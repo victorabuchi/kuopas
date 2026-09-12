@@ -1,14 +1,22 @@
 .page {
+  /* Colors taken directly from kuopas.fi's live theme stylesheet
+     (wp-content/themes/kuopas2021/style.css): #046a38 is their primary
+     button/link-hover green, #598000 is the exact button hover/focus
+     shade, #84bd00 is their secondary accent green (mobile menu button,
+     active pagination). Everything else here is a derived tint/shade of
+     those three confirmed colors, not invented. */
   --bg: #ffffff;
   --bg-card: #ffffff;
-  --bg-soft: oklch(93.5% 0.035 152);
+  --bg-soft: color-mix(in srgb, #046a38 8%, white);
   --fg: #000000;
-  --fg-muted: oklch(46% 0.02 150);
-  --green: oklch(56% 0.13 152);
-  --green-dark: oklch(30% 0.075 152);
-  --green-darker: oklch(22% 0.055 152);
-  --green-light: oklch(90% 0.05 152);
-  --border: oklch(89% 0.018 100);
+  --fg-muted: #767676;
+  --green: #84bd00;
+  --green-dark: #046a38;
+  --green-hover: #598000;
+  --green-darker: color-mix(in srgb, #046a38 75%, black);
+  --green-light: color-mix(in srgb, #046a38 12%, white);
+  --green-pale-text: color-mix(in srgb, white 80%, #046a38);
+  --border: #e7e7e7;
   --white: #ffffff;
 
   background: var(--bg);
@@ -33,11 +41,10 @@
   margin: 0;
 }
 .page :where(a) {
-  color: var(--green-dark);
   text-decoration: none;
 }
 .page :where(a:hover) {
-  color: var(--green);
+  color: var(--green-dark);
 }
 
 .wrap {
@@ -67,7 +74,7 @@
   color: var(--white);
 }
 .btnPrimary:hover {
-  background: var(--green-darker);
+  background: var(--green-hover);
   color: var(--white);
 }
 
@@ -135,7 +142,7 @@
   color: var(--fg-muted);
 }
 .navLinks a:hover {
-  color: var(--green-darker);
+  color: var(--green-dark);
 }
 .navActions {
   display: flex;
@@ -196,7 +203,7 @@
   background: var(--green-darker);
   border-radius: 28px;
   padding: 22px;
-  box-shadow: 0 30px 70px -25px oklch(30% 0.09 152 / 0.55);
+  box-shadow: 0 30px 70px -25px rgba(4, 106, 56, 0.55);
 }
 .mockHead {
   display: flex;
@@ -225,7 +232,7 @@
 }
 .mockHeadText .t2 {
   font-size: 12.5px;
-  color: oklch(85% 0.03 152);
+  color: var(--green-pale-text);
   margin-top: 2px;
 }
 .mockBody {
@@ -357,7 +364,7 @@
   color: var(--white);
 }
 .statsSection .sectionHead p {
-  color: oklch(85% 0.03 152);
+  color: var(--green-pale-text);
 }
 .stats {
   display: grid;
@@ -377,7 +384,7 @@
 .stat .label {
   margin-top: 8px;
   font-size: 14.5px;
-  color: oklch(85% 0.03 152);
+  color: var(--green-pale-text);
 }
 
 /* Final CTA */
@@ -426,7 +433,7 @@
   color: var(--fg-muted);
 }
 .footerLinks a:hover {
-  color: var(--green-darker);
+  color: var(--green-dark);
 }
 .footerFine {
   margin-top: 28px;
