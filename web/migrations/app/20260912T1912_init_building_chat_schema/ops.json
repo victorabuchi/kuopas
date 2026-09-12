@@ -1,0 +1,1441 @@
+[
+  {
+    "id": "schema.public",
+    "label": "Create schema \"public\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres"
+    },
+    "precheck": [],
+    "execute": [
+      {
+        "description": "Create schema \"public\"",
+        "sql": "CREATE SCHEMA IF NOT EXISTS \"public\"",
+        "params": []
+      }
+    ],
+    "postcheck": []
+  },
+  {
+    "id": "table.building",
+    "label": "Create table \"building\"",
+    "summary": "Creates table \"building\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "building"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"building\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"building\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"building\"",
+        "sql": "CREATE TABLE \"public\".\"building\" (\n  \"address\" text NOT NULL,\n  \"id\" uuid NOT NULL,\n  \"name\" text NOT NULL,\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"building\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"building\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "table.chat_group",
+    "label": "Create table \"chat_group\"",
+    "summary": "Creates table \"chat_group\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "chat_group"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"chat_group\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"chat_group\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"chat_group\"",
+        "sql": "CREATE TABLE \"public\".\"chat_group\" (\n  \"buildingId\" uuid,\n  \"floorGroupId\" uuid,\n  \"id\" uuid NOT NULL,\n  \"name\" text NOT NULL,\n  \"scope\" text NOT NULL,\n  \"stairwellId\" uuid,\n  PRIMARY KEY (\"id\"),\n  CONSTRAINT \"chat_group_scope_check_a40ae3fc\" CHECK (\"scope\" IN ('building', 'stairwell', 'floor'))\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"chat_group\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"chat_group\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "table.chat_group_member",
+    "label": "Create table \"chat_group_member\"",
+    "summary": "Creates table \"chat_group_member\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "chat_group_member"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"chat_group_member\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"chat_group_member\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"chat_group_member\"",
+        "sql": "CREATE TABLE \"public\".\"chat_group_member\" (\n  \"chatGroupId\" uuid NOT NULL,\n  \"id\" uuid NOT NULL,\n  \"joinedAt\" timestamptz DEFAULT (now()) NOT NULL,\n  \"tenantId\" uuid NOT NULL,\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"chat_group_member\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"chat_group_member\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "table.floor_group",
+    "label": "Create table \"floor_group\"",
+    "summary": "Creates table \"floor_group\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "floor_group"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"floor_group\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"floor_group\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"floor_group\"",
+        "sql": "CREATE TABLE \"public\".\"floor_group\" (\n  \"floor\" int4 NOT NULL,\n  \"id\" uuid NOT NULL,\n  \"stairwellId\" uuid NOT NULL,\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"floor_group\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"floor_group\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "table.message",
+    "label": "Create table \"message\"",
+    "summary": "Creates table \"message\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "message"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"message\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"message\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"message\"",
+        "sql": "CREATE TABLE \"public\".\"message\" (\n  \"chatGroupId\" uuid NOT NULL,\n  \"content\" text NOT NULL,\n  \"id\" uuid NOT NULL,\n  \"senderId\" uuid NOT NULL,\n  \"sentAt\" timestamptz DEFAULT (now()) NOT NULL,\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"message\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"message\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "table.stairwell",
+    "label": "Create table \"stairwell\"",
+    "summary": "Creates table \"stairwell\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "stairwell"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"stairwell\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"stairwell\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"stairwell\"",
+        "sql": "CREATE TABLE \"public\".\"stairwell\" (\n  \"buildingId\" uuid NOT NULL,\n  \"id\" uuid NOT NULL,\n  \"label\" text NOT NULL,\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"stairwell\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"stairwell\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "table.tenant",
+    "label": "Create table \"tenant\"",
+    "summary": "Creates table \"tenant\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "tenant"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"tenant\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"tenant\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"tenant\"",
+        "sql": "CREATE TABLE \"public\".\"tenant\" (\n  \"email\" text NOT NULL,\n  \"id\" uuid NOT NULL,\n  \"name\" text NOT NULL,\n  \"unitId\" uuid NOT NULL,\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"tenant\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"tenant\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "table.unit",
+    "label": "Create table \"unit\"",
+    "summary": "Creates table \"unit\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "unit"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"unit\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"unit\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"unit\"",
+        "sql": "CREATE TABLE \"public\".\"unit\" (\n  \"code\" text NOT NULL,\n  \"floor\" int4 NOT NULL,\n  \"id\" uuid NOT NULL,\n  \"stairwellId\" uuid NOT NULL,\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"unit\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"unit\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "unique.chat_group.chat_group_buildingId_key",
+    "label": "Add unique constraint on \"chat_group\" (buildingId)",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "unique",
+        "name": "chat_group_buildingId_key",
+        "table": "chat_group"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"chat_group_buildingId_key\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "chat_group_buildingId_key",
+          "public",
+          "\"public\".\"chat_group\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add unique constraint \"chat_group_buildingId_key\"",
+        "sql": "ALTER TABLE \"public\".\"chat_group\" ADD CONSTRAINT \"chat_group_buildingId_key\" UNIQUE (\"buildingId\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"chat_group_buildingId_key\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "chat_group_buildingId_key",
+          "public",
+          "\"public\".\"chat_group\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "unique.chat_group.chat_group_stairwellId_key",
+    "label": "Add unique constraint on \"chat_group\" (stairwellId)",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "unique",
+        "name": "chat_group_stairwellId_key",
+        "table": "chat_group"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"chat_group_stairwellId_key\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "chat_group_stairwellId_key",
+          "public",
+          "\"public\".\"chat_group\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add unique constraint \"chat_group_stairwellId_key\"",
+        "sql": "ALTER TABLE \"public\".\"chat_group\" ADD CONSTRAINT \"chat_group_stairwellId_key\" UNIQUE (\"stairwellId\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"chat_group_stairwellId_key\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "chat_group_stairwellId_key",
+          "public",
+          "\"public\".\"chat_group\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "unique.chat_group.chat_group_floorGroupId_key",
+    "label": "Add unique constraint on \"chat_group\" (floorGroupId)",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "unique",
+        "name": "chat_group_floorGroupId_key",
+        "table": "chat_group"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"chat_group_floorGroupId_key\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "chat_group_floorGroupId_key",
+          "public",
+          "\"public\".\"chat_group\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add unique constraint \"chat_group_floorGroupId_key\"",
+        "sql": "ALTER TABLE \"public\".\"chat_group\" ADD CONSTRAINT \"chat_group_floorGroupId_key\" UNIQUE (\"floorGroupId\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"chat_group_floorGroupId_key\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "chat_group_floorGroupId_key",
+          "public",
+          "\"public\".\"chat_group\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "unique.chat_group_member.chat_group_member_tenantId_chatGroupId_key",
+    "label": "Add unique constraint on \"chat_group_member\" (tenantId, chatGroupId)",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "unique",
+        "name": "chat_group_member_tenantId_chatGroupId_key",
+        "table": "chat_group_member"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"chat_group_member_tenantId_chatGroupId_key\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "chat_group_member_tenantId_chatGroupId_key",
+          "public",
+          "\"public\".\"chat_group_member\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add unique constraint \"chat_group_member_tenantId_chatGroupId_key\"",
+        "sql": "ALTER TABLE \"public\".\"chat_group_member\" ADD CONSTRAINT \"chat_group_member_tenantId_chatGroupId_key\" UNIQUE (\"tenantId\", \"chatGroupId\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"chat_group_member_tenantId_chatGroupId_key\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "chat_group_member_tenantId_chatGroupId_key",
+          "public",
+          "\"public\".\"chat_group_member\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "unique.floor_group.floor_group_stairwellId_floor_key",
+    "label": "Add unique constraint on \"floor_group\" (stairwellId, floor)",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "unique",
+        "name": "floor_group_stairwellId_floor_key",
+        "table": "floor_group"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"floor_group_stairwellId_floor_key\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "floor_group_stairwellId_floor_key",
+          "public",
+          "\"public\".\"floor_group\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add unique constraint \"floor_group_stairwellId_floor_key\"",
+        "sql": "ALTER TABLE \"public\".\"floor_group\" ADD CONSTRAINT \"floor_group_stairwellId_floor_key\" UNIQUE (\"stairwellId\", \"floor\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"floor_group_stairwellId_floor_key\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "floor_group_stairwellId_floor_key",
+          "public",
+          "\"public\".\"floor_group\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "unique.stairwell.stairwell_buildingId_label_key",
+    "label": "Add unique constraint on \"stairwell\" (buildingId, label)",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "unique",
+        "name": "stairwell_buildingId_label_key",
+        "table": "stairwell"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"stairwell_buildingId_label_key\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "stairwell_buildingId_label_key",
+          "public",
+          "\"public\".\"stairwell\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add unique constraint \"stairwell_buildingId_label_key\"",
+        "sql": "ALTER TABLE \"public\".\"stairwell\" ADD CONSTRAINT \"stairwell_buildingId_label_key\" UNIQUE (\"buildingId\", \"label\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"stairwell_buildingId_label_key\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "stairwell_buildingId_label_key",
+          "public",
+          "\"public\".\"stairwell\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "unique.tenant.tenant_email_key",
+    "label": "Add unique constraint on \"tenant\" (email)",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "unique",
+        "name": "tenant_email_key",
+        "table": "tenant"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"tenant_email_key\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "tenant_email_key",
+          "public",
+          "\"public\".\"tenant\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add unique constraint \"tenant_email_key\"",
+        "sql": "ALTER TABLE \"public\".\"tenant\" ADD CONSTRAINT \"tenant_email_key\" UNIQUE (\"email\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"tenant_email_key\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "tenant_email_key",
+          "public",
+          "\"public\".\"tenant\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "unique.unit.unit_stairwellId_code_key",
+    "label": "Add unique constraint on \"unit\" (stairwellId, code)",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "unique",
+        "name": "unit_stairwellId_code_key",
+        "table": "unit"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"unit_stairwellId_code_key\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "unit_stairwellId_code_key",
+          "public",
+          "\"public\".\"unit\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add unique constraint \"unit_stairwellId_code_key\"",
+        "sql": "ALTER TABLE \"public\".\"unit\" ADD CONSTRAINT \"unit_stairwellId_code_key\" UNIQUE (\"stairwellId\", \"code\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"unit_stairwellId_code_key\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "unit_stairwellId_code_key",
+          "public",
+          "\"public\".\"unit\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.chat_group_member.chat_group_member_chatGroupId_idx_7e9f325a",
+    "label": "Create index \"chat_group_member_chatGroupId_idx_7e9f325a\" on \"chat_group_member\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "chat_group_member_chatGroupId_idx_7e9f325a",
+        "table": "chat_group_member"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"chat_group_member_chatGroupId_idx_7e9f325a\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"chat_group_member_chatGroupId_idx_7e9f325a\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"chat_group_member_chatGroupId_idx_7e9f325a\"",
+        "sql": "CREATE INDEX \"chat_group_member_chatGroupId_idx_7e9f325a\" ON \"public\".\"chat_group_member\" (\"chatGroupId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"chat_group_member_chatGroupId_idx_7e9f325a\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"chat_group_member_chatGroupId_idx_7e9f325a\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.chat_group_member.chat_group_member_tenantId_idx_c93ed4f1",
+    "label": "Create index \"chat_group_member_tenantId_idx_c93ed4f1\" on \"chat_group_member\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "chat_group_member_tenantId_idx_c93ed4f1",
+        "table": "chat_group_member"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"chat_group_member_tenantId_idx_c93ed4f1\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"chat_group_member_tenantId_idx_c93ed4f1\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"chat_group_member_tenantId_idx_c93ed4f1\"",
+        "sql": "CREATE INDEX \"chat_group_member_tenantId_idx_c93ed4f1\" ON \"public\".\"chat_group_member\" (\"tenantId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"chat_group_member_tenantId_idx_c93ed4f1\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"chat_group_member_tenantId_idx_c93ed4f1\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.floor_group.floor_group_stairwellId_idx_5df1173b",
+    "label": "Create index \"floor_group_stairwellId_idx_5df1173b\" on \"floor_group\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "floor_group_stairwellId_idx_5df1173b",
+        "table": "floor_group"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"floor_group_stairwellId_idx_5df1173b\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"floor_group_stairwellId_idx_5df1173b\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"floor_group_stairwellId_idx_5df1173b\"",
+        "sql": "CREATE INDEX \"floor_group_stairwellId_idx_5df1173b\" ON \"public\".\"floor_group\" (\"stairwellId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"floor_group_stairwellId_idx_5df1173b\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"floor_group_stairwellId_idx_5df1173b\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.message.message_chatGroupId_idx_7e9f325a",
+    "label": "Create index \"message_chatGroupId_idx_7e9f325a\" on \"message\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "message_chatGroupId_idx_7e9f325a",
+        "table": "message"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"message_chatGroupId_idx_7e9f325a\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"message_chatGroupId_idx_7e9f325a\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"message_chatGroupId_idx_7e9f325a\"",
+        "sql": "CREATE INDEX \"message_chatGroupId_idx_7e9f325a\" ON \"public\".\"message\" (\"chatGroupId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"message_chatGroupId_idx_7e9f325a\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"message_chatGroupId_idx_7e9f325a\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.message.message_senderId_idx_4689c490",
+    "label": "Create index \"message_senderId_idx_4689c490\" on \"message\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "message_senderId_idx_4689c490",
+        "table": "message"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"message_senderId_idx_4689c490\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"message_senderId_idx_4689c490\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"message_senderId_idx_4689c490\"",
+        "sql": "CREATE INDEX \"message_senderId_idx_4689c490\" ON \"public\".\"message\" (\"senderId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"message_senderId_idx_4689c490\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"message_senderId_idx_4689c490\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.stairwell.stairwell_buildingId_idx_c40fd7b4",
+    "label": "Create index \"stairwell_buildingId_idx_c40fd7b4\" on \"stairwell\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "stairwell_buildingId_idx_c40fd7b4",
+        "table": "stairwell"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"stairwell_buildingId_idx_c40fd7b4\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"stairwell_buildingId_idx_c40fd7b4\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"stairwell_buildingId_idx_c40fd7b4\"",
+        "sql": "CREATE INDEX \"stairwell_buildingId_idx_c40fd7b4\" ON \"public\".\"stairwell\" (\"buildingId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"stairwell_buildingId_idx_c40fd7b4\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"stairwell_buildingId_idx_c40fd7b4\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.tenant.tenant_unitId_idx_be785412",
+    "label": "Create index \"tenant_unitId_idx_be785412\" on \"tenant\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "tenant_unitId_idx_be785412",
+        "table": "tenant"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"tenant_unitId_idx_be785412\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"tenant_unitId_idx_be785412\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"tenant_unitId_idx_be785412\"",
+        "sql": "CREATE INDEX \"tenant_unitId_idx_be785412\" ON \"public\".\"tenant\" (\"unitId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"tenant_unitId_idx_be785412\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"tenant_unitId_idx_be785412\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.unit.unit_stairwellId_idx_5df1173b",
+    "label": "Create index \"unit_stairwellId_idx_5df1173b\" on \"unit\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "unit_stairwellId_idx_5df1173b",
+        "table": "unit"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"unit_stairwellId_idx_5df1173b\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"unit_stairwellId_idx_5df1173b\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"unit_stairwellId_idx_5df1173b\"",
+        "sql": "CREATE INDEX \"unit_stairwellId_idx_5df1173b\" ON \"public\".\"unit\" (\"stairwellId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"unit_stairwellId_idx_5df1173b\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"unit_stairwellId_idx_5df1173b\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.chat_group.chat_group_buildingId_fkey",
+    "label": "Add foreign key \"chat_group_buildingId_fkey\" on \"chat_group\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "chat_group_buildingId_fkey",
+        "table": "chat_group"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"chat_group_buildingId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "chat_group_buildingId_fkey",
+          "public",
+          "\"public\".\"chat_group\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"chat_group_buildingId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"chat_group\"\nADD CONSTRAINT \"chat_group_buildingId_fkey\"\nFOREIGN KEY (\"buildingId\")\nREFERENCES \"public\".\"building\" (\"id\")\nON DELETE CASCADE"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"chat_group_buildingId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "chat_group_buildingId_fkey",
+          "public",
+          "\"public\".\"chat_group\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.chat_group.chat_group_stairwellId_fkey",
+    "label": "Add foreign key \"chat_group_stairwellId_fkey\" on \"chat_group\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "chat_group_stairwellId_fkey",
+        "table": "chat_group"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"chat_group_stairwellId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "chat_group_stairwellId_fkey",
+          "public",
+          "\"public\".\"chat_group\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"chat_group_stairwellId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"chat_group\"\nADD CONSTRAINT \"chat_group_stairwellId_fkey\"\nFOREIGN KEY (\"stairwellId\")\nREFERENCES \"public\".\"stairwell\" (\"id\")\nON DELETE CASCADE"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"chat_group_stairwellId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "chat_group_stairwellId_fkey",
+          "public",
+          "\"public\".\"chat_group\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.chat_group.chat_group_floorGroupId_fkey",
+    "label": "Add foreign key \"chat_group_floorGroupId_fkey\" on \"chat_group\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "chat_group_floorGroupId_fkey",
+        "table": "chat_group"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"chat_group_floorGroupId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "chat_group_floorGroupId_fkey",
+          "public",
+          "\"public\".\"chat_group\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"chat_group_floorGroupId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"chat_group\"\nADD CONSTRAINT \"chat_group_floorGroupId_fkey\"\nFOREIGN KEY (\"floorGroupId\")\nREFERENCES \"public\".\"floor_group\" (\"id\")\nON DELETE CASCADE"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"chat_group_floorGroupId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "chat_group_floorGroupId_fkey",
+          "public",
+          "\"public\".\"chat_group\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.chat_group_member.chat_group_member_tenantId_fkey",
+    "label": "Add foreign key \"chat_group_member_tenantId_fkey\" on \"chat_group_member\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "chat_group_member_tenantId_fkey",
+        "table": "chat_group_member"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"chat_group_member_tenantId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "chat_group_member_tenantId_fkey",
+          "public",
+          "\"public\".\"chat_group_member\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"chat_group_member_tenantId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"chat_group_member\"\nADD CONSTRAINT \"chat_group_member_tenantId_fkey\"\nFOREIGN KEY (\"tenantId\")\nREFERENCES \"public\".\"tenant\" (\"id\")\nON DELETE CASCADE"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"chat_group_member_tenantId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "chat_group_member_tenantId_fkey",
+          "public",
+          "\"public\".\"chat_group_member\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.chat_group_member.chat_group_member_chatGroupId_fkey",
+    "label": "Add foreign key \"chat_group_member_chatGroupId_fkey\" on \"chat_group_member\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "chat_group_member_chatGroupId_fkey",
+        "table": "chat_group_member"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"chat_group_member_chatGroupId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "chat_group_member_chatGroupId_fkey",
+          "public",
+          "\"public\".\"chat_group_member\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"chat_group_member_chatGroupId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"chat_group_member\"\nADD CONSTRAINT \"chat_group_member_chatGroupId_fkey\"\nFOREIGN KEY (\"chatGroupId\")\nREFERENCES \"public\".\"chat_group\" (\"id\")\nON DELETE CASCADE"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"chat_group_member_chatGroupId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "chat_group_member_chatGroupId_fkey",
+          "public",
+          "\"public\".\"chat_group_member\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.floor_group.floor_group_stairwellId_fkey",
+    "label": "Add foreign key \"floor_group_stairwellId_fkey\" on \"floor_group\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "floor_group_stairwellId_fkey",
+        "table": "floor_group"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"floor_group_stairwellId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "floor_group_stairwellId_fkey",
+          "public",
+          "\"public\".\"floor_group\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"floor_group_stairwellId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"floor_group\"\nADD CONSTRAINT \"floor_group_stairwellId_fkey\"\nFOREIGN KEY (\"stairwellId\")\nREFERENCES \"public\".\"stairwell\" (\"id\")\nON DELETE CASCADE"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"floor_group_stairwellId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "floor_group_stairwellId_fkey",
+          "public",
+          "\"public\".\"floor_group\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.message.message_senderId_fkey",
+    "label": "Add foreign key \"message_senderId_fkey\" on \"message\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "message_senderId_fkey",
+        "table": "message"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"message_senderId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "message_senderId_fkey",
+          "public",
+          "\"public\".\"message\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"message_senderId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"message\"\nADD CONSTRAINT \"message_senderId_fkey\"\nFOREIGN KEY (\"senderId\")\nREFERENCES \"public\".\"tenant\" (\"id\")\nON DELETE CASCADE"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"message_senderId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "message_senderId_fkey",
+          "public",
+          "\"public\".\"message\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.message.message_chatGroupId_fkey",
+    "label": "Add foreign key \"message_chatGroupId_fkey\" on \"message\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "message_chatGroupId_fkey",
+        "table": "message"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"message_chatGroupId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "message_chatGroupId_fkey",
+          "public",
+          "\"public\".\"message\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"message_chatGroupId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"message\"\nADD CONSTRAINT \"message_chatGroupId_fkey\"\nFOREIGN KEY (\"chatGroupId\")\nREFERENCES \"public\".\"chat_group\" (\"id\")\nON DELETE CASCADE"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"message_chatGroupId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "message_chatGroupId_fkey",
+          "public",
+          "\"public\".\"message\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.stairwell.stairwell_buildingId_fkey",
+    "label": "Add foreign key \"stairwell_buildingId_fkey\" on \"stairwell\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "stairwell_buildingId_fkey",
+        "table": "stairwell"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"stairwell_buildingId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "stairwell_buildingId_fkey",
+          "public",
+          "\"public\".\"stairwell\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"stairwell_buildingId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"stairwell\"\nADD CONSTRAINT \"stairwell_buildingId_fkey\"\nFOREIGN KEY (\"buildingId\")\nREFERENCES \"public\".\"building\" (\"id\")\nON DELETE CASCADE"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"stairwell_buildingId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "stairwell_buildingId_fkey",
+          "public",
+          "\"public\".\"stairwell\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.tenant.tenant_unitId_fkey",
+    "label": "Add foreign key \"tenant_unitId_fkey\" on \"tenant\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "tenant_unitId_fkey",
+        "table": "tenant"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"tenant_unitId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "tenant_unitId_fkey",
+          "public",
+          "\"public\".\"tenant\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"tenant_unitId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"tenant\"\nADD CONSTRAINT \"tenant_unitId_fkey\"\nFOREIGN KEY (\"unitId\")\nREFERENCES \"public\".\"unit\" (\"id\")\nON DELETE CASCADE"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"tenant_unitId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "tenant_unitId_fkey",
+          "public",
+          "\"public\".\"tenant\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.unit.unit_stairwellId_fkey",
+    "label": "Add foreign key \"unit_stairwellId_fkey\" on \"unit\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "unit_stairwellId_fkey",
+        "table": "unit"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"unit_stairwellId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "unit_stairwellId_fkey",
+          "public",
+          "\"public\".\"unit\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"unit_stairwellId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"unit\"\nADD CONSTRAINT \"unit_stairwellId_fkey\"\nFOREIGN KEY (\"stairwellId\")\nREFERENCES \"public\".\"stairwell\" (\"id\")\nON DELETE CASCADE"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"unit_stairwellId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "unit_stairwellId_fkey",
+          "public",
+          "\"public\".\"unit\""
+        ]
+      }
+    ]
+  }
+]

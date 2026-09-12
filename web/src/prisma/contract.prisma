@@ -1,0 +1,107 @@
+// use prisma-8
+
+enum group_scope {
+  @@type("pg/text@1")
+  building  = "building"
+  stairwell = "stairwell"
+  floor     = "floor"
+}
+
+model Building {
+  id         Uuid        @id @default(uuid())
+  name       String
+  address    String
+  stairwells Stairwell[]
+  chatGroup  ChatGroup?
+
+  @@map("building")
+}
+
+model Stairwell {
+  id          Uuid         @id @default(uuid())
+  building    Building     @relation(fields: [buildingId], references: [id], onDelete: Cascade)
+  buildingId  Uuid
+  label       String
+  units       Unit[]
+  floorGroups FloorGroup[]
+  chatGroup   ChatGroup?
+
+  @@unique([buildingId, label])
+  @@map("stairwell")
+}
+
+model Unit {
+  id          Uuid      @id @default(uuid())
+  stairwell   Stairwell @relation(fields: [stairwellId], references: [id], onDelete: Cascade)
+  stairwellId Uuid
+  code        String
+  floor       Int
+  tenants     Tenant[]
+
+  @@unique([stairwellId, code])
+  @@map("unit")
+}
+
+model FloorGroup {
+  id          Uuid       @id @default(uuid())
+  stairwell   Stairwell  @relation(fields: [stairwellId], references: [id], onDelete: Cascade)
+  stairwellId Uuid
+  floor       Int
+  chatGroup   ChatGroup?
+
+  @@unique([stairwellId, floor])
+  @@map("floor_group")
+}
+
+model Tenant {
+  id          Uuid              @id @default(uuid())
+  name        String
+  email       String            @unique
+  unit        Unit              @relation(fields: [unitId], references: [id], onDelete: Cascade)
+  unitId      Uuid
+  memberships ChatGroupMember[]
+  messages    Message[]
+
+  @@map("tenant")
+}
+
+model ChatGroup {
+  id           Uuid              @id @default(uuid())
+  name         String
+  scope        group_scope
+  building     Building?         @relation(fields: [buildingId], references: [id], onDelete: Cascade)
+  buildingId   Uuid?             @unique
+  stairwell    Stairwell?        @relation(fields: [stairwellId], references: [id], onDelete: Cascade)
+  stairwellId  Uuid?             @unique
+  floorGroup   FloorGroup?       @relation(fields: [floorGroupId], references: [id], onDelete: Cascade)
+  floorGroupId Uuid?             @unique
+  members      ChatGroupMember[]
+  messages     Message[]
+
+  @@map("chat_group")
+}
+
+model ChatGroupMember {
+  id          Uuid              @id @default(uuid())
+  tenant      Tenant            @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  tenantId    Uuid
+  chatGroup   ChatGroup         @relation(fields: [chatGroupId], references: [id], onDelete: Cascade)
+  chatGroupId Uuid
+  joinedAt    TimestamptzString @default(now())
+
+  @@unique([tenantId, chatGroupId])
+  @@map("chat_group_member")
+}
+
+model Message {
+  id          Uuid              @id @default(uuid())
+  content     String
+  sentAt      TimestamptzString @default(now())
+  sender      Tenant            @relation(fields: [senderId], references: [id], onDelete: Cascade)
+  senderId    Uuid
+  chatGroup   ChatGroup         @relation(fields: [chatGroupId], references: [id], onDelete: Cascade)
+  chatGroupId Uuid
+
+  @@index([chatGroupId])
+  @@map("message")
+}
