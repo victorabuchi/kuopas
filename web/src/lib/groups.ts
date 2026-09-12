@@ -100,6 +100,7 @@ export async function createTenantWithGroups(input: {
   name: string;
   email: string;
   unitId: string;
+  passwordHash?: string;
 }) {
   return db.transaction(async (tx) => {
     const tenant = await tx.orm.public.Tenant.create(input);

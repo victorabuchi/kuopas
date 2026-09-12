@@ -668,6 +668,20 @@
                   "kind": "scalar"
                 }
               },
+              "passwordHash": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "suomiFiPersonId": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
               "unitId": {
                 "nullable": false,
                 "type": {
@@ -734,6 +748,12 @@
                 },
                 "name": {
                   "column": "name"
+                },
+                "passwordHash": {
+                  "column": "passwordHash"
+                },
+                "suomiFiPersonId": {
+                  "column": "suomiFiPersonId"
                 },
                 "unitId": {
                   "column": "unitId"
@@ -1312,6 +1332,16 @@
                   "nativeType": "text",
                   "nullable": false
                 },
+                "passwordHash": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true
+                },
+                "suomiFiPersonId": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true
+                },
                 "unitId": {
                   "codecId": "pg/uuid@1",
                   "nativeType": "uuid",
@@ -1356,6 +1386,11 @@
                 {
                   "columns": [
                     "email"
+                  ]
+                },
+                {
+                  "columns": [
+                    "suomiFiPersonId"
                   ]
                 }
               ]
@@ -1442,7 +1477,7 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "da0a4d8f79a3407df625730165d45184478c4e7dfa236234290e4d275f800250"
+    "storageHash": "c4da3a4fa02d9ba030e4162e424d07b06926a8447dd4723a6009ea55e72d92c0"
   },
   "execution": {
     "executionHash": "3a128a6d18e6f6f9652c2b19d07861c4ab071516d299aa7f207e5d3722d45885",

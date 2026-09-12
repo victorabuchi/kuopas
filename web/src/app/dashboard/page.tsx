@@ -47,7 +47,7 @@ export default async function DashboardPage() {
                 {tenant.memberships.map((m) => (
                   <Link
                     key={m.id}
-                    href={`/chat/${m.chatGroup!.id}?as=${tenant.id}`}
+                    href={`/chat/${m.chatGroup!.id}`}
                     className="rounded-full border border-zinc-300 px-3 py-1 text-sm hover:bg-zinc-100 dark:border-zinc-700 dark:hover:bg-zinc-900"
                   >
                     {m.chatGroup!.name}

@@ -1,0 +1,128 @@
+[
+  {
+    "id": "column.public.tenant.passwordHash",
+    "label": "Add column \"passwordHash\" to \"tenant\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "passwordHash",
+        "table": "tenant"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"passwordHash\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "tenant",
+          "passwordHash"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"passwordHash\"",
+        "sql": "ALTER TABLE \"public\".\"tenant\" ADD COLUMN \"passwordHash\" text"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"passwordHash\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "tenant",
+          "passwordHash"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "column.public.tenant.suomiFiPersonId",
+    "label": "Add column \"suomiFiPersonId\" to \"tenant\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "suomiFiPersonId",
+        "table": "tenant"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"suomiFiPersonId\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "tenant",
+          "suomiFiPersonId"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"suomiFiPersonId\"",
+        "sql": "ALTER TABLE \"public\".\"tenant\" ADD COLUMN \"suomiFiPersonId\" text"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"suomiFiPersonId\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "tenant",
+          "suomiFiPersonId"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "unique.tenant.tenant_suomiFiPersonId_key",
+    "label": "Add unique constraint on \"tenant\" (suomiFiPersonId)",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "unique",
+        "name": "tenant_suomiFiPersonId_key",
+        "table": "tenant"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"tenant_suomiFiPersonId_key\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "tenant_suomiFiPersonId_key",
+          "public",
+          "\"public\".\"tenant\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add unique constraint \"tenant_suomiFiPersonId_key\"",
+        "sql": "ALTER TABLE \"public\".\"tenant\" ADD CONSTRAINT \"tenant_suomiFiPersonId_key\" UNIQUE (\"suomiFiPersonId\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"tenant_suomiFiPersonId_key\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "tenant_suomiFiPersonId_key",
+          "public",
+          "\"public\".\"tenant\""
+        ]
+      }
+    ]
+  }
+]

@@ -54,13 +54,15 @@ model FloorGroup {
 }
 
 model Tenant {
-  id          Uuid              @id @default(uuid())
-  name        String
-  email       String            @unique
-  unit        Unit              @relation(fields: [unitId], references: [id], onDelete: Cascade)
-  unitId      Uuid
-  memberships ChatGroupMember[]
-  messages    Message[]
+  id              Uuid              @id @default(uuid())
+  name            String
+  email           String            @unique
+  passwordHash    String?
+  suomiFiPersonId String?           @unique
+  unit            Unit              @relation(fields: [unitId], references: [id], onDelete: Cascade)
+  unitId          Uuid
+  memberships     ChatGroupMember[]
+  messages        Message[]
 
   @@map("tenant")
 }

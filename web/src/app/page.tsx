@@ -20,7 +20,7 @@ export default function Home() {
             <a href="#support">Support</a>
           </div>
           <div className={styles.navActions}>
-            <Link href="/dashboard" className={styles.btnPrimary}>
+            <Link href="/login" className={styles.btnPrimary}>
               Log in
             </Link>
           </div>
@@ -40,7 +40,7 @@ export default function Home() {
             support, all without leaving one app.
           </p>
           <div className={styles.heroCta}>
-            <Link href="/dashboard" className={styles.btnPrimary}>
+            <Link href="/login" className={styles.btnPrimary}>
               Log in to Kuopas
             </Link>
             <span className={styles.heroCtaNote}>For residents across Kuopas&apos; buildings in Kuopio.</span>
@@ -236,7 +236,7 @@ export default function Home() {
             <span className={styles.tag}>It is good to be at home.</span>
             <h2>Log in and see your building&apos;s chat.</h2>
             <p>Your building, stairwell, and floor groups are already waiting, no setup needed.</p>
-            <Link href="/dashboard" className={styles.btnPrimary}>
+            <Link href="/login" className={styles.btnPrimary}>
               Log in to Kuopas
             </Link>
           </div>

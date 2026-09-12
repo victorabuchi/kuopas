@@ -1,0 +1,180 @@
+.page {
+  --bg: #ffffff;
+  --fg: #000000;
+  --fg-muted: #767676;
+  --green: #84bd00;
+  --green-dark: #046a38;
+  --green-hover: #598000;
+  --border: #e7e7e7;
+  --error: #cf2e2e;
+  --error-bg: color-mix(in srgb, #cf2e2e 8%, white);
+
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-mulish), sans-serif;
+  -webkit-font-smoothing: antialiased;
+  padding: 24px;
+}
+.page * {
+  box-sizing: border-box;
+}
+
+.card {
+  width: 100%;
+  max-width: 400px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  font-weight: 800;
+  font-size: 22px;
+  color: var(--green-dark);
+}
+.logoDot {
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  background: var(--green);
+}
+
+.heading {
+  text-align: center;
+}
+.heading h1 {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 800;
+}
+.heading p {
+  margin: 8px 0 0;
+  color: var(--fg-muted);
+  font-size: 15px;
+}
+
+.error {
+  background: var(--error-bg);
+  color: var(--error);
+  border-radius: 10px;
+  padding: 12px 14px;
+  font-size: 14px;
+  text-align: center;
+}
+
+.suomiFi {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  height: 52px;
+  border-radius: 10px;
+  background: #f3f3f3;
+  color: #939393;
+  font-weight: 700;
+  font-size: 15px;
+  border: 1px solid var(--border);
+  cursor: not-allowed;
+  position: relative;
+}
+.suomiFiTag {
+  position: absolute;
+  top: -9px;
+  right: 12px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  color: var(--fg-muted);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  padding: 2px 8px;
+  border-radius: 999px;
+}
+
+.divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: var(--fg-muted);
+  font-size: 13px;
+}
+.divider::before,
+.divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.field label {
+  font-size: 13px;
+  font-weight: 700;
+}
+.field input,
+.field select {
+  height: 48px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  padding: 0 14px;
+  font-size: 15px;
+  font-family: var(--font-mulish), sans-serif;
+  color: var(--fg);
+  background: var(--bg);
+}
+.field input:focus,
+.field select:focus {
+  outline: none;
+  border-color: var(--green-dark);
+}
+.hint {
+  font-size: 12.5px;
+  color: var(--fg-muted);
+}
+
+.submit {
+  height: 52px;
+  border-radius: 10px;
+  border: none;
+  background: var(--green-dark);
+  color: #fff;
+  font-weight: 700;
+  font-size: 15px;
+  cursor: pointer;
+  margin-top: 4px;
+}
+.submit:hover {
+  background: var(--green-hover);
+}
+
+.footerNote {
+  text-align: center;
+  font-size: 14px;
+  color: var(--fg-muted);
+}
+.footerNote :where(a) {
+  color: var(--green-dark);
+  font-weight: 700;
+  text-decoration: none;
+}
+.footerNote :where(a:hover) {
+  color: var(--green-hover);
+}

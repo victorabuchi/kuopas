@@ -15,6 +15,7 @@
   "dependencies": {
     "@prisma/client": "^7.10.0",
     "@prisma/orm-postgres": "^8.0.0-rc.10",
+    "bcryptjs": "^3.0.3",
     "dotenv": "^17.4.2",
     "next": "16.3.5",
     "react": "19.2.8",
@@ -23,6 +24,7 @@
   "devDependencies": {
     "@prisma/cli-engine": "^0.2.3",
     "@tailwindcss/postcss": "^4",
+    "@types/bcryptjs": "^2.4.6",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",

@@ -3,6 +3,7 @@
 import { revalidatePath } from 'next/cache';
 import { db } from '../prisma/db';
 import { createTenantWithGroups } from '../lib/groups';
+import { getSession } from '../lib/session';
 
 export async function createTenantAction(formData: FormData) {
   const name = String(formData.get('name') ?? '').trim();
@@ -19,13 +20,21 @@ export async function createTenantAction(formData: FormData) {
 
 export async function sendMessageAction(formData: FormData) {
   const chatGroupId = String(formData.get('chatGroupId') ?? '').trim();
-  const senderId = String(formData.get('senderId') ?? '').trim();
   const content = String(formData.get('content') ?? '').trim();
 
-  if (!chatGroupId || !senderId || !content) {
-    throw new Error('Sender and message content are required');
+  if (!chatGroupId || !content) {
+    throw new Error('Message content is required');
   }
 
-  await db.orm.public.Message.create({ chatGroupId, senderId, content });
+  const session = await getSession();
+  if (!session) throw new Error('Not signed in');
+
+  const membership = await db.orm.public.ChatGroupMember.where({
+    tenantId: session.tenantId,
+    chatGroupId,
+  }).first();
+  if (!membership) throw new Error('Not a member of this chat group');
+
+  await db.orm.public.Message.create({ chatGroupId, senderId: session.tenantId, content });
   revalidatePath(`/chat/${chatGroupId}`);
 }

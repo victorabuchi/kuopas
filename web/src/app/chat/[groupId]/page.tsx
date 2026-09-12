@@ -1,24 +1,23 @@
 import Link from 'next/link';
-import { notFound } from 'next/navigation';
+import { notFound, redirect } from 'next/navigation';
 import { db } from '../../../prisma/db';
 import { sendMessageAction } from '../../actions';
+import { getSession } from '../../../lib/session';
 
-export default async function ChatGroupPage({
-  params,
-  searchParams,
-}: {
-  params: Promise<{ groupId: string }>;
-  searchParams: Promise<{ as?: string }>;
-}) {
+export default async function ChatGroupPage({ params }: { params: Promise<{ groupId: string }> }) {
   const { groupId } = await params;
-  const { as } = await searchParams;
+
+  const session = await getSession();
+  if (!session) redirect('/login');
 
   const group = await db.orm.public.ChatGroup.where({ id: groupId }).include(
     'members',
     (members) => members.include('tenant', (t) => t),
   ).first();
-
   if (!group) notFound();
+
+  const isMember = group.members.some((m) => m.tenant!.id === session.tenantId);
+  if (!isMember) redirect('/home');
 
   const messages = await db.orm.public.Message.where({ chatGroupId: groupId })
     .include('sender', (s) => s)
@@ -26,12 +25,10 @@ export default async function ChatGroupPage({
     .limit(200)
     .all();
 
-  const activeSenderId = as ?? group.members[0]?.tenant!.id ?? '';
-
   return (
     <div className="mx-auto flex w-full max-w-2xl flex-col gap-6 px-6 py-12">
       <div>
-        <Link href="/" className="text-sm text-zinc-500 hover:underline">
+        <Link href="/home" className="text-sm text-zinc-500 hover:underline">
           &larr; Back
         </Link>
         <h1 className="text-2xl font-semibold">{group.name}</h1>
@@ -53,18 +50,6 @@ export default async function ChatGroupPage({
 
       <form action={sendMessageAction} className="flex flex-col gap-3 rounded-lg border border-zinc-200 p-4 dark:border-zinc-800">
         <input type="hidden" name="chatGroupId" value={group.id} />
-        <select
-          name="senderId"
-          defaultValue={activeSenderId}
-          required
-          className="rounded border border-zinc-300 px-3 py-2 dark:border-zinc-700 dark:bg-zinc-900"
-        >
-          {group.members.map((m) => (
-            <option key={m.tenant!.id} value={m.tenant!.id}>
-              {m.tenant!.name}
-            </option>
-          ))}
-        </select>
         <textarea
           name="content"
           placeholder="Write a message..."
