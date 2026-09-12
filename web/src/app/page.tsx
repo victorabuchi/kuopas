@@ -1,13 +1,12 @@
 import Link from 'next/link';
-import { Sora, Manrope } from 'next/font/google';
+import { Mulish } from 'next/font/google';
 import styles from './page.module.css';
 
-const sora = Sora({ subsets: ['latin'], weight: ['400', '600', '700', '800'], variable: '--font-sora' });
-const manrope = Manrope({ subsets: ['latin'], weight: ['400', '500', '600', '700'], variable: '--font-manrope' });
+const mulish = Mulish({ subsets: ['latin'], weight: ['400', '500', '600', '700', '800'], variable: '--font-mulish' });
 
 export default function Home() {
   return (
-    <div className={`${styles.page} ${sora.variable} ${manrope.variable}`}>
+    <div className={`${styles.page} ${mulish.variable}`}>
       <nav className={styles.nav}>
         <div className={`${styles.wrap} ${styles.navRow}`}>
           <div className={styles.logo}>

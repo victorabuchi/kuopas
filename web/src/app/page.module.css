@@ -1,20 +1,22 @@
 .page {
-  --bg: oklch(97.3% 0.012 95);
-  --bg-card: oklch(99.2% 0.004 95);
+  --bg: #ffffff;
+  --bg-card: #ffffff;
   --bg-soft: oklch(93.5% 0.035 152);
-  --fg: oklch(23% 0.02 150);
+  --fg: #000000;
   --fg-muted: oklch(46% 0.02 150);
   --green: oklch(56% 0.13 152);
   --green-dark: oklch(30% 0.075 152);
   --green-darker: oklch(22% 0.055 152);
   --green-light: oklch(90% 0.05 152);
   --border: oklch(89% 0.018 100);
-  --white: oklch(99.4% 0.002 95);
+  --white: #ffffff;
 
   background: var(--bg);
   color: var(--fg);
-  font-family: var(--font-manrope), system-ui, sans-serif;
+  font-family: var(--font-mulish), sans-serif;
+  font-weight: 400;
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
   text-wrap: pretty;
 }
 .page * {
@@ -23,18 +25,18 @@
 .page h1,
 .page h2,
 .page h3 {
-  font-family: var(--font-sora), system-ui, sans-serif;
+  font-family: var(--font-mulish), sans-serif;
   margin: 0;
   letter-spacing: -0.01em;
 }
 .page p {
   margin: 0;
 }
-.page a {
+.page :where(a) {
   color: var(--green-dark);
   text-decoration: none;
 }
-.page a:hover {
+.page :where(a:hover) {
   color: var(--green);
 }
 
@@ -52,7 +54,7 @@
   height: 48px;
   padding: 0 24px;
   border-radius: 999px;
-  font-family: var(--font-manrope), sans-serif;
+  font-family: var(--font-mulish), sans-serif;
   font-weight: 700;
   font-size: 15px;
   cursor: pointer;
@@ -109,7 +111,7 @@
   display: flex;
   align-items: center;
   gap: 9px;
-  font-family: var(--font-sora), sans-serif;
+  font-family: var(--font-mulish), sans-serif;
   font-weight: 800;
   font-size: 21px;
   color: var(--green-darker);
@@ -211,7 +213,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-family: var(--font-sora), sans-serif;
+  font-family: var(--font-mulish), sans-serif;
   font-weight: 700;
   font-size: 13px;
   color: var(--green-darker);
@@ -367,7 +369,7 @@
   padding: 8px 12px;
 }
 .stat .num {
-  font-family: var(--font-sora), sans-serif;
+  font-family: var(--font-mulish), sans-serif;
   font-weight: 800;
   font-size: 44px;
   color: var(--white);
@@ -419,6 +421,12 @@
   font-weight: 600;
   color: var(--fg-muted);
   flex-wrap: wrap;
+}
+.footerLinks a {
+  color: var(--fg-muted);
+}
+.footerLinks a:hover {
+  color: var(--green-darker);
 }
 .footerFine {
   margin-top: 28px;
