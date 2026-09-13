@@ -1,8 +1,12 @@
 import Link from 'next/link';
 import { notFound, redirect } from 'next/navigation';
+import { Mulish } from 'next/font/google';
+import styles from './chat.module.css';
 import { db } from '../../../prisma/db';
 import { sendMessageAction } from '../../actions';
 import { getSession } from '../../../lib/session';
+
+const mulish = Mulish({ subsets: ['latin'], weight: ['400', '500', '600', '700', '800'], variable: '--font-mulish' });
 
 export default async function ChatGroupPage({ params }: { params: Promise<{ groupId: string }> }) {
   const { groupId } = await params;
@@ -26,42 +30,51 @@ export default async function ChatGroupPage({ params }: { params: Promise<{ grou
     .all();
 
   return (
-    <div className="mx-auto flex w-full max-w-2xl flex-col gap-6 px-6 py-12">
-      <div>
-        <Link href="/home" className="text-sm text-zinc-500 hover:underline">
-          &larr; Back
+    <div className={`${styles.page} ${mulish.variable}`}>
+      <div className={styles.topBar}>
+        <Link href="/home" className={styles.back} aria-label="Back">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="m15 18-6-6 6-6" />
+          </svg>
         </Link>
-        <h1 className="text-2xl font-semibold">{group.name}</h1>
-        <p className="text-zinc-500">{group.members.length} member(s)</p>
+        <div className={styles.topBarText}>
+          <span className={styles.topBarTitle}>{group.name}</span>
+          <span className={styles.topBarSubtitle}>{group.members.length} member(s)</span>
+        </div>
       </div>
 
-      <ul className="flex flex-col gap-3">
-        {messages.length === 0 && <p className="text-zinc-500">No messages yet.</p>}
-        {messages.map((message) => (
-          <li key={message.id} className="rounded-lg border border-zinc-200 p-3 dark:border-zinc-800">
-            <div className="flex items-baseline justify-between text-sm">
-              <span className="font-medium">{message.sender!.name}</span>
-              <span className="text-zinc-400">{new Date(message.sentAt).toLocaleString()}</span>
+      <div className={styles.messages}>
+        {messages.length === 0 && <p className={styles.empty}>No messages yet. Say hello.</p>}
+        {messages.map((message) => {
+          const isOwn = message.sender!.id === session.tenantId;
+          return (
+            <div key={message.id} className={`${styles.row} ${isOwn ? styles.rowOut : styles.rowIn}`}>
+              {!isOwn && <span className={styles.senderName}>{message.sender!.name}</span>}
+              <div className={`${styles.bubble} ${isOwn ? styles.bubbleOut : styles.bubbleIn}`}>
+                <span>{message.content}</span>
+                <span className={styles.time}>
+                  {new Date(message.sentAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                </span>
+              </div>
             </div>
-            <p className="mt-1">{message.content}</p>
-          </li>
-        ))}
-      </ul>
+          );
+        })}
+      </div>
 
-      <form action={sendMessageAction} className="flex flex-col gap-3 rounded-lg border border-zinc-200 p-4 dark:border-zinc-800">
+      <form action={sendMessageAction} className={styles.composer}>
         <input type="hidden" name="chatGroupId" value={group.id} />
-        <textarea
+        <input
+          type="text"
           name="content"
-          placeholder="Write a message..."
+          placeholder="Message"
           required
-          rows={3}
-          className="rounded border border-zinc-300 px-3 py-2 dark:border-zinc-700 dark:bg-zinc-900"
+          autoComplete="off"
+          className={styles.composerInput}
         />
-        <button
-          type="submit"
-          className="self-start rounded bg-black px-4 py-2 text-white dark:bg-white dark:text-black"
-        >
-          Send
+        <button type="submit" className={styles.send} aria-label="Send">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="m5 12 14-7-7 14-2-6z" />
+          </svg>
         </button>
       </form>
     </div>

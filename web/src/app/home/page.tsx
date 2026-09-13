@@ -40,8 +40,14 @@ export default async function HomePage() {
           .include('sender', (s) => s)
           .include('chatGroup', (g) => g)
           .orderBy((m) => m.sentAt.desc())
-          .limit(30)
+          .limit(50)
           .all();
+
+  const lastMessageByGroup = new Map<string, (typeof messages)[number]>();
+  for (const message of messages) {
+    const groupId = message.chatGroup!.id;
+    if (!lastMessageByGroup.has(groupId)) lastMessageByGroup.set(groupId, message);
+  }
 
   return (
     <div className={`${styles.page} ${mulish.variable}`}>
@@ -56,22 +62,33 @@ export default async function HomePage() {
       </div>
 
       <div className={styles.content}>
-        <div className={styles.stories}>
-          {tenant.memberships.map((m) => (
-            <Link key={m.id} href={`/chat/${m.chatGroup!.id}`} className={styles.story}>
-              <div className={styles.storyRing}>
-                <div className={styles.storyAvatar}>
-                  <div className={styles.storyAvatarInner}>{initials(m.chatGroup!.name)}</div>
+        <div className={styles.chatList}>
+          {tenant.memberships.map((m) => {
+            const group = m.chatGroup!;
+            const last = lastMessageByGroup.get(group.id);
+            return (
+              <Link key={m.id} href={`/chat/${group.id}`} className={styles.chatRow}>
+                <div className={styles.chatAvatar}>{initials(group.name)}</div>
+                <div className={styles.chatRowText}>
+                  <div className={styles.chatRowTop}>
+                    <span className={styles.chatRowName}>{group.name}</span>
+                    {last && (
+                      <span className={styles.chatRowTime}>{new Date(last.sentAt).toLocaleDateString()}</span>
+                    )}
+                  </div>
+                  <span className={styles.chatRowPreview}>
+                    {last ? `${last.sender!.name}: ${last.content}` : 'No messages yet'}
+                  </span>
                 </div>
-              </div>
-              <span className={styles.storyLabel}>{m.chatGroup!.name}</span>
-            </Link>
-          ))}
+              </Link>
+            );
+          })}
         </div>
 
+        <div className={styles.feedHeading}>Recent activity</div>
         <div className={styles.feed}>
           {messages.length === 0 && (
-            <div className={styles.empty}>No messages yet. Say hello in one of your groups above.</div>
+            <div className={styles.empty}>No messages yet. Say hello in one of your chats above.</div>
           )}
           {messages.map((message) => (
             <Link key={message.id} href={`/chat/${message.chatGroup!.id}`} className={styles.post}>

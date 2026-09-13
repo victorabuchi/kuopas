@@ -62,39 +62,25 @@
   padding-bottom: 60px;
 }
 
-/* Stories */
-.stories {
-  display: flex;
-  gap: 18px;
-  padding: 18px 20px;
-  overflow-x: auto;
-  border-bottom: 1px solid var(--border);
-}
-.story {
+/* Chat list (WhatsApp-style) */
+.chatList {
   display: flex;
   flex-direction: column;
+  border-bottom: 8px solid var(--border);
+}
+.chatRow {
+  display: flex;
   align-items: center;
-  gap: 6px;
-  flex-shrink: 0;
-  width: 68px;
+  gap: 12px;
+  padding: 12px 20px;
+  border-bottom: 1px solid var(--border);
 }
-.storyRing {
-  width: 62px;
-  height: 62px;
-  border-radius: 50%;
-  padding: 3px;
-  background: linear-gradient(135deg, var(--green) 0%, var(--green-dark) 100%);
+.chatRow:hover {
+  background: color-mix(in srgb, var(--border) 40%, transparent);
 }
-.storyAvatar {
-  width: 100%;
-  height: 100%;
-  border-radius: 50%;
-  background: var(--bg);
-  padding: 2px;
-}
-.storyAvatarInner {
-  width: 100%;
-  height: 100%;
+.chatAvatar {
+  width: 48px;
+  height: 48px;
   border-radius: 50%;
   background: var(--green-dark);
   color: #fff;
@@ -103,16 +89,45 @@
   justify-content: center;
   font-weight: 700;
   font-size: 15px;
+  flex-shrink: 0;
 }
-.storyLabel {
-  font-size: 11.5px;
-  text-align: center;
-  color: var(--fg);
-  line-height: 1.2;
-  max-width: 68px;
+.chatRowText {
+  min-width: 0;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.chatRowTop {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+}
+.chatRowName {
+  font-weight: 700;
+  font-size: 15px;
+}
+.chatRowTime {
+  font-size: 12px;
+  color: var(--fg-muted);
+  flex-shrink: 0;
+}
+.chatRowPreview {
+  font-size: 13.5px;
+  color: var(--fg-muted);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.feedHeading {
+  padding: 16px 20px 8px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--fg-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
 }
 
 /* Feed */
