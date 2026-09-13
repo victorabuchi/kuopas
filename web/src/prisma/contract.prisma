@@ -7,6 +7,16 @@ enum group_scope {
   floor     = "floor"
 }
 
+model NewsPost {
+  id          Uuid              @id @default(uuid())
+  title       String
+  summary     String
+  sourceUrl   String
+  publishedAt TimestamptzString
+
+  @@map("news_post")
+}
+
 model Building {
   id         Uuid        @id @default(uuid())
   name       String

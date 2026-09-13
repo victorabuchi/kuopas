@@ -1,0 +1,41 @@
+[
+  {
+    "id": "table.news_post",
+    "label": "Create table \"news_post\"",
+    "summary": "Creates table \"news_post\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "news_post"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"news_post\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"news_post\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"news_post\"",
+        "sql": "CREATE TABLE \"public\".\"news_post\" (\n  \"id\" uuid NOT NULL,\n  \"publishedAt\" timestamptz NOT NULL,\n  \"sourceUrl\" text NOT NULL,\n  \"summary\" text NOT NULL,\n  \"title\" text NOT NULL,\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"news_post\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"news_post\""
+        ]
+      }
+    ]
+  }
+]

@@ -24,6 +24,10 @@
       "model": "Message",
       "namespace": "public"
     },
+    "news_post": {
+      "model": "NewsPost",
+      "namespace": "public"
+    },
     "stairwell": {
       "model": "Stairwell",
       "namespace": "public"
@@ -539,6 +543,67 @@
               },
               "namespaceId": "public",
               "table": "message"
+            }
+          },
+          "NewsPost": {
+            "fields": {
+              "id": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/uuid@1",
+                  "kind": "scalar"
+                }
+              },
+              "publishedAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              },
+              "sourceUrl": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "summary": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "title": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              }
+            },
+            "relations": {},
+            "storage": {
+              "fields": {
+                "id": {
+                  "column": "id"
+                },
+                "publishedAt": {
+                  "column": "publishedAt"
+                },
+                "sourceUrl": {
+                  "column": "sourceUrl"
+                },
+                "summary": {
+                  "column": "summary"
+                },
+                "title": {
+                  "column": "title"
+                }
+              },
+              "namespaceId": "public",
+              "table": "news_post"
             }
           },
           "Stairwell": {
@@ -1254,6 +1319,43 @@
               },
               "uniques": []
             },
+            "news_post": {
+              "columns": {
+                "id": {
+                  "codecId": "pg/uuid@1",
+                  "nativeType": "uuid",
+                  "nullable": false
+                },
+                "publishedAt": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "nativeType": "timestamptz",
+                  "nullable": false
+                },
+                "sourceUrl": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "summary": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "title": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                }
+              },
+              "foreignKeys": [],
+              "indexes": [],
+              "primaryKey": {
+                "columns": [
+                  "id"
+                ]
+              },
+              "uniques": []
+            },
             "stairwell": {
               "columns": {
                 "buildingId": {
@@ -1477,10 +1579,10 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "c4da3a4fa02d9ba030e4162e424d07b06926a8447dd4723a6009ea55e72d92c0"
+    "storageHash": "073b129011c640b68c51ea1fbe4e6295a585bb0d0269fc2b74bf150233bab553"
   },
   "execution": {
-    "executionHash": "3a128a6d18e6f6f9652c2b19d07861c4ab071516d299aa7f207e5d3722d45885",
+    "executionHash": "30f976c565db33cb6a47a87b8224e12ad63fbce6fcace3898ad5072dc260375e",
     "mutations": {
       "defaults": [
         {
@@ -1536,6 +1638,17 @@
             "column": "id",
             "namespace": "public",
             "table": "message"
+          }
+        },
+        {
+          "onCreate": {
+            "id": "uuidv4",
+            "kind": "generator"
+          },
+          "ref": {
+            "column": "id",
+            "namespace": "public",
+            "table": "news_post"
           }
         },
         {
