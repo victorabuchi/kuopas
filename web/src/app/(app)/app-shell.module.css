@@ -1,0 +1,89 @@
+.shell {
+  --bg: #ffffff;
+  --fg: #000000;
+  --fg-muted: #767676;
+  --green: #84bd00;
+  --green-dark: #046a38;
+  --green-hover: #598000;
+  --border: #e7e7e7;
+  --rail-bg: #f6f6f6;
+
+  display: flex;
+  height: 100vh;
+  font-family: var(--font-mulish), sans-serif;
+  -webkit-font-smoothing: antialiased;
+  color: var(--fg);
+  background: var(--bg);
+}
+.shell * {
+  box-sizing: border-box;
+}
+
+.rail {
+  width: 72px;
+  flex-shrink: 0;
+  background: var(--rail-bg);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 16px 0;
+}
+.railTop {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+.railBottom {
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.railLink {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--fg-muted);
+}
+.railLink:hover {
+  background: color-mix(in srgb, var(--border) 60%, transparent);
+  color: var(--fg);
+}
+.railLinkActive {
+  background: var(--green-dark);
+  color: #fff;
+}
+.railLinkActive:hover {
+  background: var(--green-dark);
+  color: #fff;
+}
+
+.railAvatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--green-dark);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 13px;
+}
+.railAvatarActive {
+  outline: 2px solid var(--green-dark);
+  outline-offset: 2px;
+}
+
+.main {
+  flex: 1;
+  min-width: 0;
+  overflow-y: auto;
+}

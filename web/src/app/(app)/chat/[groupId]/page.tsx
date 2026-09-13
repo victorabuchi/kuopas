@@ -1,12 +1,9 @@
 import Link from 'next/link';
 import { notFound, redirect } from 'next/navigation';
-import { Mulish } from 'next/font/google';
 import styles from './chat.module.css';
-import { db } from '../../../prisma/db';
-import { sendMessageAction } from '../../actions';
-import { getSession } from '../../../lib/session';
-
-const mulish = Mulish({ subsets: ['latin'], weight: ['400', '500', '600', '700', '800'], variable: '--font-mulish' });
+import { db } from '../../../../prisma/db';
+import { sendMessageAction } from '../../../actions';
+import { getSession } from '../../../../lib/session';
 
 export default async function ChatGroupPage({ params }: { params: Promise<{ groupId: string }> }) {
   const { groupId } = await params;
@@ -30,9 +27,9 @@ export default async function ChatGroupPage({ params }: { params: Promise<{ grou
     .all();
 
   return (
-    <div className={`${styles.page} ${mulish.variable}`}>
+    <div className={styles.page}>
       <div className={styles.topBar}>
-        <Link href="/home" className={styles.back} aria-label="Back">
+        <Link href="/chats" className={styles.back} aria-label="Back">
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <path d="m15 18-6-6 6-6" />
           </svg>

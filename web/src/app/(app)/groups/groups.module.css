@@ -1,0 +1,123 @@
+.page {
+  --bg: #ffffff;
+  --fg: #000000;
+  --fg-muted: #767676;
+  --green: #84bd00;
+  --green-dark: #046a38;
+  --green-hover: #598000;
+  --green-light: color-mix(in srgb, #046a38 10%, white);
+  --border: #e7e7e7;
+
+  min-height: 100%;
+  background: var(--bg);
+  color: var(--fg);
+}
+.page * {
+  box-sizing: border-box;
+}
+
+.topBar {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: var(--bg);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  height: 60px;
+  padding: 0 20px;
+}
+.topBarTitle {
+  font-weight: 800;
+  font-size: 19px;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-width: 640px;
+  padding: 20px;
+}
+.card {
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.cardHeader {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--green-dark);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 14px;
+  flex-shrink: 0;
+}
+.cardHeaderText {
+  display: flex;
+  flex-direction: column;
+}
+.name {
+  font-weight: 700;
+  font-size: 16px;
+}
+.scope {
+  font-size: 12.5px;
+  color: var(--fg-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  font-weight: 600;
+}
+
+.members {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.membersLabel {
+  font-size: 13px;
+  color: var(--fg-muted);
+  font-weight: 600;
+}
+.memberChips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.memberChip {
+  background: var(--green-light);
+  color: var(--green-dark);
+  font-size: 12.5px;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 999px;
+}
+
+.openChat {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  height: 36px;
+  padding: 0 16px;
+  border-radius: 999px;
+  background: var(--green-dark);
+  color: #fff;
+  font-size: 13.5px;
+  font-weight: 700;
+}
+.openChat:hover {
+  background: var(--green-hover);
+  color: #fff;
+}
