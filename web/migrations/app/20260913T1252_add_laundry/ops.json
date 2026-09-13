@@ -1,0 +1,407 @@
+[
+  {
+    "id": "table.laundry_booking",
+    "label": "Create table \"laundry_booking\"",
+    "summary": "Creates table \"laundry_booking\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "laundry_booking"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"laundry_booking\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"laundry_booking\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"laundry_booking\"",
+        "sql": "CREATE TABLE \"public\".\"laundry_booking\" (\n  \"endsAt\" timestamptz NOT NULL,\n  \"id\" uuid NOT NULL,\n  \"machineId\" uuid NOT NULL,\n  \"startsAt\" timestamptz NOT NULL,\n  \"tenantId\" uuid NOT NULL,\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"laundry_booking\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"laundry_booking\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "table.laundry_machine",
+    "label": "Create table \"laundry_machine\"",
+    "summary": "Creates table \"laundry_machine\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "laundry_machine"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"laundry_machine\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"laundry_machine\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"laundry_machine\"",
+        "sql": "CREATE TABLE \"public\".\"laundry_machine\" (\n  \"buildingId\" uuid NOT NULL,\n  \"id\" uuid NOT NULL,\n  \"label\" text NOT NULL,\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"laundry_machine\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"laundry_machine\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "unique.laundry_booking.laundry_booking_machineId_startsAt_key",
+    "label": "Add unique constraint on \"laundry_booking\" (machineId, startsAt)",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "unique",
+        "name": "laundry_booking_machineId_startsAt_key",
+        "table": "laundry_booking"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"laundry_booking_machineId_startsAt_key\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "laundry_booking_machineId_startsAt_key",
+          "public",
+          "\"public\".\"laundry_booking\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add unique constraint \"laundry_booking_machineId_startsAt_key\"",
+        "sql": "ALTER TABLE \"public\".\"laundry_booking\" ADD CONSTRAINT \"laundry_booking_machineId_startsAt_key\" UNIQUE (\"machineId\", \"startsAt\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"laundry_booking_machineId_startsAt_key\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "laundry_booking_machineId_startsAt_key",
+          "public",
+          "\"public\".\"laundry_booking\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "unique.laundry_machine.laundry_machine_buildingId_label_key",
+    "label": "Add unique constraint on \"laundry_machine\" (buildingId, label)",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "unique",
+        "name": "laundry_machine_buildingId_label_key",
+        "table": "laundry_machine"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"laundry_machine_buildingId_label_key\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "laundry_machine_buildingId_label_key",
+          "public",
+          "\"public\".\"laundry_machine\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add unique constraint \"laundry_machine_buildingId_label_key\"",
+        "sql": "ALTER TABLE \"public\".\"laundry_machine\" ADD CONSTRAINT \"laundry_machine_buildingId_label_key\" UNIQUE (\"buildingId\", \"label\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"laundry_machine_buildingId_label_key\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "laundry_machine_buildingId_label_key",
+          "public",
+          "\"public\".\"laundry_machine\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.laundry_booking.laundry_booking_machineId_idx_285fc70b",
+    "label": "Create index \"laundry_booking_machineId_idx_285fc70b\" on \"laundry_booking\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "laundry_booking_machineId_idx_285fc70b",
+        "table": "laundry_booking"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"laundry_booking_machineId_idx_285fc70b\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"laundry_booking_machineId_idx_285fc70b\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"laundry_booking_machineId_idx_285fc70b\"",
+        "sql": "CREATE INDEX \"laundry_booking_machineId_idx_285fc70b\" ON \"public\".\"laundry_booking\" (\"machineId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"laundry_booking_machineId_idx_285fc70b\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"laundry_booking_machineId_idx_285fc70b\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.laundry_booking.laundry_booking_tenantId_idx_c93ed4f1",
+    "label": "Create index \"laundry_booking_tenantId_idx_c93ed4f1\" on \"laundry_booking\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "laundry_booking_tenantId_idx_c93ed4f1",
+        "table": "laundry_booking"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"laundry_booking_tenantId_idx_c93ed4f1\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"laundry_booking_tenantId_idx_c93ed4f1\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"laundry_booking_tenantId_idx_c93ed4f1\"",
+        "sql": "CREATE INDEX \"laundry_booking_tenantId_idx_c93ed4f1\" ON \"public\".\"laundry_booking\" (\"tenantId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"laundry_booking_tenantId_idx_c93ed4f1\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"laundry_booking_tenantId_idx_c93ed4f1\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.laundry_machine.laundry_machine_buildingId_idx_c40fd7b4",
+    "label": "Create index \"laundry_machine_buildingId_idx_c40fd7b4\" on \"laundry_machine\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "laundry_machine_buildingId_idx_c40fd7b4",
+        "table": "laundry_machine"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"laundry_machine_buildingId_idx_c40fd7b4\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"laundry_machine_buildingId_idx_c40fd7b4\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"laundry_machine_buildingId_idx_c40fd7b4\"",
+        "sql": "CREATE INDEX \"laundry_machine_buildingId_idx_c40fd7b4\" ON \"public\".\"laundry_machine\" (\"buildingId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"laundry_machine_buildingId_idx_c40fd7b4\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"laundry_machine_buildingId_idx_c40fd7b4\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.laundry_booking.laundry_booking_machineId_fkey",
+    "label": "Add foreign key \"laundry_booking_machineId_fkey\" on \"laundry_booking\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "laundry_booking_machineId_fkey",
+        "table": "laundry_booking"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"laundry_booking_machineId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "laundry_booking_machineId_fkey",
+          "public",
+          "\"public\".\"laundry_booking\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"laundry_booking_machineId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"laundry_booking\"\nADD CONSTRAINT \"laundry_booking_machineId_fkey\"\nFOREIGN KEY (\"machineId\")\nREFERENCES \"public\".\"laundry_machine\" (\"id\")\nON DELETE CASCADE"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"laundry_booking_machineId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "laundry_booking_machineId_fkey",
+          "public",
+          "\"public\".\"laundry_booking\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.laundry_booking.laundry_booking_tenantId_fkey",
+    "label": "Add foreign key \"laundry_booking_tenantId_fkey\" on \"laundry_booking\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "laundry_booking_tenantId_fkey",
+        "table": "laundry_booking"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"laundry_booking_tenantId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "laundry_booking_tenantId_fkey",
+          "public",
+          "\"public\".\"laundry_booking\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"laundry_booking_tenantId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"laundry_booking\"\nADD CONSTRAINT \"laundry_booking_tenantId_fkey\"\nFOREIGN KEY (\"tenantId\")\nREFERENCES \"public\".\"tenant\" (\"id\")\nON DELETE CASCADE"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"laundry_booking_tenantId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "laundry_booking_tenantId_fkey",
+          "public",
+          "\"public\".\"laundry_booking\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.laundry_machine.laundry_machine_buildingId_fkey",
+    "label": "Add foreign key \"laundry_machine_buildingId_fkey\" on \"laundry_machine\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "laundry_machine_buildingId_fkey",
+        "table": "laundry_machine"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"laundry_machine_buildingId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "laundry_machine_buildingId_fkey",
+          "public",
+          "\"public\".\"laundry_machine\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"laundry_machine_buildingId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"laundry_machine\"\nADD CONSTRAINT \"laundry_machine_buildingId_fkey\"\nFOREIGN KEY (\"buildingId\")\nREFERENCES \"public\".\"building\" (\"id\")\nON DELETE CASCADE"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"laundry_machine_buildingId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "laundry_machine_buildingId_fkey",
+          "public",
+          "\"public\".\"laundry_machine\""
+        ]
+      }
+    ]
+  }
+]

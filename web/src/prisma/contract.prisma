@@ -28,13 +28,39 @@ model NewsPost {
 }
 
 model Building {
-  id         Uuid        @id @default(uuid())
-  name       String
-  address    String
-  stairwells Stairwell[]
-  chatGroup  ChatGroup?
+  id              Uuid             @id @default(uuid())
+  name            String
+  address         String
+  stairwells      Stairwell[]
+  chatGroup       ChatGroup?
+  laundryMachines LaundryMachine[]
 
   @@map("building")
+}
+
+model LaundryMachine {
+  id         Uuid             @id @default(uuid())
+  building   Building         @relation(fields: [buildingId], references: [id], onDelete: Cascade)
+  buildingId Uuid
+  label      String
+  bookings   LaundryBooking[]
+
+  @@unique([buildingId, label])
+  @@map("laundry_machine")
+}
+
+model LaundryBooking {
+  id        Uuid              @id @default(uuid())
+  machine   LaundryMachine    @relation(fields: [machineId], references: [id], onDelete: Cascade)
+  machineId Uuid
+  tenant    Tenant            @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  tenantId  Uuid
+  startsAt  TimestamptzString
+  endsAt    TimestamptzString
+
+  @@unique([machineId, startsAt])
+  @@index([tenantId])
+  @@map("laundry_booking")
 }
 
 model Stairwell {
@@ -83,6 +109,7 @@ model Tenant {
   unitId          Uuid
   memberships     ChatGroupMember[]
   messages        Message[]
+  laundryBookings LaundryBooking[]
 
   @@map("tenant")
 }

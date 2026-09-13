@@ -164,7 +164,7 @@ export default function Home() {
                     <path d="M8 6.5h1M11.5 6.5h1" />
                   </svg>
                 </div>
-                <span className={styles.tagMuted}>Coming soon</span>
+                <span className={styles.tag}>Live now</span>
               </div>
               <h3>Book the laundry machine</h3>
               <p>

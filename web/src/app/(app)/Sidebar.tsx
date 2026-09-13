@@ -37,6 +37,18 @@ const NAV_ITEMS = [
     ),
   },
   {
+    href: '/laundry',
+    label: 'Laundry',
+    icon: (
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+        <rect x="4" y="3.5" width="16" height="17" rx="3" />
+        <circle cx="12" cy="13" r="5" />
+        <circle cx="12" cy="13" r="1.6" />
+        <path d="M8 6.5h1M11.5 6.5h1" />
+      </svg>
+    ),
+  },
+  {
     href: '/support',
     label: 'Support',
     icon: (

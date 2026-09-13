@@ -20,6 +20,14 @@
       "model": "FloorGroup",
       "namespace": "public"
     },
+    "laundry_booking": {
+      "model": "LaundryBooking",
+      "namespace": "public"
+    },
+    "laundry_machine": {
+      "model": "LaundryMachine",
+      "namespace": "public"
+    },
     "message": {
       "model": "Message",
       "namespace": "public"
@@ -127,6 +135,21 @@
                 },
                 "to": {
                   "model": "ChatGroup",
+                  "namespace": "public"
+                }
+              },
+              "laundryMachines": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "buildingId"
+                  ]
+                },
+                "to": {
+                  "model": "LaundryMachine",
                   "namespace": "public"
                 }
               },
@@ -476,6 +499,173 @@
               "table": "floor_group"
             }
           },
+          "LaundryBooking": {
+            "fields": {
+              "endsAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              },
+              "id": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/uuid@1",
+                  "kind": "scalar"
+                }
+              },
+              "machineId": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/uuid@1",
+                  "kind": "scalar"
+                }
+              },
+              "startsAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              },
+              "tenantId": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/uuid@1",
+                  "kind": "scalar"
+                }
+              }
+            },
+            "relations": {
+              "machine": {
+                "cardinality": "N:1",
+                "nullable": false,
+                "on": {
+                  "localFields": [
+                    "machineId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "LaundryMachine",
+                  "namespace": "public"
+                }
+              },
+              "tenant": {
+                "cardinality": "N:1",
+                "nullable": false,
+                "on": {
+                  "localFields": [
+                    "tenantId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "Tenant",
+                  "namespace": "public"
+                }
+              }
+            },
+            "storage": {
+              "fields": {
+                "endsAt": {
+                  "column": "endsAt"
+                },
+                "id": {
+                  "column": "id"
+                },
+                "machineId": {
+                  "column": "machineId"
+                },
+                "startsAt": {
+                  "column": "startsAt"
+                },
+                "tenantId": {
+                  "column": "tenantId"
+                }
+              },
+              "namespaceId": "public",
+              "table": "laundry_booking"
+            }
+          },
+          "LaundryMachine": {
+            "fields": {
+              "buildingId": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/uuid@1",
+                  "kind": "scalar"
+                }
+              },
+              "id": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/uuid@1",
+                  "kind": "scalar"
+                }
+              },
+              "label": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              }
+            },
+            "relations": {
+              "bookings": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "machineId"
+                  ]
+                },
+                "to": {
+                  "model": "LaundryBooking",
+                  "namespace": "public"
+                }
+              },
+              "building": {
+                "cardinality": "N:1",
+                "nullable": false,
+                "on": {
+                  "localFields": [
+                    "buildingId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "Building",
+                  "namespace": "public"
+                }
+              }
+            },
+            "storage": {
+              "fields": {
+                "buildingId": {
+                  "column": "buildingId"
+                },
+                "id": {
+                  "column": "id"
+                },
+                "label": {
+                  "column": "label"
+                }
+              },
+              "namespaceId": "public",
+              "table": "laundry_machine"
+            }
+          },
           "Message": {
             "fields": {
               "chatGroupId": {
@@ -797,6 +987,21 @@
               }
             },
             "relations": {
+              "laundryBookings": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "tenantId"
+                  ]
+                },
+                "to": {
+                  "model": "LaundryBooking",
+                  "namespace": "public"
+                }
+              },
               "memberships": {
                 "cardinality": "1:N",
                 "on": {
@@ -1267,6 +1472,163 @@
                 }
               ]
             },
+            "laundry_booking": {
+              "columns": {
+                "endsAt": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "nativeType": "timestamptz",
+                  "nullable": false
+                },
+                "id": {
+                  "codecId": "pg/uuid@1",
+                  "nativeType": "uuid",
+                  "nullable": false
+                },
+                "machineId": {
+                  "codecId": "pg/uuid@1",
+                  "nativeType": "uuid",
+                  "nullable": false
+                },
+                "startsAt": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "nativeType": "timestamptz",
+                  "nullable": false
+                },
+                "tenantId": {
+                  "codecId": "pg/uuid@1",
+                  "nativeType": "uuid",
+                  "nullable": false
+                }
+              },
+              "foreignKeys": [
+                {
+                  "onDelete": "cascade",
+                  "source": {
+                    "columns": [
+                      "machineId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "laundry_booking"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "laundry_machine"
+                  }
+                },
+                {
+                  "onDelete": "cascade",
+                  "source": {
+                    "columns": [
+                      "tenantId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "laundry_booking"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "tenant"
+                  }
+                }
+              ],
+              "indexes": [
+                {
+                  "columns": [
+                    "machineId"
+                  ],
+                  "name": "laundry_booking_machineId_idx_285fc70b",
+                  "prefix": "laundry_booking_machineId_idx",
+                  "unique": false
+                },
+                {
+                  "columns": [
+                    "tenantId"
+                  ],
+                  "name": "laundry_booking_tenantId_idx_c93ed4f1",
+                  "prefix": "laundry_booking_tenantId_idx",
+                  "unique": false
+                }
+              ],
+              "primaryKey": {
+                "columns": [
+                  "id"
+                ]
+              },
+              "uniques": [
+                {
+                  "columns": [
+                    "machineId",
+                    "startsAt"
+                  ]
+                }
+              ]
+            },
+            "laundry_machine": {
+              "columns": {
+                "buildingId": {
+                  "codecId": "pg/uuid@1",
+                  "nativeType": "uuid",
+                  "nullable": false
+                },
+                "id": {
+                  "codecId": "pg/uuid@1",
+                  "nativeType": "uuid",
+                  "nullable": false
+                },
+                "label": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                }
+              },
+              "foreignKeys": [
+                {
+                  "onDelete": "cascade",
+                  "source": {
+                    "columns": [
+                      "buildingId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "laundry_machine"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "building"
+                  }
+                }
+              ],
+              "indexes": [
+                {
+                  "columns": [
+                    "buildingId"
+                  ],
+                  "name": "laundry_machine_buildingId_idx_c40fd7b4",
+                  "prefix": "laundry_machine_buildingId_idx",
+                  "unique": false
+                }
+              ],
+              "primaryKey": {
+                "columns": [
+                  "id"
+                ]
+              },
+              "uniques": [
+                {
+                  "columns": [
+                    "buildingId",
+                    "label"
+                  ]
+                }
+              ]
+            },
             "message": {
               "columns": {
                 "chatGroupId": {
@@ -1652,10 +2014,10 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "0940b7af6e5a88c372f5f26437266f52f1ddd1c0e080e74f979f2d179f87a19c"
+    "storageHash": "bb3eea7ee9fad5024539bebd0158c2dfc6f536e09bb93955fbc34de457656702"
   },
   "execution": {
-    "executionHash": "30f976c565db33cb6a47a87b8224e12ad63fbce6fcace3898ad5072dc260375e",
+    "executionHash": "d20dfc76180d901f507e5661d30e7a8555b42bad5b5123664575ca05e8c10205",
     "mutations": {
       "defaults": [
         {
@@ -1700,6 +2062,28 @@
             "column": "id",
             "namespace": "public",
             "table": "floor_group"
+          }
+        },
+        {
+          "onCreate": {
+            "id": "uuidv4",
+            "kind": "generator"
+          },
+          "ref": {
+            "column": "id",
+            "namespace": "public",
+            "table": "laundry_booking"
+          }
+        },
+        {
+          "onCreate": {
+            "id": "uuidv4",
+            "kind": "generator"
+          },
+          "ref": {
+            "column": "id",
+            "namespace": "public",
+            "table": "laundry_machine"
           }
         },
         {
