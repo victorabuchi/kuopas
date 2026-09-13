@@ -25,6 +25,16 @@ const NAV_ITEMS = [
     ),
   },
   {
+    href: '/messages',
+    label: 'Messages',
+    icon: (
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+        <rect x="3" y="5" width="18" height="14" rx="2.5" />
+        <path d="m4 7 8 6 8-6" />
+      </svg>
+    ),
+  },
+  {
     href: '/groups',
     label: 'Groups',
     icon: (
@@ -45,6 +55,28 @@ const NAV_ITEMS = [
         <circle cx="12" cy="13" r="5" />
         <circle cx="12" cy="13" r="1.6" />
         <path d="M8 6.5h1M11.5 6.5h1" />
+      </svg>
+    ),
+  },
+  {
+    href: '/sauna',
+    label: 'Sauna',
+    icon: (
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M8 3c-1 1.5-1 2.5 0 4-1 1.5-1 2.5 0 4" />
+        <path d="M12 3c-1 1.5-1 2.5 0 4-1 1.5-1 2.5 0 4" />
+        <path d="M16 3c-1 1.5-1 2.5 0 4-1 1.5-1 2.5 0 4" />
+        <rect x="3.5" y="13" width="17" height="8" rx="1.5" />
+      </svg>
+    ),
+  },
+  {
+    href: '/parking',
+    label: 'Parking',
+    icon: (
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+        <rect x="3.5" y="3.5" width="17" height="17" rx="3" />
+        <path d="M9.5 16V8h3a2.5 2.5 0 0 1 0 5h-3" />
       </svg>
     ),
   },

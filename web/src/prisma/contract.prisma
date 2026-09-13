@@ -34,8 +34,47 @@ model Building {
   stairwells      Stairwell[]
   chatGroup       ChatGroup?
   laundryMachines LaundryMachine[]
+  saunaSlots      SaunaSlot[]
+  parkingSpots    ParkingSpot[]
 
   @@map("building")
+}
+
+model SaunaSlot {
+  id         Uuid           @id @default(uuid())
+  building   Building       @relation(fields: [buildingId], references: [id], onDelete: Cascade)
+  buildingId Uuid
+  label      String
+  bookings   SaunaBooking[]
+
+  @@unique([buildingId, label])
+  @@map("sauna_slot")
+}
+
+model SaunaBooking {
+  id        Uuid              @id @default(uuid())
+  slot      SaunaSlot         @relation(fields: [slotId], references: [id], onDelete: Cascade)
+  slotId    Uuid
+  tenant    Tenant            @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  tenantId  Uuid
+  startsAt  TimestamptzString
+  endsAt    TimestamptzString
+
+  @@unique([slotId, startsAt])
+  @@index([tenantId])
+  @@map("sauna_booking")
+}
+
+model ParkingSpot {
+  id         Uuid     @id @default(uuid())
+  building   Building @relation(fields: [buildingId], references: [id], onDelete: Cascade)
+  buildingId Uuid
+  label      String
+  tenant     Tenant?  @relation(fields: [tenantId], references: [id], onDelete: SetNull)
+  tenantId   Uuid?    @unique
+
+  @@unique([buildingId, label])
+  @@map("parking_spot")
 }
 
 model LaundryMachine {
@@ -110,6 +149,11 @@ model Tenant {
   memberships     ChatGroupMember[]
   messages        Message[]
   laundryBookings LaundryBooking[]
+  saunaBookings   SaunaBooking[]
+  parkingSpot     ParkingSpot?
+  directConvosA   DirectConversation[] @relation("direct_conversations_as_a")
+  directConvosB   DirectConversation[] @relation("direct_conversations_as_b")
+  directMessages  DirectMessage[]      @relation("direct_messages_sent")
 
   @@map("tenant")
 }
@@ -153,4 +197,29 @@ model Message {
 
   @@index([chatGroupId])
   @@map("message")
+}
+
+model DirectConversation {
+  id        Uuid            @id @default(uuid())
+  memberA   Tenant          @relation("direct_conversations_as_a", fields: [memberAId], references: [id], onDelete: Cascade)
+  memberAId Uuid
+  memberB   Tenant          @relation("direct_conversations_as_b", fields: [memberBId], references: [id], onDelete: Cascade)
+  memberBId Uuid
+  messages  DirectMessage[]
+
+  @@unique([memberAId, memberBId])
+  @@map("direct_conversation")
+}
+
+model DirectMessage {
+  id             Uuid               @id @default(uuid())
+  conversation   DirectConversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  conversationId Uuid
+  sender         Tenant             @relation("direct_messages_sent", fields: [senderId], references: [id], onDelete: Cascade)
+  senderId       Uuid
+  content        String
+  sentAt         TimestamptzString  @default(now())
+
+  @@index([conversationId])
+  @@map("direct_message")
 }

@@ -1,0 +1,112 @@
+.page {
+  --bg: #ffffff;
+  --fg: #000000;
+  --fg-muted: #767676;
+  --green-dark: #046a38;
+  --border: #e7e7e7;
+
+  min-height: 100%;
+  background: var(--bg);
+  color: var(--fg);
+}
+.page * {
+  box-sizing: border-box;
+}
+
+.sectionHeading {
+  padding: 16px 20px 8px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--fg-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.chatList {
+  display: flex;
+  flex-direction: column;
+  max-width: 640px;
+}
+.chatRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 20px;
+  border-bottom: 1px solid var(--border);
+}
+.chatRow:hover {
+  background: color-mix(in srgb, var(--border) 40%, transparent);
+}
+.chatAvatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--green-dark);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 14px;
+  flex-shrink: 0;
+}
+.chatRowText {
+  min-width: 0;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.chatRowTop {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+}
+.chatRowName {
+  font-weight: 700;
+  font-size: 15px;
+}
+.chatRowTime {
+  font-size: 12px;
+  color: var(--fg-muted);
+  flex-shrink: 0;
+}
+.chatRowPreview {
+  font-size: 13.5px;
+  color: var(--fg-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.peopleList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 0 20px 24px;
+  max-width: 640px;
+}
+.personButton {
+  display: inline-flex;
+  align-items: center;
+  height: 34px;
+  padding: 0 14px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: none;
+  color: var(--fg);
+  font-size: 13.5px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.personButton:hover {
+  border-color: var(--green-dark);
+  color: var(--green-dark);
+}
+
+.empty {
+  padding: 24px 20px;
+  color: var(--fg-muted);
+  font-size: 14px;
+}

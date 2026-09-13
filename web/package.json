@@ -12,7 +12,8 @@
     "contract:emit": "prisma contract emit",
     "seed": "tsx src/scripts/seed.ts",
     "seed:news": "tsx src/scripts/seed-news.ts",
-    "seed:laundry": "tsx src/scripts/seed-laundry.ts"
+    "seed:laundry": "tsx src/scripts/seed-laundry.ts",
+    "seed:sauna-parking": "tsx src/scripts/seed-sauna-parking.ts"
   },
   "dependencies": {
     "@prisma/client": "^7.10.0",

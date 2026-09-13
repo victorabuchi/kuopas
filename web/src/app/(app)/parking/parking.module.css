@@ -1,0 +1,100 @@
+.page {
+  --bg: #ffffff;
+  --fg: #000000;
+  --fg-muted: #767676;
+  --green: #84bd00;
+  --green-dark: #046a38;
+  --green-hover: #598000;
+  --border: #e7e7e7;
+  --booked: #f3d9d9;
+  --booked-fg: #a13a3a;
+  --error: #cf2e2e;
+
+  min-height: 100%;
+  background: var(--bg);
+  color: var(--fg);
+}
+.page * {
+  box-sizing: border-box;
+}
+
+.error {
+  margin: 14px 20px 0;
+  background: color-mix(in srgb, #cf2e2e 8%, white);
+  color: var(--error);
+  border-radius: 10px;
+  padding: 10px 14px;
+  font-size: 13.5px;
+}
+
+.rules {
+  margin: 14px 20px;
+  font-size: 13px;
+  color: var(--fg-muted);
+  max-width: 640px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 14px;
+  padding: 0 20px 24px;
+  max-width: 900px;
+}
+.spot {
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.spotFree {
+  background: color-mix(in srgb, #046a38 6%, white);
+}
+.spotTaken {
+  background: var(--booked);
+}
+.spotMine {
+  background: color-mix(in srgb, #046a38 14%, white);
+  border-color: var(--green-dark);
+}
+.spotLabel {
+  font-size: 20px;
+  font-weight: 800;
+}
+.spotStatus {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--fg-muted);
+}
+.spotTaken .spotStatus {
+  color: var(--booked-fg);
+}
+.spotMine .spotStatus {
+  color: var(--green-dark);
+}
+.spotButton {
+  align-self: flex-start;
+  height: 34px;
+  padding: 0 16px;
+  border-radius: 999px;
+  border: none;
+  background: var(--green-dark);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.spotButton:hover {
+  background: var(--green-hover);
+}
+.spotButtonRelease {
+  background: transparent;
+  border: 1px solid var(--error);
+  color: var(--error);
+}
+.spotButtonRelease:hover {
+  background: var(--error);
+  color: #fff;
+}
