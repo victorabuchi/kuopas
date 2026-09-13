@@ -14,16 +14,10 @@
 }
 
 
-.content {
-  max-width: 560px;
-  margin: 0 auto;
-}
-
 .feed {
   display: flex;
   flex-direction: column;
-  max-width: 560px;
-  margin: 0 auto;
+  max-width: 640px;
   padding-bottom: 40px;
 }
 .post {
