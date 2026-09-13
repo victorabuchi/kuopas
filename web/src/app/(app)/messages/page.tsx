@@ -7,6 +7,8 @@ import { getSession } from '../../../lib/session';
 import { db } from '../../../prisma/db';
 import { startConversationAction } from '../../../lib/direct-message-actions';
 import { otherMemberId } from '../../../lib/direct-messages';
+import { getLocale } from '../../../lib/i18n';
+import { getDictionary } from '../../../lib/dictionary';
 
 export const metadata: Metadata = {
   title: 'Messages - Kuopas',
@@ -24,6 +26,9 @@ function initials(name: string): string {
 export default async function MessagesPage() {
   const session = await getSession();
   if (!session) redirect('/login');
+
+  const locale = await getLocale();
+  const dict = getDictionary(locale);
 
   const tenant = await db.orm.public.Tenant.where({ id: session.tenantId })
     .include('unit', (unit) => unit.include('stairwell', (stairwell) => stairwell.include('building', (b) => b)))
@@ -70,11 +75,11 @@ export default async function MessagesPage() {
 
   return (
     <div className={styles.page}>
-      <TopBar title="Messages" />
+      <TopBar title={dict.messages.title} />
 
-      <div className={styles.sectionHeading}>Conversations</div>
+      <div className={styles.sectionHeading}>{dict.messages.conversations}</div>
       {conversationRows.length === 0 ? (
-        <div className={styles.empty}>No direct messages yet. Start one below.</div>
+        <div className={styles.empty}>{dict.messages.noneYet}</div>
       ) : (
         <div className={styles.chatList}>
           {conversationRows.map(({ conversation, other, lastMessage }) =>
@@ -89,7 +94,7 @@ export default async function MessagesPage() {
                     )}
                   </div>
                   <span className={styles.chatRowPreview}>
-                    {lastMessage ? lastMessage.content : 'No messages yet'}
+                    {lastMessage ? lastMessage.content : dict.chats.noMessagesYet}
                   </span>
                 </div>
               </Link>
@@ -98,9 +103,11 @@ export default async function MessagesPage() {
         </div>
       )}
 
-      <div className={styles.sectionHeading}>Start a new conversation</div>
+      <div className={styles.sectionHeading}>{dict.messages.startNew}</div>
       {newContacts.length === 0 ? (
-        <div className={styles.empty}>You&apos;re already messaging everyone in {building.name}.</div>
+        <div className={styles.empty}>
+          {dict.messages.everyone} {building.name}.
+        </div>
       ) : (
         <div className={styles.peopleList}>
           {newContacts.map((t) => (

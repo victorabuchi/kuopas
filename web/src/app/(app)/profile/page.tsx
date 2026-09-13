@@ -5,6 +5,8 @@ import { getSession } from '../../../lib/session';
 import { logoutAction } from '../../../lib/auth-actions';
 import { db } from '../../../prisma/db';
 import TopBar from '../TopBar';
+import { getLocale } from '../../../lib/i18n';
+import { getDictionary } from '../../../lib/dictionary';
 
 export const metadata: Metadata = {
   title: 'Profile - Kuopas',
@@ -32,9 +34,12 @@ export default async function ProfilePage() {
   const stairwell = unit.stairwell!;
   const building = stairwell.building!;
 
+  const locale = await getLocale();
+  const dict = getDictionary(locale);
+
   return (
     <div className={styles.page}>
-      <TopBar title="Profile" />
+      <TopBar title={dict.profile.title} />
 
       <div className={styles.content}>
         <div className={styles.avatar}>{initials(tenant.name)}</div>
@@ -43,26 +48,26 @@ export default async function ProfilePage() {
 
         <div className={styles.card}>
           <div className={styles.row}>
-            <span className={styles.rowLabel}>Building</span>
+            <span className={styles.rowLabel}>{dict.profile.building}</span>
             <span className={styles.rowValue}>{building.name}</span>
           </div>
           <div className={styles.row}>
-            <span className={styles.rowLabel}>Stairwell</span>
+            <span className={styles.rowLabel}>{dict.profile.stairwell}</span>
             <span className={styles.rowValue}>{stairwell.label}</span>
           </div>
           <div className={styles.row}>
-            <span className={styles.rowLabel}>Unit</span>
+            <span className={styles.rowLabel}>{dict.profile.unit}</span>
             <span className={styles.rowValue}>{unit.code}</span>
           </div>
           <div className={styles.row}>
-            <span className={styles.rowLabel}>Floor</span>
+            <span className={styles.rowLabel}>{dict.profile.floor}</span>
             <span className={styles.rowValue}>{unit.floor}</span>
           </div>
         </div>
 
         <form action={logoutAction}>
           <button type="submit" className={styles.logout}>
-            Log out
+            {dict.profile.logOut}
           </button>
         </form>
       </div>

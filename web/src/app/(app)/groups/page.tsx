@@ -5,15 +5,11 @@ import styles from './groups.module.css';
 import { getSession } from '../../../lib/session';
 import { db } from '../../../prisma/db';
 import TopBar from '../TopBar';
+import { getLocale } from '../../../lib/i18n';
+import { getDictionary } from '../../../lib/dictionary';
 
 export const metadata: Metadata = {
   title: 'Groups - Kuopas',
-};
-
-const SCOPE_LABEL: Record<string, string> = {
-  building: 'Building',
-  stairwell: 'Stairwell',
-  floor: 'Floor',
 };
 
 function initials(name: string): string {
@@ -29,6 +25,14 @@ export default async function GroupsPage() {
   const session = await getSession();
   if (!session) redirect('/login');
 
+  const locale = await getLocale();
+  const dict = getDictionary(locale);
+  const scopeLabel: Record<string, string> = {
+    building: dict.profile.building,
+    stairwell: dict.profile.stairwell,
+    floor: dict.profile.floor,
+  };
+
   const tenant = await db.orm.public.Tenant.where({ id: session.tenantId })
     .include('memberships', (memberships) =>
       memberships.include('chatGroup', (g) => g.include('members', (m) => m.include('tenant', (t) => t))),
@@ -38,7 +42,7 @@ export default async function GroupsPage() {
 
   return (
     <div className={styles.page}>
-      <TopBar title="Groups" />
+      <TopBar title={dict.groups.title} />
 
       <div className={styles.list}>
         {tenant.memberships.map((m) => {
@@ -49,12 +53,14 @@ export default async function GroupsPage() {
                 <div className={styles.avatar}>{initials(group.name)}</div>
                 <div className={styles.cardHeaderText}>
                   <span className={styles.name}>{group.name}</span>
-                  <span className={styles.scope}>{SCOPE_LABEL[group.scope] ?? group.scope}</span>
+                  <span className={styles.scope}>{scopeLabel[group.scope] ?? group.scope}</span>
                 </div>
               </div>
 
               <div className={styles.members}>
-                <span className={styles.membersLabel}>{group.members.length} member(s)</span>
+                <span className={styles.membersLabel}>
+                  {group.members.length} {dict.groups.members}
+                </span>
                 <div className={styles.memberChips}>
                   {group.members.map((member) => (
                     <span key={member.id} className={styles.memberChip}>
@@ -65,7 +71,7 @@ export default async function GroupsPage() {
               </div>
 
               <Link href={`/chat/${group.id}`} className={styles.openChat}>
-                Open chat
+                {dict.groups.openChat}
               </Link>
             </div>
           );

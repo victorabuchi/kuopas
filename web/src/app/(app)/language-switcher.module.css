@@ -1,0 +1,19 @@
+.switcher {
+  display: flex;
+  border: 1px solid #e7e7e7;
+  border-radius: 999px;
+  overflow: hidden;
+}
+.option {
+  border: none;
+  background: none;
+  padding: 6px 12px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #767676;
+  cursor: pointer;
+}
+.optionActive {
+  background: #046a38;
+  color: #fff;
+}

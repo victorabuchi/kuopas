@@ -22,6 +22,9 @@
   font-size: 19px;
   color: #000000;
 }
+.spacer {
+  flex: 1;
+}
 .accent {
   height: 6px;
   background-image: url('/page-header-bg.svg');

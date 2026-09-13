@@ -3,11 +3,14 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import styles from './app-shell.module.css';
+import type { getDictionary } from '../../lib/dictionary';
+
+type NavDict = ReturnType<typeof getDictionary>['nav'];
 
 const NAV_ITEMS = [
   {
     href: '/home',
-    label: 'Feed',
+    key: 'feed' as const,
     icon: (
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
         <path d="M4 11.5 12 4l8 7.5" />
@@ -17,7 +20,7 @@ const NAV_ITEMS = [
   },
   {
     href: '/chats',
-    label: 'Chats',
+    key: 'chats' as const,
     icon: (
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
         <path d="M20 12a7 7 0 0 1-7 7H8l-4 3 1-4.5A7 7 0 1 1 20 12Z" />
@@ -26,7 +29,7 @@ const NAV_ITEMS = [
   },
   {
     href: '/messages',
-    label: 'Messages',
+    key: 'messages' as const,
     icon: (
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
         <rect x="3" y="5" width="18" height="14" rx="2.5" />
@@ -36,7 +39,7 @@ const NAV_ITEMS = [
   },
   {
     href: '/groups',
-    label: 'Groups',
+    key: 'groups' as const,
     icon: (
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
         <circle cx="9" cy="8" r="3" />
@@ -48,7 +51,7 @@ const NAV_ITEMS = [
   },
   {
     href: '/laundry',
-    label: 'Laundry',
+    key: 'laundry' as const,
     icon: (
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
         <rect x="4" y="3.5" width="16" height="17" rx="3" />
@@ -60,7 +63,7 @@ const NAV_ITEMS = [
   },
   {
     href: '/sauna',
-    label: 'Sauna',
+    key: 'sauna' as const,
     icon: (
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
         <path d="M8 3c-1 1.5-1 2.5 0 4-1 1.5-1 2.5 0 4" />
@@ -72,7 +75,7 @@ const NAV_ITEMS = [
   },
   {
     href: '/parking',
-    label: 'Parking',
+    key: 'parking' as const,
     icon: (
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
         <rect x="3.5" y="3.5" width="17" height="17" rx="3" />
@@ -82,7 +85,7 @@ const NAV_ITEMS = [
   },
   {
     href: '/support',
-    label: 'Support',
+    key: 'support' as const,
     icon: (
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
         <path d="M4 13v-1a8 8 0 0 1 16 0v1" />
@@ -103,7 +106,7 @@ function initials(name: string): string {
     .join('');
 }
 
-export default function Sidebar({ tenantName }: { tenantName: string }) {
+export default function Sidebar({ tenantName, nav }: { tenantName: string; nav: NavDict }) {
   const pathname = usePathname();
 
   return (
@@ -115,7 +118,7 @@ export default function Sidebar({ tenantName }: { tenantName: string }) {
             <Link
               key={item.href}
               href={item.href}
-              title={item.label}
+              title={nav[item.key]}
               className={`${styles.railLink} ${active ? styles.railLinkActive : ''}`}
             >
               {item.icon}
@@ -126,7 +129,7 @@ export default function Sidebar({ tenantName }: { tenantName: string }) {
       <div className={styles.railBottom}>
         <Link
           href="/profile"
-          title="Profile"
+          title={nav.profile}
           className={`${styles.railAvatar} ${pathname.startsWith('/profile') ? styles.railAvatarActive : ''}`}
         >
           {initials(tenantName)}

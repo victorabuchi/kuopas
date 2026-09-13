@@ -5,23 +5,18 @@ import styles from './home.module.css';
 import { getSession } from '../../../lib/session';
 import { db } from '../../../prisma/db';
 import TopBar from '../TopBar';
+import { getLocale } from '../../../lib/i18n';
+import { getDictionary } from '../../../lib/dictionary';
 
 export const metadata: Metadata = {
   title: 'Feed - Kuopas',
 };
 
-const TABS = [
-  { value: 'news', label: 'News' },
-  { value: 'updates', label: 'Updates' },
-  { value: 'promotions', label: 'Promotions' },
-  { value: 'discounts', label: 'Discounts' },
-  { value: 'events', label: 'Events' },
-] as const;
-
-type TabValue = (typeof TABS)[number]['value'];
+const TAB_VALUES = ['news', 'updates', 'promotions', 'discounts', 'events'] as const;
+type TabValue = (typeof TAB_VALUES)[number];
 
 function isTabValue(value: string): value is TabValue {
-  return TABS.some((tab) => tab.value === value);
+  return TAB_VALUES.includes(value as TabValue);
 }
 
 export default async function HomePage({
@@ -35,6 +30,17 @@ export default async function HomePage({
   const session = await getSession();
   if (!session) redirect('/login');
 
+  const locale = await getLocale();
+  const dict = getDictionary(locale);
+
+  const tabs = [
+    { value: 'news' as const, label: dict.home.tabNews },
+    { value: 'updates' as const, label: dict.home.tabUpdates },
+    { value: 'promotions' as const, label: dict.home.tabPromotions },
+    { value: 'discounts' as const, label: dict.home.tabDiscounts },
+    { value: 'events' as const, label: dict.home.tabEvents },
+  ];
+
   const posts = await db.orm.public.NewsPost.where({ category: tab })
     .orderBy((n) => n.publishedAt.desc())
     .limit(30)
@@ -42,10 +48,10 @@ export default async function HomePage({
 
   return (
     <div className={styles.page}>
-      <TopBar title="Feed" />
+      <TopBar title={dict.home.title} />
 
       <div className={styles.tabs}>
-        {TABS.map((t) => (
+        {tabs.map((t) => (
           <Link
             key={t.value}
             href={`/home?tab=${t.value}`}
@@ -58,7 +64,9 @@ export default async function HomePage({
 
       <div className={styles.feed}>
         {posts.length === 0 && (
-          <div className={styles.empty}>No {TABS.find((t) => t.value === tab)?.label.toLowerCase()} yet.</div>
+          <div className={styles.empty}>
+            {dict.home.emptyPrefix} {tabs.find((t) => t.value === tab)?.label.toLowerCase()} {dict.home.emptySuffix}
+          </div>
         )}
         {posts.map((post) => (
           <a
@@ -76,13 +84,13 @@ export default async function HomePage({
                 </svg>
               </div>
               <div className={styles.postHeaderText}>
-                <span className={styles.postSender}>Kuopas News</span>
+                <span className={styles.postSender}>{dict.home.kuopasNews}</span>
                 <span className={styles.postMeta}>{new Date(post.publishedAt).toLocaleDateString()}</span>
               </div>
             </div>
             <p className={styles.newsTitle}>{post.title}</p>
             <p className={styles.postContent}>{post.summary}</p>
-            <span className={styles.newsLink}>Read the full article on kuopas.fi</span>
+            <span className={styles.newsLink}>{dict.home.readFullArticle}</span>
           </a>
         ))}
       </div>

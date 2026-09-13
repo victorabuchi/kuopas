@@ -6,6 +6,8 @@ import TopBar from '../TopBar';
 import { getSession } from '../../../lib/session';
 import { db } from '../../../prisma/db';
 import { bookSaunaAction, cancelSaunaBookingAction } from '../../../lib/sauna-actions';
+import { getLocale } from '../../../lib/i18n';
+import { getDictionary } from '../../../lib/dictionary';
 import {
   SLOT_START_HOURS,
   SLOT_LENGTH_HOURS,
@@ -22,8 +24,6 @@ export const metadata: Metadata = {
   title: 'Sauna - Kuopas',
 };
 
-const DAY_LABELS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-
 export default async function SaunaPage({
   searchParams,
 }: {
@@ -33,6 +33,18 @@ export default async function SaunaPage({
 
   const session = await getSession();
   if (!session) redirect('/login');
+
+  const locale = await getLocale();
+  const dict = getDictionary(locale);
+  const dayLabels = [
+    dict.days.mon,
+    dict.days.tue,
+    dict.days.wed,
+    dict.days.thu,
+    dict.days.fri,
+    dict.days.sat,
+    dict.days.sun,
+  ];
 
   const tenant = await db.orm.public.Tenant.where({ id: session.tenantId })
     .include('unit', (unit) => unit.include('stairwell', (stairwell) => stairwell.include('building', (b) => b)))
@@ -48,8 +60,10 @@ export default async function SaunaPage({
   if (slots.length === 0) {
     return (
       <div className={styles.page}>
-        <TopBar title="Sauna" />
-        <div className={styles.empty}>No sauna turns are set up for {building.name} yet.</div>
+        <TopBar title={dict.sauna.title} />
+        <div className={styles.empty}>
+          {dict.sauna.noneSetUp} {building.name}.
+        </div>
       </div>
     );
   }
@@ -73,7 +87,7 @@ export default async function SaunaPage({
 
   return (
     <div className={styles.page}>
-      <TopBar title="Sauna" />
+      <TopBar title={dict.sauna.title} />
 
       <div className={styles.toolbar}>
         <div className={styles.machineTabs}>
@@ -92,13 +106,14 @@ export default async function SaunaPage({
             &lsaquo;
           </Link>
           <Link href={`/sauna?slot=${activeSlot.id}&week=${formatWeekParam(getWeekStart(new Date()))}`} className={styles.navBtn}>
-            Today
+            {dict.sauna.today}
           </Link>
           <Link href={`/sauna?slot=${activeSlot.id}&week=${formatWeekParam(addDays(weekStart, 7))}`} className={styles.navBtn} aria-label="Next week">
             &rsaquo;
           </Link>
           <span className={styles.weekLabel}>
-            {weekStart.toLocaleDateString(undefined, { month: 'short', day: 'numeric' })} &ndash;{' '}
+            {weekStart.toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}
+            {' - '}
             {addDays(weekStart, 6).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}
           </span>
         </div>
@@ -106,17 +121,14 @@ export default async function SaunaPage({
 
       {error && <div className={styles.error}>{error}</div>}
 
-      <p className={styles.rules}>
-        Sauna turns run {SLOT_LENGTH_HOURS} hours each. Book up to {MAX_HOURS_PER_WEEK} hours a week, up to{' '}
-        {MAX_DAYS_IN_ADVANCE} days ahead. Cancel a turn if you end up not needing it, so someone else can take it.
-      </p>
+      <p className={styles.rules}>{dict.sauna.rules(SLOT_LENGTH_HOURS, MAX_HOURS_PER_WEEK, MAX_DAYS_IN_ADVANCE)}</p>
 
       <div className={styles.gridWrap}>
         <table className={styles.grid}>
           <thead>
             <tr>
               <th className={styles.timeCol} />
-              {DAY_LABELS.map((label, i) => (
+              {dayLabels.map((label, i) => (
                 <th key={label} className={styles.dayHead}>
                   {label}
                   <span className={styles.dayDate}>{addDays(weekStart, i).getDate()}</span>
@@ -128,9 +140,9 @@ export default async function SaunaPage({
             {SLOT_START_HOURS.map((hour) => (
               <tr key={hour}>
                 <td className={styles.timeCol}>
-                  {String(hour).padStart(2, '0')}&ndash;{String(hour + SLOT_LENGTH_HOURS).padStart(2, '0')}
+                  {String(hour).padStart(2, '0')}-{String(hour + SLOT_LENGTH_HOURS).padStart(2, '0')}
                 </td>
-                {DAY_LABELS.map((_, dayOffset) => {
+                {dayLabels.map((_, dayOffset) => {
                   const date = slotDate(weekStart, dayOffset, hour);
                   const iso = date.toISOString();
                   const booking = bookingByStart.get(iso);
@@ -147,11 +159,11 @@ export default async function SaunaPage({
                             <input type="hidden" name="slotId" value={activeSlot.id} />
                             <input type="hidden" name="week" value={weekParamValue} />
                             <button type="submit" className={styles.cellButton}>
-                              You
+                              {dict.sauna.you}
                             </button>
                           </form>
                         ) : (
-                          <span className={styles.cellLabel}>Booked</span>
+                          <span className={styles.cellLabel}>{dict.sauna.booked}</span>
                         )}
                       </td>
                     );

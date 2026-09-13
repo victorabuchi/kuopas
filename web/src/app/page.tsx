@@ -1,10 +1,17 @@
 import Link from 'next/link';
 import { Mulish } from 'next/font/google';
 import styles from './page.module.css';
+import { getLocale } from '../lib/i18n';
+import { getDictionary } from '../lib/dictionary';
+import LanguageSwitcher from './(app)/LanguageSwitcher';
 
 const mulish = Mulish({ subsets: ['latin'], weight: ['400', '500', '600', '700', '800'], variable: '--font-mulish' });
 
-export default function Home() {
+export default async function Home() {
+  const locale = await getLocale();
+  const dict = getDictionary(locale);
+  const t = dict.landing;
+
   return (
     <div className={`${styles.page} ${mulish.variable}`}>
       <nav className={styles.nav}>
@@ -14,14 +21,15 @@ export default function Home() {
             Kuopas
           </div>
           <div className={styles.navLinks}>
-            <a href="#chat">Chat</a>
-            <a href="#feed">Feed</a>
-            <a href="#laundry">Laundry</a>
-            <a href="#support">Support</a>
+            <a href="#chat">{dict.nav.chats}</a>
+            <a href="#feed">{dict.nav.feed}</a>
+            <a href="#laundry">{dict.nav.laundry}</a>
+            <a href="#support">{dict.nav.support}</a>
           </div>
           <div className={styles.navActions}>
+            <LanguageSwitcher locale={locale} />
             <Link href="/login" className={styles.btnPrimary}>
-              Log in
+              {dict.common.logIn}
             </Link>
           </div>
         </div>
@@ -29,21 +37,18 @@ export default function Home() {
 
       <header className={`${styles.wrap} ${styles.hero}`}>
         <div>
-          <div className={styles.heroEyebrow}>THE NEW KUOPAS APP</div>
+          <div className={styles.heroEyebrow}>{t.eyebrow}</div>
           <h1>
-            Your Kuopas life,
+            {t.heroLine1}
             <br />
-            all in <em>one place</em>.
+            <em>{t.heroEmphasis}</em>
           </h1>
-          <p className={styles.lede}>
-            Chat with your housemates, catch every Kuopas update, book the laundry machine, and reach customer
-            support, all without leaving one app.
-          </p>
+          <p className={styles.lede}>{t.heroLede}</p>
           <div className={styles.heroCta}>
             <Link href="/login" className={styles.btnPrimary}>
-              Log in to Kuopas
+              {t.heroCta}
             </Link>
-            <span className={styles.heroCtaNote}>For residents across Kuopas&apos; buildings in Kuopio.</span>
+            <span className={styles.heroCtaNote}>{t.heroNote}</span>
           </div>
         </div>
 
@@ -89,8 +94,8 @@ export default function Home() {
       <section id="chat" className={styles.section}>
         <div className={styles.wrap}>
           <div className={styles.sectionHead}>
-            <h2>Everything you need as a Kuopas resident</h2>
-            <p>One login, four things you actually use, starting with the one residents asked for most.</p>
+            <h2>{t.featuresHeading}</h2>
+            <p>{t.featuresLede}</p>
           </div>
 
           <div className={styles.features}>
@@ -110,13 +115,10 @@ export default function Home() {
                     <path d="M20 12a7 7 0 0 1-7 7H8l-4 3 1-4.5A7 7 0 1 1 20 12Z" />
                   </svg>
                 </div>
-                <span className={styles.tag}>Live now</span>
+                <span className={styles.tag}>{t.liveNow}</span>
               </div>
-              <h3>Chat with your housemates</h3>
-              <p>
-                Move in and you&apos;re automatically added to your building, stairwell, and floor group chats. No
-                hunting down phone numbers or adding people by hand.
-              </p>
+              <h3>{t.chatTitle}</h3>
+              <p>{t.chatBody}</p>
             </div>
 
             <div className={styles.featureCard} id="feed">
@@ -136,13 +138,10 @@ export default function Home() {
                     <path d="M7.5 9h9M7.5 12.5h9M7.5 16h5.5" />
                   </svg>
                 </div>
-                <span className={styles.tagMuted}>Coming soon</span>
+                <span className={styles.tag}>{t.liveNow}</span>
               </div>
-              <h3>Never miss a Kuopas update</h3>
-              <p>
-                Maintenance notices, sauna schedules, and news from Kuopas, collected in one feed instead of
-                scattered across email and noticeboards.
-              </p>
+              <h3>{t.feedTitle}</h3>
+              <p>{t.feedBody}</p>
             </div>
 
             <div className={styles.featureCard} id="laundry">
@@ -164,13 +163,10 @@ export default function Home() {
                     <path d="M8 6.5h1M11.5 6.5h1" />
                   </svg>
                 </div>
-                <span className={styles.tag}>Live now</span>
+                <span className={styles.tag}>{t.liveNow}</span>
               </div>
-              <h3>Book the laundry machine</h3>
-              <p>
-                See which machines are free in your building and reserve a slot from your phone. No more walking
-                down to check, or a slot that mysteriously stays &quot;taken.&quot;
-              </p>
+              <h3>{t.laundryTitle}</h3>
+              <p>{t.laundryBody}</p>
             </div>
 
             <div className={styles.featureCard} id="support">
@@ -192,13 +188,10 @@ export default function Home() {
                     <path d="M20 19v1a3 3 0 0 1-3 3h-3" />
                   </svg>
                 </div>
-                <span className={styles.tagMuted}>Coming soon</span>
+                <span className={styles.tag}>{t.liveNow}</span>
               </div>
-              <h3>Reach support in seconds</h3>
-              <p>
-                Skip the phone queue and the contact form. Message Kuopas customer service directly and pick up
-                right where you left off.
-              </p>
+              <h3>{t.supportTitle}</h3>
+              <p>{t.supportBody}</p>
             </div>
           </div>
         </div>
@@ -207,24 +200,21 @@ export default function Home() {
       <section className={styles.statsSection}>
         <div className={styles.wrap}>
           <div className={styles.sectionHead}>
-            <h2>Built for every Kuopas resident</h2>
-            <p>
-              Kuopas has housed students in Kuopio for over 50 years; this app is for everyone living in one of its
-              buildings today.
-            </p>
+            <h2>{t.statsHeading}</h2>
+            <p>{t.statsLede}</p>
           </div>
           <div className={styles.stats}>
             <div className={styles.stat}>
               <div className={styles.num}>~3,000</div>
-              <div className={styles.label}>students housed by Kuopas</div>
+              <div className={styles.label}>{t.statStudents}</div>
             </div>
             <div className={styles.stat}>
               <div className={styles.num}>30</div>
-              <div className={styles.label}>buildings across Kuopio</div>
+              <div className={styles.label}>{t.statBuildings}</div>
             </div>
             <div className={styles.stat}>
               <div className={styles.num}>1</div>
-              <div className={styles.label}>app for all of it</div>
+              <div className={styles.label}>{t.statApp}</div>
             </div>
           </div>
         </div>
@@ -233,11 +223,11 @@ export default function Home() {
       <section className={styles.section}>
         <div className={styles.wrap}>
           <div className={styles.ctaBand}>
-            <span className={styles.tag}>It is good to be at home.</span>
-            <h2>Log in and see your building&apos;s chat.</h2>
-            <p>Your building, stairwell, and floor groups are already waiting, no setup needed.</p>
+            <span className={styles.tag}>{t.ctaTag}</span>
+            <h2>{t.ctaHeading}</h2>
+            <p>{t.ctaBody}</p>
             <Link href="/login" className={styles.btnPrimary}>
-              Log in to Kuopas
+              {t.heroCta}
             </Link>
           </div>
         </div>
@@ -251,10 +241,10 @@ export default function Home() {
               Kuopas
             </div>
             <div className={styles.footerLinks}>
-              <a href="#chat">Chat</a>
-              <a href="#feed">Feed</a>
-              <a href="#laundry">Laundry</a>
-              <a href="#support">Support</a>
+              <a href="#chat">{dict.nav.chats}</a>
+              <a href="#feed">{dict.nav.feed}</a>
+              <a href="#laundry">{dict.nav.laundry}</a>
+              <a href="#support">{dict.nav.support}</a>
               <span>kuopas.fi</span>
             </div>
           </div>

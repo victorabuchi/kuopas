@@ -5,6 +5,8 @@ import { db } from '../../../../prisma/db';
 import { sendDirectMessageAction } from '../../../../lib/direct-message-actions';
 import { getSession } from '../../../../lib/session';
 import { otherMemberId } from '../../../../lib/direct-messages';
+import { getLocale } from '../../../../lib/i18n';
+import { getDictionary } from '../../../../lib/dictionary';
 
 export default async function DirectMessageThreadPage({
   params,
@@ -31,6 +33,9 @@ export default async function DirectMessageThreadPage({
     .limit(200)
     .all();
 
+  const locale = await getLocale();
+  const dict = getDictionary(locale);
+
   return (
     <div className={styles.page}>
       <div className={styles.topBar}>
@@ -45,7 +50,7 @@ export default async function DirectMessageThreadPage({
       </div>
 
       <div className={styles.messages}>
-        {messages.length === 0 && <p className={styles.empty}>No messages yet. Say hello.</p>}
+        {messages.length === 0 && <p className={styles.empty}>{dict.messages.noMessagesSayHello}</p>}
         {messages.map((message) => {
           const isOwn = message.senderId === session.tenantId;
           return (
@@ -66,7 +71,7 @@ export default async function DirectMessageThreadPage({
         <input
           type="text"
           name="content"
-          placeholder="Message"
+          placeholder={dict.messages.placeholder}
           required
           autoComplete="off"
           className={styles.composerInput}

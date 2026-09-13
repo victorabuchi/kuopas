@@ -4,6 +4,8 @@ import styles from './chat.module.css';
 import { db } from '../../../../prisma/db';
 import { sendMessageAction } from '../../../actions';
 import { getSession } from '../../../../lib/session';
+import { getLocale } from '../../../../lib/i18n';
+import { getDictionary } from '../../../../lib/dictionary';
 
 export default async function ChatGroupPage({ params }: { params: Promise<{ groupId: string }> }) {
   const { groupId } = await params;
@@ -19,6 +21,9 @@ export default async function ChatGroupPage({ params }: { params: Promise<{ grou
 
   const isMember = group.members.some((m) => m.tenant!.id === session.tenantId);
   if (!isMember) redirect('/home');
+
+  const locale = await getLocale();
+  const dict = getDictionary(locale);
 
   const messages = await db.orm.public.Message.where({ chatGroupId: groupId })
     .include('sender', (s) => s)
@@ -36,12 +41,14 @@ export default async function ChatGroupPage({ params }: { params: Promise<{ grou
         </Link>
         <div className={styles.topBarText}>
           <span className={styles.topBarTitle}>{group.name}</span>
-          <span className={styles.topBarSubtitle}>{group.members.length} member(s)</span>
+          <span className={styles.topBarSubtitle}>
+            {group.members.length} {dict.groups.members}
+          </span>
         </div>
       </div>
 
       <div className={styles.messages}>
-        {messages.length === 0 && <p className={styles.empty}>No messages yet. Say hello.</p>}
+        {messages.length === 0 && <p className={styles.empty}>{dict.chatThread.noMessagesSayHello}</p>}
         {messages.map((message) => {
           const isOwn = message.sender!.id === session.tenantId;
           return (
@@ -63,7 +70,7 @@ export default async function ChatGroupPage({ params }: { params: Promise<{ grou
         <input
           type="text"
           name="content"
-          placeholder="Message"
+          placeholder={dict.chatThread.placeholder}
           required
           autoComplete="off"
           className={styles.composerInput}

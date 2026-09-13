@@ -5,6 +5,8 @@ import TopBar from '../TopBar';
 import { getSession } from '../../../lib/session';
 import { db } from '../../../prisma/db';
 import { claimParkingSpotAction, releaseParkingSpotAction } from '../../../lib/parking-actions';
+import { getLocale } from '../../../lib/i18n';
+import { getDictionary } from '../../../lib/dictionary';
 
 export const metadata: Metadata = {
   title: 'Parking - Kuopas',
@@ -20,6 +22,9 @@ export default async function ParkingPage({
   const session = await getSession();
   if (!session) redirect('/login');
 
+  const locale = await getLocale();
+  const dict = getDictionary(locale);
+
   const tenant = await db.orm.public.Tenant.where({ id: session.tenantId })
     .include('unit', (unit) => unit.include('stairwell', (stairwell) => stairwell.include('building', (b) => b)))
     .first();
@@ -34,14 +39,16 @@ export default async function ParkingPage({
 
   return (
     <div className={styles.page}>
-      <TopBar title="Parking" />
+      <TopBar title={dict.parking.title} />
 
       {error && <div className={styles.error}>{error}</div>}
 
-      <p className={styles.rules}>One spot per tenant. Release yours if you no longer need it.</p>
+      <p className={styles.rules}>{dict.parking.rules}</p>
 
       {spots.length === 0 ? (
-        <div className={styles.rules}>No parking spots are set up for {building.name} yet.</div>
+        <div className={styles.rules}>
+          {dict.parking.noneSetUp} {building.name}.
+        </div>
       ) : (
         <div className={styles.grid}>
           {spots.map((spot) => {
@@ -54,13 +61,17 @@ export default async function ParkingPage({
               >
                 <span className={styles.spotLabel}>{spot.label}</span>
                 <span className={styles.spotStatus}>
-                  {isMine ? 'Your spot' : isTaken ? `Taken by ${spot.tenant!.name}` : 'Free'}
+                  {isMine
+                    ? dict.parking.yourSpot
+                    : isTaken
+                      ? `${dict.parking.takenBy} ${spot.tenant!.name}`
+                      : dict.parking.free}
                 </span>
                 {isMine && (
                   <form action={releaseParkingSpotAction}>
                     <input type="hidden" name="spotId" value={spot.id} />
                     <button type="submit" className={`${styles.spotButton} ${styles.spotButtonRelease}`}>
-                      Release
+                      {dict.parking.release}
                     </button>
                   </form>
                 )}
@@ -68,7 +79,7 @@ export default async function ParkingPage({
                   <form action={claimParkingSpotAction}>
                     <input type="hidden" name="spotId" value={spot.id} />
                     <button type="submit" className={styles.spotButton}>
-                      Claim
+                      {dict.parking.claim}
                     </button>
                   </form>
                 )}

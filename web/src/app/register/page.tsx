@@ -4,6 +4,9 @@ import { Mulish } from 'next/font/google';
 import styles from '../auth.module.css';
 import { registerAction } from '../../lib/auth-actions';
 import { db } from '../../prisma/db';
+import { getLocale } from '../../lib/i18n';
+import { getDictionary } from '../../lib/dictionary';
+import LanguageSwitcher from '../(app)/LanguageSwitcher';
 
 const mulish = Mulish({ subsets: ['latin'], weight: ['400', '500', '600', '700', '800'], variable: '--font-mulish' });
 
@@ -17,6 +20,9 @@ export default async function RegisterPage({
   searchParams: Promise<{ error?: string }>;
 }) {
   const { error } = await searchParams;
+  const locale = await getLocale();
+  const dict = getDictionary(locale);
+  const t = dict.register;
 
   const buildings = await db.orm.public.Building.include('stairwells', (stairwells) =>
     stairwells.include('units', (units) => units.orderBy((u) => u.code.asc())),
@@ -25,44 +31,47 @@ export default async function RegisterPage({
   return (
     <div className={`${styles.page} ${mulish.variable}`}>
       <div className={styles.card}>
-        <div className={styles.logo}>
-          <span className={styles.logoDot} />
-          Kuopas
+        <div className={styles.topRow}>
+          <div className={styles.logo}>
+            <span className={styles.logoDot} />
+            Kuopas
+          </div>
+          <LanguageSwitcher locale={locale} />
         </div>
 
         <div className={styles.heading}>
-          <h1>Create your account</h1>
-          <p>You&apos;ll be added to your building, stairwell, and floor chats automatically.</p>
+          <h1>{t.heading}</h1>
+          <p>{t.lede}</p>
         </div>
 
         {error && <div className={styles.error}>{error}</div>}
 
         <div className={styles.suomiFi}>
-          Register with Suomi.fi
-          <span className={styles.suomiFiTag}>Coming soon</span>
+          {t.suomiFi}
+          <span className={styles.suomiFiTag}>{t.comingSoon}</span>
         </div>
 
-        <div className={styles.divider}>or register with email</div>
+        <div className={styles.divider}>{t.or}</div>
 
         <form action={registerAction} className={styles.form}>
           <div className={styles.field}>
-            <label htmlFor="name">Full name</label>
+            <label htmlFor="name">{t.fullName}</label>
             <input id="name" name="name" type="text" autoComplete="name" required />
           </div>
           <div className={styles.field}>
-            <label htmlFor="email">Email</label>
+            <label htmlFor="email">{t.email}</label>
             <input id="email" name="email" type="email" autoComplete="email" required />
           </div>
           <div className={styles.field}>
-            <label htmlFor="password">Password</label>
+            <label htmlFor="password">{t.password}</label>
             <input id="password" name="password" type="password" autoComplete="new-password" minLength={8} required />
-            <span className={styles.hint}>At least 8 characters.</span>
+            <span className={styles.hint}>{t.passwordHint}</span>
           </div>
           <div className={styles.field}>
-            <label htmlFor="unitId">Your unit</label>
+            <label htmlFor="unitId">{t.unit}</label>
             <select id="unitId" name="unitId" defaultValue="" required>
               <option value="" disabled>
-                Select a unit
+                {t.selectUnit}
               </option>
               {buildings.map((building) =>
                 building.stairwells.map((stairwell) =>
@@ -77,12 +86,12 @@ export default async function RegisterPage({
             </select>
           </div>
           <button type="submit" className={styles.submit}>
-            Create account
+            {t.submit}
           </button>
         </form>
 
         <p className={styles.footerNote}>
-          Already have an account? <Link href="/login">Log in</Link>
+          {t.haveAccount} <Link href="/login">{t.logIn}</Link>
         </p>
       </div>
     </div>

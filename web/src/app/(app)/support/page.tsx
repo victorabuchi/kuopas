@@ -3,6 +3,8 @@ import { redirect } from 'next/navigation';
 import styles from './support.module.css';
 import { getSession } from '../../../lib/session';
 import TopBar from '../TopBar';
+import { getLocale } from '../../../lib/i18n';
+import { getDictionary } from '../../../lib/dictionary';
 
 export const metadata: Metadata = {
   title: 'Support - Kuopas',
@@ -12,14 +14,17 @@ export default async function SupportPage() {
   const session = await getSession();
   if (!session) redirect('/login');
 
+  const locale = await getLocale();
+  const dict = getDictionary(locale);
+
   return (
     <div className={styles.page}>
-      <TopBar title="Support" />
+      <TopBar title={dict.support.title} />
 
       <div className={styles.content}>
         <div className={styles.card}>
-          <h2>Customer service</h2>
-          <p className={styles.hours}>Monday to Friday, 12:00 to 15:00</p>
+          <h2>{dict.support.customerService}</h2>
+          <p className={styles.hours}>{dict.support.hours}</p>
           <a className={styles.contactRow} href="tel:+358207109740">
             <span className={styles.icon}>
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
@@ -49,8 +54,8 @@ export default async function SupportPage() {
         </div>
 
         <div className={styles.card}>
-          <h2>Maintenance emergency</h2>
-          <p className={styles.hours}>Available 24/7 for door openings, water leaks, and other urgent issues</p>
+          <h2>{dict.support.maintenanceEmergency}</h2>
+          <p className={styles.hours}>{dict.support.maintenanceHours}</p>
           <a className={styles.contactRow} href="tel:+358447640760">
             <span className={styles.icon}>
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
