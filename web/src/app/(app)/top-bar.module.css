@@ -1,0 +1,32 @@
+.wrap {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+.bar {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  height: 60px;
+  padding: 0 20px;
+  background: #ffffff;
+  border-bottom: 1px solid #e7e7e7;
+}
+.logo {
+  height: 28px;
+  width: auto;
+  flex-shrink: 0;
+}
+.title {
+  font-weight: 800;
+  font-size: 19px;
+  color: #000000;
+  padding-left: 14px;
+  border-left: 1px solid #e7e7e7;
+}
+.accent {
+  height: 6px;
+  background-image: url('/page-header-bg.svg');
+  background-repeat: repeat-x;
+  background-size: auto 100%;
+}

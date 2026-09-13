@@ -4,6 +4,7 @@ import styles from './profile.module.css';
 import { getSession } from '../../../lib/session';
 import { logoutAction } from '../../../lib/auth-actions';
 import { db } from '../../../prisma/db';
+import TopBar from '../TopBar';
 
 export const metadata: Metadata = {
   title: 'Profile - Kuopas',
@@ -33,9 +34,7 @@ export default async function ProfilePage() {
 
   return (
     <div className={styles.page}>
-      <div className={styles.topBar}>
-        <span className={styles.topBarTitle}>Profile</span>
-      </div>
+      <TopBar title="Profile" />
 
       <div className={styles.content}>
         <div className={styles.avatar}>{initials(tenant.name)}</div>

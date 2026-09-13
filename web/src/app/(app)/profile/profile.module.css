@@ -14,21 +14,6 @@
   box-sizing: border-box;
 }
 
-.topBar {
-  position: sticky;
-  top: 0;
-  z-index: 10;
-  background: var(--bg);
-  border-bottom: 1px solid var(--border);
-  display: flex;
-  align-items: center;
-  height: 60px;
-  padding: 0 20px;
-}
-.topBarTitle {
-  font-weight: 800;
-  font-size: 19px;
-}
 
 .content {
   display: flex;

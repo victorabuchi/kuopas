@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { redirect } from 'next/navigation';
 import styles from './support.module.css';
 import { getSession } from '../../../lib/session';
+import TopBar from '../TopBar';
 
 export const metadata: Metadata = {
   title: 'Support - Kuopas',
@@ -13,9 +14,7 @@ export default async function SupportPage() {
 
   return (
     <div className={styles.page}>
-      <div className={styles.topBar}>
-        <span className={styles.topBarTitle}>Support</span>
-      </div>
+      <TopBar title="Support" />
 
       <div className={styles.content}>
         <div className={styles.card}>

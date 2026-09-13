@@ -4,6 +4,7 @@ import { redirect } from 'next/navigation';
 import styles from './chats.module.css';
 import { getSession } from '../../../lib/session';
 import { db } from '../../../prisma/db';
+import TopBar from '../TopBar';
 
 export const metadata: Metadata = {
   title: 'Chats - Kuopas',
@@ -57,9 +58,7 @@ export default async function ChatsPage({
 
   return (
     <div className={styles.page}>
-      <div className={styles.topBar}>
-        <span className={styles.topBarTitle}>Chats</span>
-      </div>
+      <TopBar title="Chats" />
 
       <div className={styles.tabs}>
         <Link href="/chats?tab=all" className={`${styles.tab} ${tab === 'all' ? styles.tabActive : ''}`}>

@@ -4,6 +4,7 @@ import { redirect } from 'next/navigation';
 import styles from './home.module.css';
 import { getSession } from '../../../lib/session';
 import { db } from '../../../prisma/db';
+import TopBar from '../TopBar';
 
 export const metadata: Metadata = {
   title: 'Feed - Kuopas',
@@ -71,9 +72,7 @@ export default async function HomePage() {
 
   return (
     <div className={styles.page}>
-      <div className={styles.topBar}>
-        <span className={styles.topBarTitle}>Feed</span>
-      </div>
+      <TopBar title="Feed" />
 
       <div className={styles.feed}>
         {feed.length === 0 && <div className={styles.empty}>No activity yet.</div>}
@@ -107,7 +106,7 @@ export default async function HomePage() {
               </div>
               <p className={styles.newsTitle}>{item.title}</p>
               <p className={styles.postContent}>{item.summary}</p>
-              <span className={styles.newsLink}>Read the full article on kuopas.fi &rarr;</span>
+              <span className={styles.newsLink}>Read the full article on kuopas.fi</span>
             </a>
           ),
         )}

@@ -4,6 +4,7 @@ import { redirect } from 'next/navigation';
 import styles from './groups.module.css';
 import { getSession } from '../../../lib/session';
 import { db } from '../../../prisma/db';
+import TopBar from '../TopBar';
 
 export const metadata: Metadata = {
   title: 'Groups - Kuopas',
@@ -37,9 +38,7 @@ export default async function GroupsPage() {
 
   return (
     <div className={styles.page}>
-      <div className={styles.topBar}>
-        <span className={styles.topBarTitle}>Groups</span>
-      </div>
+      <TopBar title="Groups" />
 
       <div className={styles.list}>
         {tenant.memberships.map((m) => {
