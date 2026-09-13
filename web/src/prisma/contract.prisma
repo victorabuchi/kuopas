@@ -7,11 +7,21 @@ enum group_scope {
   floor     = "floor"
 }
 
+enum news_category {
+  @@type("pg/text@1")
+  news       = "news"
+  updates    = "updates"
+  promotions = "promotions"
+  discounts  = "discounts"
+  events     = "events"
+}
+
 model NewsPost {
   id          Uuid              @id @default(uuid())
   title       String
   summary     String
   sourceUrl   String
+  category    news_category     @default(news)
   publishedAt TimestamptzString
 
   @@map("news_post")

@@ -9,6 +9,7 @@ const posts = [
     summary:
       'Studio and family apartments for summer 2026 are already fully booked. Kuopas suggests applying broadly across apartment types and being open to a shared-apartment room for the best chance of getting a place.',
     sourceUrl: 'https://www.kuopas.fi/en/summer-housing-search-2026/',
+    category: 'news' as const,
     publishedAt: '2026-06-23T00:00:00Z',
   },
   {
@@ -16,6 +17,7 @@ const posts = [
     summary:
       'Tenants with a spare room in their shared apartment can use a free app to find and get to know potential roommates before they formally apply to move in.',
     sourceUrl: 'https://www.kuopas.fi/en/find-a-roommate-with-kamppisfinder/',
+    category: 'news' as const,
     publishedAt: '2026-06-12T00:00:00Z',
   },
   {
@@ -23,6 +25,7 @@ const posts = [
     summary:
       "Kuopas' office runs shorter hours over summer and is closed on Mondays and Tuesdays. Email or the secure messaging system will get a faster response than calling during this period.",
     sourceUrl: 'https://www.kuopas.fi/en/exceptional-summer-opening-hours/',
+    category: 'news' as const,
     publishedAt: '2026-05-04T00:00:00Z',
   },
   {
@@ -30,6 +33,7 @@ const posts = [
     summary:
       'Move-in-ready furnished apartments in Rauhalahti are available for summer, with shared rooms from roughly 229 to 262 euros a month, no long lease or furniture purchase required.',
     sourceUrl: 'https://www.kuopas.fi/en/furnished-summer-apartment/',
+    category: 'news' as const,
     publishedAt: '2026-02-17T00:00:00Z',
   },
   {
@@ -37,12 +41,14 @@ const posts = [
     summary:
       'Applications are open for Kampus Ankkuri, a new energy-efficient building with 137 units opening in February 2026, with rents starting around 364 euros and shared saunas and kitchens.',
     sourceUrl: 'https://www.kuopas.fi/en/kampus-ankkuri-applications-have-opened/',
+    category: 'news' as const,
     publishedAt: '2025-12-15T00:00:00Z',
   },
   {
     title: 'Kuopas will not increase rents 2026',
     summary: 'Kuopas is holding rents steady for 2026 - no rent increase, and no change to existing payment details.',
     sourceUrl: 'https://www.kuopas.fi/en/kuopas-will-not-increase-rents-2026/',
+    category: 'news' as const,
     publishedAt: '2025-11-27T00:00:00Z',
   },
   {
@@ -50,6 +56,7 @@ const posts = [
     summary:
       "To mark its 50th anniversary, Kuopas is running a photo contest: tenants can submit pictures of everyday life in Kuopio for a chance to win gift cards and have their photo displayed at Kuopas' office.",
     sourceUrl: 'https://www.kuopas.fi/en/50years-photo-campaign/',
+    category: 'news' as const,
     publishedAt: '2025-09-25T00:00:00Z',
   },
   {
@@ -57,6 +64,7 @@ const posts = [
     summary:
       'Kuopas is celebrating 50 years in 2025 with social media contests, giveaways, and surprises throughout the year for its student tenants.',
     sourceUrl: 'https://www.kuopas.fi/en/kuopas-50-years/',
+    category: 'news' as const,
     publishedAt: '2025-02-04T00:00:00Z',
   },
   {
@@ -64,6 +72,7 @@ const posts = [
     summary:
       'Kuopas is building 265 new apartments in the Savilahti campus area, available from 2025, with rents expected around 370 to 570 euros a month.',
     sourceUrl: 'https://www.kuopas.fi/en/savilahti-construction/',
+    category: 'news' as const,
     publishedAt: '2025-01-31T00:00:00Z',
   },
   {
@@ -71,6 +80,7 @@ const posts = [
     summary:
       'Kuopas residents get a discounted rate on a shared electric car through 24Rent, with one car based at Pyorakatu 7 and 30% off standard rental prices.',
     sourceUrl: 'https://www.kuopas.fi/en/rent-shared-electric-car/',
+    category: 'news' as const,
     publishedAt: '2024-10-25T00:00:00Z',
   },
 ];

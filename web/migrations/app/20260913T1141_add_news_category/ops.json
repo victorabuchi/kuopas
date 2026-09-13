@@ -1,0 +1,86 @@
+[
+  {
+    "id": "column.public.news_post.category",
+    "label": "Add column \"category\" to \"news_post\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "category",
+        "table": "news_post"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"category\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "news_post",
+          "category"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"category\"",
+        "sql": "ALTER TABLE \"public\".\"news_post\" ADD COLUMN \"category\" text DEFAULT 'news' NOT NULL"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"category\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "news_post",
+          "category"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "checkConstraint.news_post.news_post_category_check_92bcdf7d",
+    "label": "Add check constraint \"news_post_category_check_92bcdf7d\" on \"news_post\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "checkConstraint",
+        "name": "news_post_category_check_92bcdf7d",
+        "table": "news_post"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"news_post_category_check_92bcdf7d\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "news_post_category_check_92bcdf7d",
+          "public",
+          "\"public\".\"news_post\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add check constraint \"news_post_category_check_92bcdf7d\"",
+        "sql": "ALTER TABLE \"public\".\"news_post\" ADD CONSTRAINT \"news_post_category_check_92bcdf7d\" CHECK (\"category\" IN ('news', 'updates', 'promotions', 'discounts', 'events'))"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"news_post_category_check_92bcdf7d\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "news_post_category_check_92bcdf7d",
+          "public",
+          "\"public\".\"news_post\""
+        ]
+      }
+    ]
+  }
+]

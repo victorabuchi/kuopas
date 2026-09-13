@@ -61,6 +61,31 @@
                 "value": "floor"
               }
             ]
+          },
+          "news_category": {
+            "codecId": "pg/text@1",
+            "members": [
+              {
+                "name": "news",
+                "value": "news"
+              },
+              {
+                "name": "updates",
+                "value": "updates"
+              },
+              {
+                "name": "promotions",
+                "value": "promotions"
+              },
+              {
+                "name": "discounts",
+                "value": "discounts"
+              },
+              {
+                "name": "events",
+                "value": "events"
+              }
+            ]
           }
         },
         "models": {
@@ -547,6 +572,19 @@
           },
           "NewsPost": {
             "fields": {
+              "category": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                },
+                "valueSet": {
+                  "entityKind": "enum",
+                  "entityName": "news_category",
+                  "namespaceId": "public",
+                  "plane": "domain"
+                }
+              },
               "id": {
                 "nullable": false,
                 "type": {
@@ -586,6 +624,9 @@
             "relations": {},
             "storage": {
               "fields": {
+                "category": {
+                  "column": "category"
+                },
                 "id": {
                   "column": "id"
                 },
@@ -1320,7 +1361,29 @@
               "uniques": []
             },
             "news_post": {
+              "checks": [
+                {
+                  "expression": "\"category\" IN ('news', 'updates', 'promotions', 'discounts', 'events')",
+                  "name": "news_post_category_check_92bcdf7d",
+                  "prefix": "news_post_category_check"
+                }
+              ],
               "columns": {
+                "category": {
+                  "codecId": "pg/text@1",
+                  "default": {
+                    "kind": "literal",
+                    "value": "news"
+                  },
+                  "nativeType": "text",
+                  "nullable": false,
+                  "valueSet": {
+                    "entityKind": "valueSet",
+                    "entityName": "news_category",
+                    "namespaceId": "public",
+                    "plane": "storage"
+                  }
+                },
                 "id": {
                   "codecId": "pg/uuid@1",
                   "nativeType": "uuid",
@@ -1572,6 +1635,16 @@
                 "stairwell",
                 "floor"
               ]
+            },
+            "news_category": {
+              "kind": "valueSet",
+              "values": [
+                "news",
+                "updates",
+                "promotions",
+                "discounts",
+                "events"
+              ]
             }
           }
         },
@@ -1579,7 +1652,7 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "073b129011c640b68c51ea1fbe4e6295a585bb0d0269fc2b74bf150233bab553"
+    "storageHash": "0940b7af6e5a88c372f5f26437266f52f1ddd1c0e080e74f979f2d179f87a19c"
   },
   "execution": {
     "executionHash": "30f976c565db33cb6a47a87b8224e12ad63fbce6fcace3898ad5072dc260375e",

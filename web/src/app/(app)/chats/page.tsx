@@ -54,7 +54,7 @@ export default async function ChatsPage({
     }
   }
 
-  const showChats = tab === 'all';
+  const showChats = tab === 'all' || tab === 'groups';
 
   return (
     <div className={styles.page}>
@@ -72,6 +72,9 @@ export default async function ChatsPage({
           className={`${styles.tab} ${tab === 'favourites' ? styles.tabActive : ''}`}
         >
           Favourites
+        </Link>
+        <Link href="/chats?tab=groups" className={`${styles.tab} ${tab === 'groups' ? styles.tabActive : ''}`}>
+          Groups
         </Link>
       </div>
 
