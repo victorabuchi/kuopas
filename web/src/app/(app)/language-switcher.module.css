@@ -1,19 +1,19 @@
 .switcher {
-  display: flex;
-  border: 1px solid #e7e7e7;
-  border-radius: 999px;
-  overflow: hidden;
+  display: inline-flex;
 }
-.option {
-  border: none;
-  background: none;
-  padding: 6px 12px;
+.select {
+  appearance: none;
+  border: 1px solid #e7e7e7;
+  border-radius: 10px;
+  background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%23767676' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") no-repeat right 10px center;
+  padding: 6px 28px 6px 14px;
   font-size: 12px;
   font-weight: 700;
-  color: #767676;
+  font-family: inherit;
+  color: #046a38;
   cursor: pointer;
 }
-.optionActive {
-  background: #046a38;
-  color: #fff;
+.select:focus {
+  outline: none;
+  border-color: #046a38;
 }

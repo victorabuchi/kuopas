@@ -78,7 +78,7 @@
   align-self: flex-start;
   height: 34px;
   padding: 0 16px;
-  border-radius: 999px;
+  border-radius: 10px;
   border: none;
   background: var(--green-dark);
   color: #fff;

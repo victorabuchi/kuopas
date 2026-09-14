@@ -1,32 +1,33 @@
 'use client';
 
+import { useRef } from 'react';
 import { usePathname } from 'next/navigation';
 import { setLocaleAction } from '../../lib/i18n-actions';
 import type { Locale } from '../../lib/i18n';
 import styles from './language-switcher.module.css';
 
+const LABELS: Record<Locale, string> = { en: 'English', fi: 'Suomi' };
+
 export default function LanguageSwitcher({ locale }: { locale: Locale }) {
   const pathname = usePathname();
+  const formRef = useRef<HTMLFormElement>(null);
 
   return (
-    <form action={setLocaleAction} className={styles.switcher}>
+    <form ref={formRef} action={setLocaleAction} className={styles.switcher}>
       <input type="hidden" name="redirectTo" value={pathname} />
-      <button
-        type="submit"
+      <select
         name="locale"
-        value="en"
-        className={`${styles.option} ${locale === 'en' ? styles.optionActive : ''}`}
+        defaultValue={locale}
+        onChange={() => formRef.current?.requestSubmit()}
+        className={styles.select}
+        aria-label={LABELS[locale]}
       >
-        EN
-      </button>
-      <button
-        type="submit"
-        name="locale"
-        value="fi"
-        className={`${styles.option} ${locale === 'fi' ? styles.optionActive : ''}`}
-      >
-        FI
-      </button>
+        {(Object.keys(LABELS) as Locale[]).map((value) => (
+          <option key={value} value={value}>
+            {LABELS[value]}
+          </option>
+        ))}
+      </select>
     </form>
   );
 }

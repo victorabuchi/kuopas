@@ -113,7 +113,7 @@
   align-items: center;
   height: 26px;
   padding: 0 12px;
-  border-radius: 999px;
+  border-radius: 10px;
   font-size: 12px;
   font-weight: 700;
   white-space: nowrap;
@@ -227,7 +227,7 @@
 }
 .composerBar input {
   flex: 1;
-  border-radius: 999px;
+  border-radius: 10px;
   border: 1px solid var(--border);
   padding: 10px 16px;
   font-size: 14px;
@@ -237,7 +237,7 @@
   border: none;
   background: var(--green-dark);
   color: #fff;
-  border-radius: 999px;
+  border-radius: 10px;
   padding: 0 18px;
   font-size: 13px;
   font-weight: 700;
