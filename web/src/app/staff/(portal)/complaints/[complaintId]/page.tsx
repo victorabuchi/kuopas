@@ -53,6 +53,8 @@ export default async function StaffComplaintDetailPage({
     .limit(200)
     .all();
 
+  const savedReplies = await db.orm.public.SavedReply.orderBy((r) => r.createdAt.desc()).all();
+
   const staffList = await db.orm.public.Staff.orderBy((s) => s.name.asc()).all();
 
   return (
@@ -124,8 +126,24 @@ export default async function StaffComplaintDetailPage({
         })}
       </div>
 
+      {savedReplies.length > 0 && (
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginBottom: 10 }}>
+          {savedReplies.map((reply) => (
+            <form key={reply.id} action={sendComplaintMessageAction}>
+              <input type="hidden" name="complaintId" value={complaint.id} />
+              <input type="hidden" name="actingAs" value="staff" />
+              <input type="hidden" name="content" value={reply.content} />
+              <button type="submit" className={styles.inlineSubmit} title={reply.content}>
+                {reply.title}
+              </button>
+            </form>
+          ))}
+        </div>
+      )}
+
       <form action={sendComplaintMessageAction} className={styles.inlineForm}>
         <input type="hidden" name="complaintId" value={complaint.id} />
+        <input type="hidden" name="actingAs" value="staff" />
         <input
           type="text"
           name="content"

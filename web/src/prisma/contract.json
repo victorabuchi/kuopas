@@ -20,6 +20,14 @@
       "model": "BuildingPostReaction",
       "namespace": "public"
     },
+    "building_post_read": {
+      "model": "BuildingPostRead",
+      "namespace": "public"
+    },
+    "building_post_report": {
+      "model": "BuildingPostReport",
+      "namespace": "public"
+    },
     "chat_group": {
       "model": "ChatGroup",
       "namespace": "public"
@@ -68,6 +76,10 @@
       "model": "Message",
       "namespace": "public"
     },
+    "move_in_checklist_item": {
+      "model": "MoveInChecklistItem",
+      "namespace": "public"
+    },
     "news_post": {
       "model": "NewsPost",
       "namespace": "public"
@@ -86,6 +98,10 @@
     },
     "sauna_slot": {
       "model": "SaunaSlot",
+      "namespace": "public"
+    },
+    "saved_reply": {
+      "model": "SavedReply",
       "namespace": "public"
     },
     "staff": {
@@ -244,6 +260,36 @@
               {
                 "name": "other",
                 "value": "other"
+              }
+            ]
+          },
+          "report_status": {
+            "codecId": "pg/text@1",
+            "members": [
+              {
+                "name": "open",
+                "value": "open"
+              },
+              {
+                "name": "dismissed",
+                "value": "dismissed"
+              },
+              {
+                "name": "actioned",
+                "value": "actioned"
+              }
+            ]
+          },
+          "tenant_role": {
+            "codecId": "pg/text@1",
+            "members": [
+              {
+                "name": "resident",
+                "value": "resident"
+              },
+              {
+                "name": "admin",
+                "value": "admin"
               }
             ]
           }
@@ -412,6 +458,13 @@
                   "kind": "scalar"
                 }
               },
+              "contentEn": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
               "createdAt": {
                 "nullable": false,
                 "type": {
@@ -448,6 +501,13 @@
               },
               "title": {
                 "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "titleEn": {
+                "nullable": true,
                 "type": {
                   "codecId": "pg/text@1",
                   "kind": "scalar"
@@ -545,6 +605,36 @@
                   "model": "BuildingPostReaction",
                   "namespace": "public"
                 }
+              },
+              "reads": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "postId"
+                  ]
+                },
+                "to": {
+                  "model": "BuildingPostRead",
+                  "namespace": "public"
+                }
+              },
+              "reports": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "postId"
+                  ]
+                },
+                "to": {
+                  "model": "BuildingPostReport",
+                  "namespace": "public"
+                }
               }
             },
             "storage": {
@@ -561,6 +651,9 @@
                 "content": {
                   "column": "content"
                 },
+                "contentEn": {
+                  "column": "contentEn"
+                },
                 "createdAt": {
                   "column": "createdAt"
                 },
@@ -575,6 +668,9 @@
                 },
                 "title": {
                   "column": "title"
+                },
+                "titleEn": {
+                  "column": "titleEn"
                 },
                 "type": {
                   "column": "type"
@@ -652,6 +748,21 @@
                 },
                 "to": {
                   "model": "BuildingPost",
+                  "namespace": "public"
+                }
+              },
+              "reports": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "commentId"
+                  ]
+                },
+                "to": {
+                  "model": "BuildingPostReport",
                   "namespace": "public"
                 }
               }
@@ -770,6 +881,226 @@
               },
               "namespaceId": "public",
               "table": "building_post_reaction"
+            }
+          },
+          "BuildingPostRead": {
+            "fields": {
+              "id": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/uuid@1",
+                  "kind": "scalar"
+                }
+              },
+              "postId": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/uuid@1",
+                  "kind": "scalar"
+                }
+              },
+              "readAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              },
+              "tenantId": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/uuid@1",
+                  "kind": "scalar"
+                }
+              }
+            },
+            "relations": {
+              "post": {
+                "cardinality": "N:1",
+                "nullable": false,
+                "on": {
+                  "localFields": [
+                    "postId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "BuildingPost",
+                  "namespace": "public"
+                }
+              },
+              "tenant": {
+                "cardinality": "N:1",
+                "nullable": false,
+                "on": {
+                  "localFields": [
+                    "tenantId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "Tenant",
+                  "namespace": "public"
+                }
+              }
+            },
+            "storage": {
+              "fields": {
+                "id": {
+                  "column": "id"
+                },
+                "postId": {
+                  "column": "postId"
+                },
+                "readAt": {
+                  "column": "readAt"
+                },
+                "tenantId": {
+                  "column": "tenantId"
+                }
+              },
+              "namespaceId": "public",
+              "table": "building_post_read"
+            }
+          },
+          "BuildingPostReport": {
+            "fields": {
+              "commentId": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/uuid@1",
+                  "kind": "scalar"
+                }
+              },
+              "createdAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              },
+              "id": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/uuid@1",
+                  "kind": "scalar"
+                }
+              },
+              "postId": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/uuid@1",
+                  "kind": "scalar"
+                }
+              },
+              "reason": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "reporterId": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/uuid@1",
+                  "kind": "scalar"
+                }
+              },
+              "status": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                },
+                "valueSet": {
+                  "entityKind": "enum",
+                  "entityName": "report_status",
+                  "namespaceId": "public",
+                  "plane": "domain"
+                }
+              }
+            },
+            "relations": {
+              "comment": {
+                "cardinality": "N:1",
+                "nullable": true,
+                "on": {
+                  "localFields": [
+                    "commentId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "BuildingPostComment",
+                  "namespace": "public"
+                }
+              },
+              "post": {
+                "cardinality": "N:1",
+                "nullable": true,
+                "on": {
+                  "localFields": [
+                    "postId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "BuildingPost",
+                  "namespace": "public"
+                }
+              },
+              "reporter": {
+                "cardinality": "N:1",
+                "nullable": false,
+                "on": {
+                  "localFields": [
+                    "reporterId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "Tenant",
+                  "namespace": "public"
+                }
+              }
+            },
+            "storage": {
+              "fields": {
+                "commentId": {
+                  "column": "commentId"
+                },
+                "createdAt": {
+                  "column": "createdAt"
+                },
+                "id": {
+                  "column": "id"
+                },
+                "postId": {
+                  "column": "postId"
+                },
+                "reason": {
+                  "column": "reason"
+                },
+                "reporterId": {
+                  "column": "reporterId"
+                },
+                "status": {
+                  "column": "status"
+                }
+              },
+              "namespaceId": "public",
+              "table": "building_post_report"
             }
           },
           "ChatGroup": {
@@ -2020,6 +2351,74 @@
               "table": "message"
             }
           },
+          "MoveInChecklistItem": {
+            "fields": {
+              "completedAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              },
+              "id": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/uuid@1",
+                  "kind": "scalar"
+                }
+              },
+              "itemKey": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "tenantId": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/uuid@1",
+                  "kind": "scalar"
+                }
+              }
+            },
+            "relations": {
+              "tenant": {
+                "cardinality": "N:1",
+                "nullable": false,
+                "on": {
+                  "localFields": [
+                    "tenantId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "Tenant",
+                  "namespace": "public"
+                }
+              }
+            },
+            "storage": {
+              "fields": {
+                "completedAt": {
+                  "column": "completedAt"
+                },
+                "id": {
+                  "column": "id"
+                },
+                "itemKey": {
+                  "column": "itemKey"
+                },
+                "tenantId": {
+                  "column": "tenantId"
+                }
+              },
+              "namespaceId": "public",
+              "table": "move_in_checklist_item"
+            }
+          },
           "NewsPost": {
             "fields": {
               "category": {
@@ -2436,6 +2835,84 @@
               "table": "sauna_slot"
             }
           },
+          "SavedReply": {
+            "fields": {
+              "content": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "createdAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              },
+              "createdByStaffId": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/uuid@1",
+                  "kind": "scalar"
+                }
+              },
+              "id": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/uuid@1",
+                  "kind": "scalar"
+                }
+              },
+              "title": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              }
+            },
+            "relations": {
+              "createdByStaff": {
+                "cardinality": "N:1",
+                "nullable": true,
+                "on": {
+                  "localFields": [
+                    "createdByStaffId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "Staff",
+                  "namespace": "public"
+                }
+              }
+            },
+            "storage": {
+              "fields": {
+                "content": {
+                  "column": "content"
+                },
+                "createdAt": {
+                  "column": "createdAt"
+                },
+                "createdByStaffId": {
+                  "column": "createdByStaffId"
+                },
+                "id": {
+                  "column": "id"
+                },
+                "title": {
+                  "column": "title"
+                }
+              },
+              "namespaceId": "public",
+              "table": "saved_reply"
+            }
+          },
           "Staff": {
             "fields": {
               "createdAt": {
@@ -2505,6 +2982,22 @@
                   "namespace": "public"
                 }
               },
+              "linkedTenant": {
+                "cardinality": "1:1",
+                "nullable": true,
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "staffId"
+                  ]
+                },
+                "to": {
+                  "model": "Tenant",
+                  "namespace": "public"
+                }
+              },
               "noticeMessages": {
                 "cardinality": "1:N",
                 "on": {
@@ -2532,6 +3025,21 @@
                 },
                 "to": {
                   "model": "BuildingPost",
+                  "namespace": "public"
+                }
+              },
+              "savedReplies": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "createdByStaffId"
+                  ]
+                },
+                "to": {
+                  "model": "SavedReply",
                   "namespace": "public"
                 }
               }
@@ -2664,6 +3172,13 @@
           },
           "Tenant": {
             "fields": {
+              "blockedFromNoticeboard": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/bool@1",
+                  "kind": "scalar"
+                }
+              },
               "email": {
                 "nullable": false,
                 "type": {
@@ -2696,6 +3211,26 @@
                 "nullable": true,
                 "type": {
                   "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "role": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                },
+                "valueSet": {
+                  "entityKind": "enum",
+                  "entityName": "tenant_role",
+                  "namespaceId": "public",
+                  "plane": "domain"
+                }
+              },
+              "staffId": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/uuid@1",
                   "kind": "scalar"
                 }
               },
@@ -2850,6 +3385,21 @@
                   "namespace": "public"
                 }
               },
+              "moveInChecklistItems": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "tenantId"
+                  ]
+                },
+                "to": {
+                  "model": "MoveInChecklistItem",
+                  "namespace": "public"
+                }
+              },
               "noticeMessages": {
                 "cardinality": "1:N",
                 "on": {
@@ -2927,6 +3477,36 @@
                   "namespace": "public"
                 }
               },
+              "postReads": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "tenantId"
+                  ]
+                },
+                "to": {
+                  "model": "BuildingPostRead",
+                  "namespace": "public"
+                }
+              },
+              "postReports": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "reporterId"
+                  ]
+                },
+                "to": {
+                  "model": "BuildingPostReport",
+                  "namespace": "public"
+                }
+              },
               "pushSubscriptions": {
                 "cardinality": "1:N",
                 "on": {
@@ -2957,6 +3537,22 @@
                   "namespace": "public"
                 }
               },
+              "staffAccount": {
+                "cardinality": "N:1",
+                "nullable": true,
+                "on": {
+                  "localFields": [
+                    "staffId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "Staff",
+                  "namespace": "public"
+                }
+              },
               "unit": {
                 "cardinality": "N:1",
                 "nullable": false,
@@ -2976,6 +3572,9 @@
             },
             "storage": {
               "fields": {
+                "blockedFromNoticeboard": {
+                  "column": "blockedFromNoticeboard"
+                },
                 "email": {
                   "column": "email"
                 },
@@ -2990,6 +3589,12 @@
                 },
                 "pseudonym": {
                   "column": "pseudonym"
+                },
+                "role": {
+                  "column": "role"
+                },
+                "staffId": {
+                  "column": "staffId"
                 },
                 "suomiFiPersonId": {
                   "column": "suomiFiPersonId"
@@ -3171,6 +3776,11 @@
                   "nativeType": "text",
                   "nullable": false
                 },
+                "contentEn": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true
+                },
                 "createdAt": {
                   "codecId": "pg/timestamptz-string@1",
                   "default": {
@@ -3205,6 +3815,11 @@
                   "codecId": "pg/text@1",
                   "nativeType": "text",
                   "nullable": false
+                },
+                "titleEn": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true
                 },
                 "type": {
                   "codecId": "pg/text@1",
@@ -3509,6 +4124,254 @@
                   ]
                 }
               ]
+            },
+            "building_post_read": {
+              "columns": {
+                "id": {
+                  "codecId": "pg/uuid@1",
+                  "nativeType": "uuid",
+                  "nullable": false
+                },
+                "postId": {
+                  "codecId": "pg/uuid@1",
+                  "nativeType": "uuid",
+                  "nullable": false
+                },
+                "readAt": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "default": {
+                    "expression": "now()",
+                    "kind": "function"
+                  },
+                  "nativeType": "timestamptz",
+                  "nullable": false
+                },
+                "tenantId": {
+                  "codecId": "pg/uuid@1",
+                  "nativeType": "uuid",
+                  "nullable": false
+                }
+              },
+              "foreignKeys": [
+                {
+                  "onDelete": "cascade",
+                  "source": {
+                    "columns": [
+                      "postId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "building_post_read"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "building_post"
+                  }
+                },
+                {
+                  "onDelete": "cascade",
+                  "source": {
+                    "columns": [
+                      "tenantId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "building_post_read"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "tenant"
+                  }
+                }
+              ],
+              "indexes": [
+                {
+                  "columns": [
+                    "postId"
+                  ],
+                  "name": "building_post_read_postId_idx_a7a72715",
+                  "prefix": "building_post_read_postId_idx",
+                  "unique": false
+                },
+                {
+                  "columns": [
+                    "tenantId"
+                  ],
+                  "name": "building_post_read_tenantId_idx_c93ed4f1",
+                  "prefix": "building_post_read_tenantId_idx",
+                  "unique": false
+                }
+              ],
+              "primaryKey": {
+                "columns": [
+                  "id"
+                ]
+              },
+              "uniques": [
+                {
+                  "columns": [
+                    "postId",
+                    "tenantId"
+                  ]
+                }
+              ]
+            },
+            "building_post_report": {
+              "checks": [
+                {
+                  "expression": "\"status\" IN ('open', 'dismissed', 'actioned')",
+                  "name": "building_post_report_status_check_13409d73",
+                  "prefix": "building_post_report_status_check"
+                }
+              ],
+              "columns": {
+                "commentId": {
+                  "codecId": "pg/uuid@1",
+                  "nativeType": "uuid",
+                  "nullable": true
+                },
+                "createdAt": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "default": {
+                    "expression": "now()",
+                    "kind": "function"
+                  },
+                  "nativeType": "timestamptz",
+                  "nullable": false
+                },
+                "id": {
+                  "codecId": "pg/uuid@1",
+                  "nativeType": "uuid",
+                  "nullable": false
+                },
+                "postId": {
+                  "codecId": "pg/uuid@1",
+                  "nativeType": "uuid",
+                  "nullable": true
+                },
+                "reason": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true
+                },
+                "reporterId": {
+                  "codecId": "pg/uuid@1",
+                  "nativeType": "uuid",
+                  "nullable": false
+                },
+                "status": {
+                  "codecId": "pg/text@1",
+                  "default": {
+                    "kind": "literal",
+                    "value": "open"
+                  },
+                  "nativeType": "text",
+                  "nullable": false,
+                  "valueSet": {
+                    "entityKind": "valueSet",
+                    "entityName": "report_status",
+                    "namespaceId": "public",
+                    "plane": "storage"
+                  }
+                }
+              },
+              "foreignKeys": [
+                {
+                  "onDelete": "cascade",
+                  "source": {
+                    "columns": [
+                      "postId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "building_post_report"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "building_post"
+                  }
+                },
+                {
+                  "onDelete": "cascade",
+                  "source": {
+                    "columns": [
+                      "commentId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "building_post_report"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "building_post_comment"
+                  }
+                },
+                {
+                  "onDelete": "cascade",
+                  "source": {
+                    "columns": [
+                      "reporterId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "building_post_report"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "tenant"
+                  }
+                }
+              ],
+              "indexes": [
+                {
+                  "columns": [
+                    "commentId"
+                  ],
+                  "name": "building_post_report_commentId_idx_b5a4f615",
+                  "prefix": "building_post_report_commentId_idx",
+                  "unique": false
+                },
+                {
+                  "columns": [
+                    "postId"
+                  ],
+                  "name": "building_post_report_postId_idx_a7a72715",
+                  "prefix": "building_post_report_postId_idx",
+                  "unique": false
+                },
+                {
+                  "columns": [
+                    "reporterId"
+                  ],
+                  "name": "building_post_report_reporterId_idx_aa245831",
+                  "prefix": "building_post_report_reporterId_idx",
+                  "unique": false
+                },
+                {
+                  "columns": [
+                    "status"
+                  ],
+                  "name": "building_post_report_status_idx_e98638ab",
+                  "prefix": "building_post_report_status_idx",
+                  "unique": false
+                }
+              ],
+              "primaryKey": {
+                "columns": [
+                  "id"
+                ]
+              },
+              "uniques": []
             },
             "chat_group": {
               "checks": [
@@ -4690,6 +5553,76 @@
               },
               "uniques": []
             },
+            "move_in_checklist_item": {
+              "columns": {
+                "completedAt": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "default": {
+                    "expression": "now()",
+                    "kind": "function"
+                  },
+                  "nativeType": "timestamptz",
+                  "nullable": false
+                },
+                "id": {
+                  "codecId": "pg/uuid@1",
+                  "nativeType": "uuid",
+                  "nullable": false
+                },
+                "itemKey": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "tenantId": {
+                  "codecId": "pg/uuid@1",
+                  "nativeType": "uuid",
+                  "nullable": false
+                }
+              },
+              "foreignKeys": [
+                {
+                  "onDelete": "cascade",
+                  "source": {
+                    "columns": [
+                      "tenantId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "move_in_checklist_item"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "tenant"
+                  }
+                }
+              ],
+              "indexes": [
+                {
+                  "columns": [
+                    "tenantId"
+                  ],
+                  "name": "move_in_checklist_item_tenantId_idx_c93ed4f1",
+                  "prefix": "move_in_checklist_item_tenantId_idx",
+                  "unique": false
+                }
+              ],
+              "primaryKey": {
+                "columns": [
+                  "id"
+                ]
+              },
+              "uniques": [
+                {
+                  "columns": [
+                    "tenantId",
+                    "itemKey"
+                  ]
+                }
+              ]
+            },
             "news_post": {
               "checks": [
                 {
@@ -5073,6 +6006,74 @@
                 }
               ]
             },
+            "saved_reply": {
+              "columns": {
+                "content": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "createdAt": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "default": {
+                    "expression": "now()",
+                    "kind": "function"
+                  },
+                  "nativeType": "timestamptz",
+                  "nullable": false
+                },
+                "createdByStaffId": {
+                  "codecId": "pg/uuid@1",
+                  "nativeType": "uuid",
+                  "nullable": true
+                },
+                "id": {
+                  "codecId": "pg/uuid@1",
+                  "nativeType": "uuid",
+                  "nullable": false
+                },
+                "title": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                }
+              },
+              "foreignKeys": [
+                {
+                  "onDelete": "setNull",
+                  "source": {
+                    "columns": [
+                      "createdByStaffId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "saved_reply"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "staff"
+                  }
+                }
+              ],
+              "indexes": [
+                {
+                  "columns": [
+                    "createdByStaffId"
+                  ],
+                  "name": "saved_reply_createdByStaffId_idx_3dc0f553",
+                  "prefix": "saved_reply_createdByStaffId_idx",
+                  "unique": false
+                }
+              ],
+              "primaryKey": {
+                "columns": [
+                  "id"
+                ]
+              },
+              "uniques": []
+            },
             "staff": {
               "columns": {
                 "createdAt": {
@@ -5182,7 +6183,23 @@
               ]
             },
             "tenant": {
+              "checks": [
+                {
+                  "expression": "\"role\" IN ('resident', 'admin')",
+                  "name": "tenant_role_check_d42ba6ef",
+                  "prefix": "tenant_role_check"
+                }
+              ],
               "columns": {
+                "blockedFromNoticeboard": {
+                  "codecId": "pg/bool@1",
+                  "default": {
+                    "kind": "literal",
+                    "value": false
+                  },
+                  "nativeType": "bool",
+                  "nullable": false
+                },
                 "email": {
                   "codecId": "pg/text@1",
                   "nativeType": "text",
@@ -5208,6 +6225,26 @@
                   "nativeType": "text",
                   "nullable": true
                 },
+                "role": {
+                  "codecId": "pg/text@1",
+                  "default": {
+                    "kind": "literal",
+                    "value": "resident"
+                  },
+                  "nativeType": "text",
+                  "nullable": false,
+                  "valueSet": {
+                    "entityKind": "valueSet",
+                    "entityName": "tenant_role",
+                    "namespaceId": "public",
+                    "plane": "storage"
+                  }
+                },
+                "staffId": {
+                  "codecId": "pg/uuid@1",
+                  "nativeType": "uuid",
+                  "nullable": true
+                },
                 "suomiFiPersonId": {
                   "codecId": "pg/text@1",
                   "nativeType": "text",
@@ -5220,6 +6257,23 @@
                 }
               },
               "foreignKeys": [
+                {
+                  "onDelete": "setNull",
+                  "source": {
+                    "columns": [
+                      "staffId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "tenant"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "staff"
+                  }
+                },
                 {
                   "onDelete": "cascade",
                   "source": {
@@ -5267,6 +6321,11 @@
                 {
                   "columns": [
                     "suomiFiPersonId"
+                  ]
+                },
+                {
+                  "columns": [
+                    "staffId"
                   ]
                 }
               ]
@@ -5395,6 +6454,21 @@
                 "giveaway",
                 "other"
               ]
+            },
+            "report_status": {
+              "kind": "valueSet",
+              "values": [
+                "open",
+                "dismissed",
+                "actioned"
+              ]
+            },
+            "tenant_role": {
+              "kind": "valueSet",
+              "values": [
+                "resident",
+                "admin"
+              ]
             }
           }
         },
@@ -5402,10 +6476,10 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "fd830ccbf4bd4260a0de4fa10b3634e3c2f58f9f9e7f3ee9b1192f51b1faa46f"
+    "storageHash": "b295b72c76c7437375bbda018884a0b9874f5f3778fc0de3ab8e523c0831899e"
   },
   "execution": {
-    "executionHash": "a40e1d12266e5a78fa537a2091029b726b98a1c689380f9d3f6dfc16877e5b20",
+    "executionHash": "da3eb87c32f4f6e35aa2bb124c3db7e07e807e96c4bc5eb2ed0112af361dccac",
     "mutations": {
       "defaults": [
         {
@@ -5450,6 +6524,28 @@
             "column": "id",
             "namespace": "public",
             "table": "building_post_reaction"
+          }
+        },
+        {
+          "onCreate": {
+            "id": "uuidv4",
+            "kind": "generator"
+          },
+          "ref": {
+            "column": "id",
+            "namespace": "public",
+            "table": "building_post_read"
+          }
+        },
+        {
+          "onCreate": {
+            "id": "uuidv4",
+            "kind": "generator"
+          },
+          "ref": {
+            "column": "id",
+            "namespace": "public",
+            "table": "building_post_report"
           }
         },
         {
@@ -5592,6 +6688,17 @@
           "ref": {
             "column": "id",
             "namespace": "public",
+            "table": "move_in_checklist_item"
+          }
+        },
+        {
+          "onCreate": {
+            "id": "uuidv4",
+            "kind": "generator"
+          },
+          "ref": {
+            "column": "id",
+            "namespace": "public",
             "table": "news_post"
           }
         },
@@ -5637,6 +6744,17 @@
             "column": "id",
             "namespace": "public",
             "table": "sauna_slot"
+          }
+        },
+        {
+          "onCreate": {
+            "id": "uuidv4",
+            "kind": "generator"
+          },
+          "ref": {
+            "column": "id",
+            "namespace": "public",
+            "table": "saved_reply"
           }
         },
         {

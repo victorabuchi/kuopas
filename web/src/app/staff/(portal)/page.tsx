@@ -4,7 +4,7 @@ import { db } from '../../../prisma/db';
 import { getLocale } from '../../../lib/i18n';
 import { getDictionary } from '../../../lib/dictionary';
 import { createAnnouncementAction } from '../../../lib/building-post-actions';
-import { sendDirectNoticeAction } from '../../../lib/direct-notice-actions';
+import { sendDirectNoticeAction, sendRentReminderAction } from '../../../lib/direct-notice-actions';
 
 export const metadata: Metadata = {
   title: 'Staff dashboard - Kuopas',
@@ -21,6 +21,21 @@ export default async function StaffDashboardPage() {
   )
     .orderBy((tn) => tn.name.asc())
     .all();
+
+  const recentAnnouncements = await db.orm.public.BuildingPost.where({ type: 'announcement' })
+    .include('reads', (r) => r)
+    .orderBy((p) => p.createdAt.desc())
+    .limit(5)
+    .all();
+  const buildingMemberCounts = new Map<string, number>();
+  for (const post of recentAnnouncements) {
+    if (buildingMemberCounts.has(post.buildingId)) continue;
+    const group = await db.orm.public.ChatGroup.where({ buildingId: post.buildingId }).first();
+    const count = group
+      ? (await db.orm.public.ChatGroupMember.where({ chatGroupId: group.id }).all()).length
+      : 0;
+    buildingMemberCounts.set(post.buildingId, count);
+  }
 
   return (
     <>
@@ -43,12 +58,20 @@ export default async function StaffDashboardPage() {
             </select>
           </div>
           <div className={styles.field}>
-            <label htmlFor="title">{t.postTitle}</label>
+            <label htmlFor="title">{t.titleFi}</label>
             <input id="title" name="title" type="text" required />
           </div>
           <div className={styles.field}>
-            <label htmlFor="content">{t.postContent}</label>
+            <label htmlFor="content">{t.contentFi}</label>
             <textarea id="content" name="content" required />
+          </div>
+          <div className={styles.field}>
+            <label htmlFor="titleEn">{t.titleEn}</label>
+            <input id="titleEn" name="titleEn" type="text" />
+          </div>
+          <div className={styles.field}>
+            <label htmlFor="contentEn">{t.contentEn}</label>
+            <textarea id="contentEn" name="contentEn" />
           </div>
           <div className={styles.field}>
             <label htmlFor="photo">{dict.feedBoard.photo}</label>
@@ -59,6 +82,30 @@ export default async function StaffDashboardPage() {
           </button>
         </form>
       </div>
+
+      {recentAnnouncements.length > 0 && (
+        <div className={styles.card}>
+          <h2>{t.readReceipts}</h2>
+          <div className={styles.list}>
+            {recentAnnouncements.map((post) => {
+              const total = buildingMemberCounts.get(post.buildingId) ?? 0;
+              const opened = post.reads.length;
+              const pct = total > 0 ? Math.round((opened / total) * 100) : 0;
+              return (
+                <div key={post.id} className={styles.row}>
+                  <div className={styles.rowText}>
+                    <span className={styles.rowCategory}>{post.title}</span>
+                    <span className={styles.rowMeta}>{new Date(post.createdAt).toLocaleDateString()}</span>
+                  </div>
+                  <span className={styles.rowMeta}>
+                    {opened} / {total} ({pct}%)
+                  </span>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
 
       <div className={styles.card}>
         <h2>{t.sendDirectNotice}</h2>
@@ -83,6 +130,20 @@ export default async function StaffDashboardPage() {
           </div>
           <button type="submit" className={styles.submit}>
             {t.send}
+          </button>
+        </form>
+      </div>
+
+      <div className={styles.card}>
+        <h2>{t.rentReminder}</h2>
+        <p style={{ color: '#767676', marginTop: '-6px' }}>{t.rentReminderLede}</p>
+        <form action={sendRentReminderAction} className={styles.form}>
+          <div className={styles.field}>
+            <label htmlFor="rentContent">{t.rentReminderMessage}</label>
+            <textarea id="rentContent" name="content" defaultValue={t.rentReminderDefault} required />
+          </div>
+          <button type="submit" className={styles.submit}>
+            {t.sendToEveryone}
           </button>
         </form>
       </div>

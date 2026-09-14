@@ -51,6 +51,19 @@ enum news_category {
   events     = "events"
 }
 
+enum tenant_role {
+  @@type("pg/text@1")
+  resident = "resident"
+  admin    = "admin"
+}
+
+enum report_status {
+  @@type("pg/text@1")
+  open      = "open"
+  dismissed = "dismissed"
+  actioned  = "actioned"
+}
+
 model NewsPost {
   id          Uuid              @id @default(uuid())
   title       String
@@ -176,30 +189,37 @@ model FloorGroup {
 }
 
 model Tenant {
-  id                Uuid              @id @default(uuid())
-  name              String
-  pseudonym         String?           @unique
-  email             String            @unique
-  passwordHash      String?
-  suomiFiPersonId   String?           @unique
-  unit              Unit              @relation(fields: [unitId], references: [id], onDelete: Cascade)
-  unitId            Uuid
-  memberships       ChatGroupMember[]
-  messages          Message[]
-  laundryBookings   LaundryBooking[]
-  saunaBookings     SaunaBooking[]
-  parkingSpot       ParkingSpot?
-  directConvosA     DirectConversation[] @relation("direct_conversations_as_a")
-  directConvosB     DirectConversation[] @relation("direct_conversations_as_b")
-  directMessages    DirectMessage[]      @relation("direct_messages_sent")
-  buildingPosts     BuildingPost[]
-  postComments      BuildingPostComment[]
-  postReactions     BuildingPostReaction[]
-  complaints        Complaint[]
-  complaintMessages ComplaintMessage[]
-  noticeThread      DirectNoticeThread?
-  noticeMessages    DirectNoticeMessage[]
-  pushSubscriptions PushSubscription[]
+  id                      Uuid              @id @default(uuid())
+  name                    String
+  pseudonym               String?           @unique
+  email                   String            @unique
+  passwordHash            String?
+  suomiFiPersonId         String?           @unique
+  role                    tenant_role       @default(resident)
+  staffAccount            Staff?            @relation(fields: [staffId], references: [id], onDelete: SetNull)
+  staffId                 Uuid?             @unique
+  blockedFromNoticeboard  Boolean           @default(false)
+  unit                    Unit              @relation(fields: [unitId], references: [id], onDelete: Cascade)
+  unitId                  Uuid
+  memberships             ChatGroupMember[]
+  messages                Message[]
+  laundryBookings         LaundryBooking[]
+  saunaBookings           SaunaBooking[]
+  parkingSpot             ParkingSpot?
+  directConvosA           DirectConversation[] @relation("direct_conversations_as_a")
+  directConvosB           DirectConversation[] @relation("direct_conversations_as_b")
+  directMessages          DirectMessage[]      @relation("direct_messages_sent")
+  buildingPosts           BuildingPost[]
+  postComments            BuildingPostComment[]
+  postReactions           BuildingPostReaction[]
+  postReads               BuildingPostRead[]
+  postReports             BuildingPostReport[]
+  complaints              Complaint[]
+  complaintMessages       ComplaintMessage[]
+  noticeThread            DirectNoticeThread?
+  noticeMessages          DirectNoticeMessage[]
+  pushSubscriptions       PushSubscription[]
+  moveInChecklistItems    MoveInChecklistItem[]
 
   @@map("tenant")
 }
@@ -210,10 +230,12 @@ model Staff {
   email              String              @unique
   passwordHash       String
   createdAt          TimestamptzString   @default(now())
+  linkedTenant       Tenant?
   posts              BuildingPost[]
   assignedComplaints Complaint[]
   complaintMessages  ComplaintMessage[]
   noticeMessages     DirectNoticeMessage[]
+  savedReplies       SavedReply[]
 
   @@map("staff")
 }
@@ -298,10 +320,14 @@ model BuildingPost {
   authorStaffId        Uuid?
   title                String
   content              String
+  titleEn              String?
+  contentEn            String?
   photoUrl             String?
   createdAt            TimestamptzString      @default(now())
   comments             BuildingPostComment[]
   reactions            BuildingPostReaction[]
+  reads                BuildingPostRead[]
+  reports              BuildingPostReport[]
 
   @@index([buildingId, createdAt])
   @@map("building_post")
@@ -315,6 +341,7 @@ model BuildingPostComment {
   authorId  Uuid
   content   String
   createdAt TimestamptzString @default(now())
+  reports   BuildingPostReport[]
 
   @@index([postId])
   @@map("building_post_comment")
@@ -402,4 +429,56 @@ model PushSubscription {
 
   @@index([tenantId])
   @@map("push_subscription")
+}
+
+model BuildingPostRead {
+  id       Uuid              @id @default(uuid())
+  post     BuildingPost      @relation(fields: [postId], references: [id], onDelete: Cascade)
+  postId   Uuid
+  tenant   Tenant            @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  tenantId Uuid
+  readAt   TimestamptzString @default(now())
+
+  @@unique([postId, tenantId])
+  @@map("building_post_read")
+}
+
+model BuildingPostReport {
+  id        Uuid              @id @default(uuid())
+  post      BuildingPost?     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  postId    Uuid?
+  comment   BuildingPostComment? @relation(fields: [commentId], references: [id], onDelete: Cascade)
+  commentId Uuid?
+  reporter  Tenant            @relation(fields: [reporterId], references: [id], onDelete: Cascade)
+  reporterId Uuid
+  reason    String?
+  status    report_status     @default(open)
+  createdAt TimestamptzString @default(now())
+
+  @@index([postId])
+  @@index([commentId])
+  @@index([status])
+  @@map("building_post_report")
+}
+
+model MoveInChecklistItem {
+  id          Uuid              @id @default(uuid())
+  tenant      Tenant            @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  tenantId    Uuid
+  itemKey     String
+  completedAt TimestamptzString @default(now())
+
+  @@unique([tenantId, itemKey])
+  @@map("move_in_checklist_item")
+}
+
+model SavedReply {
+  id               Uuid              @id @default(uuid())
+  title            String
+  content          String
+  createdByStaff   Staff?            @relation(fields: [createdByStaffId], references: [id], onDelete: SetNull)
+  createdByStaffId Uuid?
+  createdAt        TimestamptzString @default(now())
+
+  @@map("saved_reply")
 }

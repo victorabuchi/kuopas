@@ -1,0 +1,66 @@
+.page {
+  --bg: #ffffff;
+  --fg: #000000;
+  --fg-muted: #767676;
+  --green-dark: #046a38;
+  --border: #e7e7e7;
+
+  min-height: 100%;
+  background: var(--bg);
+  color: var(--fg);
+}
+.page * {
+  box-sizing: border-box;
+}
+
+.lede {
+  padding: 16px 20px 0;
+  color: var(--fg-muted);
+  font-size: 14.5px;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  padding: 12px 0 40px;
+}
+
+.item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 20px;
+  border-bottom: 1px solid var(--border);
+  background: none;
+  border-left: none;
+  border-right: none;
+  border-top: none;
+  text-align: left;
+  width: 100%;
+}
+
+.checkbox {
+  flex-shrink: 0;
+  width: 26px;
+  height: 26px;
+  border-radius: 8px;
+  border: 2px solid var(--border);
+  background: var(--bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  cursor: pointer;
+}
+.checkboxDone {
+  background: var(--green-dark);
+  border-color: var(--green-dark);
+}
+
+.label {
+  font-size: 15px;
+}
+.labelDone {
+  color: var(--fg-muted);
+  text-decoration: line-through;
+}

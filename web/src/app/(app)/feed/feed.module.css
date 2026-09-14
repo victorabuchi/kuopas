@@ -205,6 +205,15 @@
   font-weight: 700;
   margin-right: 6px;
 }
+.commentReport {
+  margin-left: 8px;
+  font-size: 11.5px;
+  color: var(--fg-muted);
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-decoration: underline;
+}
 .commentForm {
   display: flex;
   gap: 8px;

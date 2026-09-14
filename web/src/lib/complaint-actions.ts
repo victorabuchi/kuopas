@@ -3,7 +3,7 @@
 import { revalidatePath } from 'next/cache';
 import { db } from '../prisma/db';
 import { getSession } from './session';
-import { getStaffSession } from './staff-session';
+import { getStaffAccess, requireStaffAccess } from './portal-access';
 import { savePhotoUpload } from './uploads';
 
 const CATEGORIES = [
@@ -35,29 +35,36 @@ export async function submitComplaintAction(formData: FormData) {
   revalidatePath('/complaints');
 }
 
+// `actingAs` disambiguates an admin, who has both a tenant session and staff
+// access at once: the tenant-side complaint thread always sends "tenant",
+// the staff-side one always sends "staff", so an admin replying to their own
+// complaint as a resident is never misattributed as a staff reply.
 export async function sendComplaintMessageAction(formData: FormData) {
   const complaintId = String(formData.get('complaintId') ?? '').trim();
   const content = String(formData.get('content') ?? '').trim();
+  const actingAs = String(formData.get('actingAs') ?? 'tenant');
   if (!complaintId || !content) throw new Error('Message content is required');
 
   const tenantSession = await getSession();
-  const staffSession = await getStaffSession();
-  if (!tenantSession && !staffSession) throw new Error('Not signed in');
+  const staffAccess = actingAs === 'staff' ? await getStaffAccess() : null;
+  if (!tenantSession && !staffAccess) throw new Error('Not signed in');
 
   const complaint = await db.orm.public.Complaint.where({ id: complaintId }).first();
   if (!complaint) throw new Error('Complaint not found');
-  if (tenantSession && complaint.tenantId !== tenantSession.tenantId) {
-    throw new Error('Not your complaint');
+  if (!staffAccess) {
+    if (!tenantSession || complaint.tenantId !== tenantSession.tenantId) {
+      throw new Error('Not your complaint');
+    }
   }
 
   await db.orm.public.ComplaintMessage.create({
     complaintId,
-    senderTenantId: tenantSession ? tenantSession.tenantId : null,
-    senderStaffId: staffSession ? staffSession.staffId : null,
+    senderTenantId: staffAccess ? null : tenantSession!.tenantId,
+    senderStaffId: staffAccess ? staffAccess.staffId : null,
     content,
   });
 
-  if (staffSession && complaint.status === 'new') {
+  if (staffAccess && complaint.status === 'new') {
     await db.orm.public.Complaint.where({ id: complaintId }).update({
       status: 'in_progress',
       updatedAt: new Date().toISOString(),
@@ -69,8 +76,7 @@ export async function sendComplaintMessageAction(formData: FormData) {
 }
 
 export async function updateComplaintStatusAction(formData: FormData) {
-  const staffSession = await getStaffSession();
-  if (!staffSession) throw new Error('Not signed in as staff');
+  await requireStaffAccess();
 
   const complaintId = String(formData.get('complaintId') ?? '').trim();
   const status = String(formData.get('status') ?? '').trim();
@@ -86,8 +92,7 @@ export async function updateComplaintStatusAction(formData: FormData) {
 }
 
 export async function assignComplaintAction(formData: FormData) {
-  const staffSession = await getStaffSession();
-  if (!staffSession) throw new Error('Not signed in as staff');
+  await requireStaffAccess();
 
   const complaintId = String(formData.get('complaintId') ?? '').trim();
   const assignedStaffId = String(formData.get('assignedStaffId') ?? '').trim() || null;

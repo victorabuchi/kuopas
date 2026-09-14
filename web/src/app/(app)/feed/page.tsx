@@ -8,7 +8,13 @@ import TopBar from '../TopBar';
 import { getLocale } from '../../../lib/i18n';
 import { getDictionary } from '../../../lib/dictionary';
 import { displayNameFor } from '../../../lib/names';
-import { createNoticeboardPostAction, commentOnPostAction, reactToPostAction } from '../../../lib/building-post-actions';
+import {
+  createNoticeboardPostAction,
+  commentOnPostAction,
+  reactToPostAction,
+  reportPostAction,
+} from '../../../lib/building-post-actions';
+import MarkPostsRead from './MarkPostsRead';
 
 export const metadata: Metadata = {
   title: 'Noticeboard - Kuopas',
@@ -109,6 +115,8 @@ export default async function FeedPage({
         </form>
       )}
 
+      {tab === 'announcements' && <MarkPostsRead postIds={posts.map((p) => p.id)} />}
+
       <div className={styles.feed}>
         {posts.length === 0 && (
           <div className={styles.empty}>{tab === 'announcements' ? t.noAnnouncementsYet : t.noNoticeboardYet}</div>
@@ -116,6 +124,8 @@ export default async function FeedPage({
         {posts.map((post) => {
           const senderName = post.authorStaff ? t.kuopas : displayNameFor(post.authorTenant!, 'building');
           const reacted = post.reactions.some((r) => r.tenantId === session.tenantId);
+          const title = locale === 'en' && post.titleEn ? post.titleEn : post.title;
+          const content = locale === 'en' && post.contentEn ? post.contentEn : post.content;
           return (
             <article key={post.id} className={styles.post}>
               <div className={styles.postHeader}>
@@ -127,8 +137,8 @@ export default async function FeedPage({
                   <span className={styles.postMeta}>{new Date(post.createdAt).toLocaleString()}</span>
                 </div>
               </div>
-              <p className={styles.postTitle}>{post.title}</p>
-              <p className={styles.postContent}>{post.content}</p>
+              <p className={styles.postTitle}>{title}</p>
+              <p className={styles.postContent}>{content}</p>
               {post.photoUrl && <img src={post.photoUrl} alt="" className={styles.postPhoto} />}
               {post.noticeboardCategory && (
                 <span className={styles.categoryBadge}>{categoryLabel[post.noticeboardCategory]}</span>
@@ -147,6 +157,14 @@ export default async function FeedPage({
                 {post.type === 'announcement' && (
                   <span className={styles.reactionsOnlyNote}>{t.reactionsOnly}</span>
                 )}
+                {post.authorTenant && post.authorTenant.id !== session.tenantId && (
+                  <form action={reportPostAction}>
+                    <input type="hidden" name="postId" value={post.id} />
+                    <button type="submit" className={styles.postAction}>
+                      {t.report}
+                    </button>
+                  </form>
+                )}
               </div>
 
               {post.type === 'noticeboard' && (
@@ -159,6 +177,14 @@ export default async function FeedPage({
                             {displayNameFor(comment.author!, 'building')}
                           </span>
                           {comment.content}
+                          {comment.authorId !== session.tenantId && (
+                            <form action={reportPostAction} style={{ display: 'inline' }}>
+                              <input type="hidden" name="commentId" value={comment.id} />
+                              <button type="submit" className={styles.commentReport}>
+                                {t.reportComment}
+                              </button>
+                            </form>
+                          )}
                         </div>
                       ))}
                     </div>

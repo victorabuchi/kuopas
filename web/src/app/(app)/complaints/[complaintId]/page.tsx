@@ -87,6 +87,7 @@ export default async function ComplaintThreadPage({
 
       <form action={sendComplaintMessageAction} className={styles.composerBar}>
         <input type="hidden" name="complaintId" value={complaint.id} />
+        <input type="hidden" name="actingAs" value="tenant" />
         <input type="text" name="content" placeholder={t.placeholder} required autoComplete="off" />
         <button type="submit" className={styles.send}>
           {dict.common.send}
