@@ -7,6 +7,7 @@ import { db } from '../../../prisma/db';
 import TopBar from '../TopBar';
 import { getLocale } from '../../../lib/i18n';
 import { getDictionary } from '../../../lib/dictionary';
+import { displayNameFor } from '../../../lib/names';
 
 export const metadata: Metadata = {
   title: 'Chats - Kuopas',
@@ -41,6 +42,8 @@ export default async function ChatsPage({
 
   const groupIds = tenant.memberships.map((m) => m.chatGroup!.id);
 
+  const scopeByGroupId = new Map(tenant.memberships.map((m) => [m.chatGroup!.id, m.chatGroup!.scope]));
+
   const lastMessageByGroup = new Map<string, { senderName: string; content: string; sentAt: string }>();
   if (groupIds.length > 0) {
     const recent = await db.orm.public.Message.where((m) => m.chatGroupId.in(groupIds))
@@ -50,8 +53,9 @@ export default async function ChatsPage({
       .all();
     for (const message of recent) {
       if (!lastMessageByGroup.has(message.chatGroupId)) {
+        const scope = scopeByGroupId.get(message.chatGroupId) ?? 'building';
         lastMessageByGroup.set(message.chatGroupId, {
-          senderName: message.sender!.name,
+          senderName: displayNameFor(message.sender!, scope),
           content: message.content,
           sentAt: message.sentAt,
         });

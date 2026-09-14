@@ -50,6 +50,27 @@ const NAV_ITEMS = [
     ),
   },
   {
+    href: '/feed',
+    key: 'noticeboard' as const,
+    icon: (
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+        <rect x="3.5" y="3.5" width="17" height="17" rx="2.5" />
+        <path d="M7.5 8h4M7.5 12h9M7.5 16h6" />
+      </svg>
+    ),
+  },
+  {
+    href: '/complaints',
+    key: 'complaints' as const,
+    icon: (
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M12 9v4" />
+        <path d="M12 16.5h.01" />
+        <path d="M10.3 4.4 2.9 17.5a1.6 1.6 0 0 0 1.4 2.4h15.4a1.6 1.6 0 0 0 1.4-2.4L13.7 4.4a1.6 1.6 0 0 0-2.8 0Z" />
+      </svg>
+    ),
+  },
+  {
     href: '/laundry',
     key: 'laundry' as const,
     icon: (

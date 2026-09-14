@@ -1,0 +1,245 @@
+.page {
+  --bg: #ffffff;
+  --fg: #000000;
+  --fg-muted: #767676;
+  --green-dark: #046a38;
+  --green-hover: #598000;
+  --border: #e7e7e7;
+
+  min-height: 100%;
+  background: var(--bg);
+  color: var(--fg);
+}
+.page * {
+  box-sizing: border-box;
+}
+
+.composer {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 20px;
+  border-bottom: 8px solid #f6f7f6;
+}
+.composer h2 {
+  margin: 0 0 4px;
+  font-size: 15px;
+}
+.composer select,
+.composer textarea,
+.composer input[type="file"] {
+  width: 100%;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  padding: 10px 12px;
+  font-size: 14px;
+  font-family: inherit;
+  color: var(--fg);
+  background: var(--bg);
+}
+.composer textarea {
+  min-height: 80px;
+  resize: vertical;
+}
+.composer input[type="file"] {
+  border: none;
+  padding: 0;
+  font-size: 13px;
+}
+.submit {
+  align-self: flex-start;
+  height: 40px;
+  padding: 0 20px;
+  border-radius: 10px;
+  border: none;
+  background: var(--green-dark);
+  color: #fff;
+  font-weight: 700;
+  font-size: 14px;
+  cursor: pointer;
+}
+.submit:hover {
+  background: var(--green-hover);
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  padding: 8px 0 40px;
+}
+.listHeading {
+  padding: 12px 20px 4px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--fg-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+.row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 20px;
+  border-bottom: 1px solid var(--border);
+}
+.rowText {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+.rowCategory {
+  font-weight: 700;
+  font-size: 14.5px;
+  text-transform: capitalize;
+}
+.rowDescription {
+  font-size: 13.5px;
+  color: var(--fg-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 320px;
+}
+.rowMeta {
+  font-size: 12px;
+  color: var(--fg-muted);
+}
+
+.status {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  height: 26px;
+  padding: 0 12px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+.statusSent {
+  background: #f0f2f0;
+  color: var(--fg-muted);
+}
+.statusAcknowledged {
+  background: color-mix(in srgb, #046a38 12%, white);
+  color: var(--green-dark);
+}
+.statusResolved {
+  background: #046a38;
+  color: #fff;
+}
+
+.empty {
+  padding: 40px 20px;
+  text-align: center;
+  color: var(--fg-muted);
+}
+
+/* thread page */
+.topBar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 20px;
+  border-bottom: 1px solid var(--border);
+}
+.back {
+  color: var(--fg);
+  display: flex;
+}
+.topBarText {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+.topBarTitle {
+  font-weight: 700;
+  font-size: 15px;
+  text-transform: capitalize;
+}
+.topBarSubtitle {
+  font-size: 12.5px;
+  color: var(--fg-muted);
+}
+
+.detail {
+  padding: 16px 20px;
+  border-bottom: 8px solid #f6f7f6;
+}
+.detailDescription {
+  margin-top: 8px;
+  font-size: 15px;
+  line-height: 1.5;
+  white-space: pre-wrap;
+}
+.detailPhoto {
+  margin-top: 10px;
+  border-radius: 10px;
+  max-width: 100%;
+  display: block;
+}
+
+.messages {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px 20px;
+}
+.messageRow {
+  display: flex;
+  flex-direction: column;
+  max-width: 80%;
+}
+.messageRowOut {
+  align-self: flex-end;
+  align-items: flex-end;
+}
+.messageRowIn {
+  align-self: flex-start;
+}
+.messageAuthor {
+  font-size: 11.5px;
+  color: var(--fg-muted);
+  margin-bottom: 3px;
+}
+.messageBubble {
+  border-radius: 14px;
+  padding: 10px 14px;
+  font-size: 14.5px;
+  line-height: 1.4;
+}
+.messageBubbleOut {
+  background: var(--green-dark);
+  color: #fff;
+}
+.messageBubbleIn {
+  background: #f0f2f0;
+  color: var(--fg);
+}
+
+.composerBar {
+  display: flex;
+  gap: 8px;
+  padding: 12px 20px;
+  border-top: 1px solid var(--border);
+}
+.composerBar input {
+  flex: 1;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  padding: 10px 16px;
+  font-size: 14px;
+  font-family: inherit;
+}
+.send {
+  border: none;
+  background: var(--green-dark);
+  color: #fff;
+  border-radius: 999px;
+  padding: 0 18px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+}

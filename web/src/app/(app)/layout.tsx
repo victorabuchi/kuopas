@@ -2,6 +2,7 @@ import { redirect } from 'next/navigation';
 import { Mulish } from 'next/font/google';
 import styles from './app-shell.module.css';
 import Sidebar from './Sidebar';
+import PushSubscribe from './PushSubscribe';
 import { getSession } from '../../lib/session';
 import { db } from '../../prisma/db';
 import { getLocale } from '../../lib/i18n';
@@ -21,6 +22,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
 
   return (
     <div className={`${styles.shell} ${mulish.variable}`}>
+      <PushSubscribe />
       <Sidebar tenantName={tenant.name} nav={dict.nav} />
       <main className={styles.main}>{children}</main>
     </div>

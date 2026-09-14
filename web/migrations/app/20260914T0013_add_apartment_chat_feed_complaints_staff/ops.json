@@ -1,0 +1,2231 @@
+[
+  {
+    "id": "dropCheckConstraint.chat_group.chat_group_scope_check_a40ae3fc",
+    "label": "Drop check constraint \"chat_group_scope_check_a40ae3fc\" on \"chat_group\"",
+    "operationClass": "destructive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "checkConstraint",
+        "name": "chat_group_scope_check_a40ae3fc",
+        "table": "chat_group"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"chat_group_scope_check_a40ae3fc\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "chat_group_scope_check_a40ae3fc",
+          "public",
+          "\"public\".\"chat_group\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "drop check constraint \"chat_group_scope_check_a40ae3fc\"",
+        "sql": "ALTER TABLE \"public\".\"chat_group\" DROP CONSTRAINT \"chat_group_scope_check_a40ae3fc\""
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"chat_group_scope_check_a40ae3fc\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "chat_group_scope_check_a40ae3fc",
+          "public",
+          "\"public\".\"chat_group\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "table.building_post",
+    "label": "Create table \"building_post\"",
+    "summary": "Creates table \"building_post\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "building_post"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"building_post\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"building_post\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"building_post\"",
+        "sql": "CREATE TABLE \"public\".\"building_post\" (\n  \"authorStaffId\" uuid,\n  \"authorTenantId\" uuid,\n  \"buildingId\" uuid NOT NULL,\n  \"content\" text NOT NULL,\n  \"createdAt\" timestamptz DEFAULT (now()) NOT NULL,\n  \"id\" uuid NOT NULL,\n  \"noticeboardCategory\" text,\n  \"photoUrl\" text,\n  \"title\" text NOT NULL,\n  \"type\" text NOT NULL,\n  PRIMARY KEY (\"id\"),\n  CONSTRAINT \"building_post_noticeboardCategory_check_3ceb2636\" CHECK (\"noticeboardCategory\" IN ('furniture', 'lost_found', 'borrow', 'giveaway', 'other')),\n  CONSTRAINT \"building_post_type_check_54f4d5fe\" CHECK (\"type\" IN ('announcement', 'noticeboard'))\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"building_post\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"building_post\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "table.building_post_comment",
+    "label": "Create table \"building_post_comment\"",
+    "summary": "Creates table \"building_post_comment\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "building_post_comment"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"building_post_comment\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"building_post_comment\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"building_post_comment\"",
+        "sql": "CREATE TABLE \"public\".\"building_post_comment\" (\n  \"authorId\" uuid NOT NULL,\n  \"content\" text NOT NULL,\n  \"createdAt\" timestamptz DEFAULT (now()) NOT NULL,\n  \"id\" uuid NOT NULL,\n  \"postId\" uuid NOT NULL,\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"building_post_comment\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"building_post_comment\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "table.building_post_reaction",
+    "label": "Create table \"building_post_reaction\"",
+    "summary": "Creates table \"building_post_reaction\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "building_post_reaction"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"building_post_reaction\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"building_post_reaction\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"building_post_reaction\"",
+        "sql": "CREATE TABLE \"public\".\"building_post_reaction\" (\n  \"createdAt\" timestamptz DEFAULT (now()) NOT NULL,\n  \"emoji\" text DEFAULT '👍' NOT NULL,\n  \"id\" uuid NOT NULL,\n  \"postId\" uuid NOT NULL,\n  \"tenantId\" uuid NOT NULL,\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"building_post_reaction\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"building_post_reaction\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "table.complaint",
+    "label": "Create table \"complaint\"",
+    "summary": "Creates table \"complaint\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "complaint"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"complaint\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"complaint\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"complaint\"",
+        "sql": "CREATE TABLE \"public\".\"complaint\" (\n  \"assignedStaffId\" uuid,\n  \"category\" text NOT NULL,\n  \"createdAt\" timestamptz DEFAULT (now()) NOT NULL,\n  \"description\" text NOT NULL,\n  \"id\" uuid NOT NULL,\n  \"photoUrl\" text,\n  \"status\" text DEFAULT 'new' NOT NULL,\n  \"tenantId\" uuid NOT NULL,\n  \"updatedAt\" timestamptz DEFAULT (now()) NOT NULL,\n  PRIMARY KEY (\"id\"),\n  CONSTRAINT \"complaint_category_check_3a483362\" CHECK (\"category\" IN ('plumbing', 'electrical', 'heating', 'appliance', 'pest', 'noise', 'structural', 'other')),\n  CONSTRAINT \"complaint_status_check_5df1bb4e\" CHECK (\"status\" IN ('new', 'in_progress', 'resolved'))\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"complaint\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"complaint\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "table.complaint_message",
+    "label": "Create table \"complaint_message\"",
+    "summary": "Creates table \"complaint_message\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "complaint_message"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"complaint_message\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"complaint_message\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"complaint_message\"",
+        "sql": "CREATE TABLE \"public\".\"complaint_message\" (\n  \"complaintId\" uuid NOT NULL,\n  \"content\" text NOT NULL,\n  \"id\" uuid NOT NULL,\n  \"senderStaffId\" uuid,\n  \"senderTenantId\" uuid,\n  \"sentAt\" timestamptz DEFAULT (now()) NOT NULL,\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"complaint_message\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"complaint_message\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "table.direct_notice_message",
+    "label": "Create table \"direct_notice_message\"",
+    "summary": "Creates table \"direct_notice_message\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "direct_notice_message"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"direct_notice_message\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"direct_notice_message\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"direct_notice_message\"",
+        "sql": "CREATE TABLE \"public\".\"direct_notice_message\" (\n  \"content\" text NOT NULL,\n  \"id\" uuid NOT NULL,\n  \"senderStaffId\" uuid,\n  \"senderTenantId\" uuid,\n  \"sentAt\" timestamptz DEFAULT (now()) NOT NULL,\n  \"threadId\" uuid NOT NULL,\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"direct_notice_message\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"direct_notice_message\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "table.direct_notice_thread",
+    "label": "Create table \"direct_notice_thread\"",
+    "summary": "Creates table \"direct_notice_thread\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "direct_notice_thread"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"direct_notice_thread\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"direct_notice_thread\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"direct_notice_thread\"",
+        "sql": "CREATE TABLE \"public\".\"direct_notice_thread\" (\n  \"id\" uuid NOT NULL,\n  \"tenantId\" uuid NOT NULL,\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"direct_notice_thread\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"direct_notice_thread\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "table.push_subscription",
+    "label": "Create table \"push_subscription\"",
+    "summary": "Creates table \"push_subscription\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "push_subscription"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"push_subscription\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"push_subscription\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"push_subscription\"",
+        "sql": "CREATE TABLE \"public\".\"push_subscription\" (\n  \"auth\" text NOT NULL,\n  \"createdAt\" timestamptz DEFAULT (now()) NOT NULL,\n  \"endpoint\" text NOT NULL,\n  \"id\" uuid NOT NULL,\n  \"p256dh\" text NOT NULL,\n  \"tenantId\" uuid NOT NULL,\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"push_subscription\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"push_subscription\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "table.staff",
+    "label": "Create table \"staff\"",
+    "summary": "Creates table \"staff\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "staff"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"staff\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"staff\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"staff\"",
+        "sql": "CREATE TABLE \"public\".\"staff\" (\n  \"createdAt\" timestamptz DEFAULT (now()) NOT NULL,\n  \"email\" text NOT NULL,\n  \"id\" uuid NOT NULL,\n  \"name\" text NOT NULL,\n  \"passwordHash\" text NOT NULL,\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"staff\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"staff\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "column.public.chat_group.unitId",
+    "label": "Add column \"unitId\" to \"chat_group\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "unitId",
+        "table": "chat_group"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"unitId\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "chat_group",
+          "unitId"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"unitId\"",
+        "sql": "ALTER TABLE \"public\".\"chat_group\" ADD COLUMN \"unitId\" uuid"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"unitId\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "chat_group",
+          "unitId"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "column.public.tenant.pseudonym",
+    "label": "Add column \"pseudonym\" to \"tenant\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "pseudonym",
+        "table": "tenant"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"pseudonym\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "tenant",
+          "pseudonym"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"pseudonym\"",
+        "sql": "ALTER TABLE \"public\".\"tenant\" ADD COLUMN \"pseudonym\" text"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"pseudonym\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "tenant",
+          "pseudonym"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "unique.building_post_reaction.building_post_reaction_postId_tenantId_key",
+    "label": "Add unique constraint on \"building_post_reaction\" (postId, tenantId)",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "unique",
+        "name": "building_post_reaction_postId_tenantId_key",
+        "table": "building_post_reaction"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"building_post_reaction_postId_tenantId_key\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "building_post_reaction_postId_tenantId_key",
+          "public",
+          "\"public\".\"building_post_reaction\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add unique constraint \"building_post_reaction_postId_tenantId_key\"",
+        "sql": "ALTER TABLE \"public\".\"building_post_reaction\" ADD CONSTRAINT \"building_post_reaction_postId_tenantId_key\" UNIQUE (\"postId\", \"tenantId\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"building_post_reaction_postId_tenantId_key\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "building_post_reaction_postId_tenantId_key",
+          "public",
+          "\"public\".\"building_post_reaction\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "checkConstraint.chat_group.chat_group_scope_check_ce77aac6",
+    "label": "Add check constraint \"chat_group_scope_check_ce77aac6\" on \"chat_group\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "checkConstraint",
+        "name": "chat_group_scope_check_ce77aac6",
+        "table": "chat_group"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"chat_group_scope_check_ce77aac6\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "chat_group_scope_check_ce77aac6",
+          "public",
+          "\"public\".\"chat_group\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add check constraint \"chat_group_scope_check_ce77aac6\"",
+        "sql": "ALTER TABLE \"public\".\"chat_group\" ADD CONSTRAINT \"chat_group_scope_check_ce77aac6\" CHECK (\"scope\" IN ('building', 'stairwell', 'floor', 'unit'))"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"chat_group_scope_check_ce77aac6\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "chat_group_scope_check_ce77aac6",
+          "public",
+          "\"public\".\"chat_group\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "unique.chat_group.chat_group_unitId_key",
+    "label": "Add unique constraint on \"chat_group\" (unitId)",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "unique",
+        "name": "chat_group_unitId_key",
+        "table": "chat_group"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"chat_group_unitId_key\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "chat_group_unitId_key",
+          "public",
+          "\"public\".\"chat_group\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add unique constraint \"chat_group_unitId_key\"",
+        "sql": "ALTER TABLE \"public\".\"chat_group\" ADD CONSTRAINT \"chat_group_unitId_key\" UNIQUE (\"unitId\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"chat_group_unitId_key\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "chat_group_unitId_key",
+          "public",
+          "\"public\".\"chat_group\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "unique.direct_notice_thread.direct_notice_thread_tenantId_key",
+    "label": "Add unique constraint on \"direct_notice_thread\" (tenantId)",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "unique",
+        "name": "direct_notice_thread_tenantId_key",
+        "table": "direct_notice_thread"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"direct_notice_thread_tenantId_key\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "direct_notice_thread_tenantId_key",
+          "public",
+          "\"public\".\"direct_notice_thread\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add unique constraint \"direct_notice_thread_tenantId_key\"",
+        "sql": "ALTER TABLE \"public\".\"direct_notice_thread\" ADD CONSTRAINT \"direct_notice_thread_tenantId_key\" UNIQUE (\"tenantId\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"direct_notice_thread_tenantId_key\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "direct_notice_thread_tenantId_key",
+          "public",
+          "\"public\".\"direct_notice_thread\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "unique.push_subscription.push_subscription_endpoint_key",
+    "label": "Add unique constraint on \"push_subscription\" (endpoint)",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "unique",
+        "name": "push_subscription_endpoint_key",
+        "table": "push_subscription"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"push_subscription_endpoint_key\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "push_subscription_endpoint_key",
+          "public",
+          "\"public\".\"push_subscription\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add unique constraint \"push_subscription_endpoint_key\"",
+        "sql": "ALTER TABLE \"public\".\"push_subscription\" ADD CONSTRAINT \"push_subscription_endpoint_key\" UNIQUE (\"endpoint\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"push_subscription_endpoint_key\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "push_subscription_endpoint_key",
+          "public",
+          "\"public\".\"push_subscription\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "unique.staff.staff_email_key",
+    "label": "Add unique constraint on \"staff\" (email)",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "unique",
+        "name": "staff_email_key",
+        "table": "staff"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"staff_email_key\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "staff_email_key",
+          "public",
+          "\"public\".\"staff\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add unique constraint \"staff_email_key\"",
+        "sql": "ALTER TABLE \"public\".\"staff\" ADD CONSTRAINT \"staff_email_key\" UNIQUE (\"email\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"staff_email_key\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "staff_email_key",
+          "public",
+          "\"public\".\"staff\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "unique.tenant.tenant_pseudonym_key",
+    "label": "Add unique constraint on \"tenant\" (pseudonym)",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "unique",
+        "name": "tenant_pseudonym_key",
+        "table": "tenant"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"tenant_pseudonym_key\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "tenant_pseudonym_key",
+          "public",
+          "\"public\".\"tenant\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add unique constraint \"tenant_pseudonym_key\"",
+        "sql": "ALTER TABLE \"public\".\"tenant\" ADD CONSTRAINT \"tenant_pseudonym_key\" UNIQUE (\"pseudonym\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"tenant_pseudonym_key\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "tenant_pseudonym_key",
+          "public",
+          "\"public\".\"tenant\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.building_post.building_post_authorStaffId_idx_9658370a",
+    "label": "Create index \"building_post_authorStaffId_idx_9658370a\" on \"building_post\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "building_post_authorStaffId_idx_9658370a",
+        "table": "building_post"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"building_post_authorStaffId_idx_9658370a\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"building_post_authorStaffId_idx_9658370a\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"building_post_authorStaffId_idx_9658370a\"",
+        "sql": "CREATE INDEX \"building_post_authorStaffId_idx_9658370a\" ON \"public\".\"building_post\" (\"authorStaffId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"building_post_authorStaffId_idx_9658370a\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"building_post_authorStaffId_idx_9658370a\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.building_post.building_post_authorTenantId_idx_c661c2b2",
+    "label": "Create index \"building_post_authorTenantId_idx_c661c2b2\" on \"building_post\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "building_post_authorTenantId_idx_c661c2b2",
+        "table": "building_post"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"building_post_authorTenantId_idx_c661c2b2\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"building_post_authorTenantId_idx_c661c2b2\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"building_post_authorTenantId_idx_c661c2b2\"",
+        "sql": "CREATE INDEX \"building_post_authorTenantId_idx_c661c2b2\" ON \"public\".\"building_post\" (\"authorTenantId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"building_post_authorTenantId_idx_c661c2b2\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"building_post_authorTenantId_idx_c661c2b2\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.building_post.building_post_buildingId_createdAt_idx_7b656189",
+    "label": "Create index \"building_post_buildingId_createdAt_idx_7b656189\" on \"building_post\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "building_post_buildingId_createdAt_idx_7b656189",
+        "table": "building_post"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"building_post_buildingId_createdAt_idx_7b656189\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"building_post_buildingId_createdAt_idx_7b656189\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"building_post_buildingId_createdAt_idx_7b656189\"",
+        "sql": "CREATE INDEX \"building_post_buildingId_createdAt_idx_7b656189\" ON \"public\".\"building_post\" (\"buildingId\", \"createdAt\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"building_post_buildingId_createdAt_idx_7b656189\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"building_post_buildingId_createdAt_idx_7b656189\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.building_post.building_post_buildingId_idx_c40fd7b4",
+    "label": "Create index \"building_post_buildingId_idx_c40fd7b4\" on \"building_post\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "building_post_buildingId_idx_c40fd7b4",
+        "table": "building_post"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"building_post_buildingId_idx_c40fd7b4\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"building_post_buildingId_idx_c40fd7b4\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"building_post_buildingId_idx_c40fd7b4\"",
+        "sql": "CREATE INDEX \"building_post_buildingId_idx_c40fd7b4\" ON \"public\".\"building_post\" (\"buildingId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"building_post_buildingId_idx_c40fd7b4\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"building_post_buildingId_idx_c40fd7b4\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.building_post_comment.building_post_comment_authorId_idx_e47547ed",
+    "label": "Create index \"building_post_comment_authorId_idx_e47547ed\" on \"building_post_comment\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "building_post_comment_authorId_idx_e47547ed",
+        "table": "building_post_comment"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"building_post_comment_authorId_idx_e47547ed\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"building_post_comment_authorId_idx_e47547ed\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"building_post_comment_authorId_idx_e47547ed\"",
+        "sql": "CREATE INDEX \"building_post_comment_authorId_idx_e47547ed\" ON \"public\".\"building_post_comment\" (\"authorId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"building_post_comment_authorId_idx_e47547ed\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"building_post_comment_authorId_idx_e47547ed\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.building_post_comment.building_post_comment_postId_idx_a7a72715",
+    "label": "Create index \"building_post_comment_postId_idx_a7a72715\" on \"building_post_comment\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "building_post_comment_postId_idx_a7a72715",
+        "table": "building_post_comment"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"building_post_comment_postId_idx_a7a72715\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"building_post_comment_postId_idx_a7a72715\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"building_post_comment_postId_idx_a7a72715\"",
+        "sql": "CREATE INDEX \"building_post_comment_postId_idx_a7a72715\" ON \"public\".\"building_post_comment\" (\"postId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"building_post_comment_postId_idx_a7a72715\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"building_post_comment_postId_idx_a7a72715\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.building_post_reaction.building_post_reaction_postId_idx_a7a72715",
+    "label": "Create index \"building_post_reaction_postId_idx_a7a72715\" on \"building_post_reaction\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "building_post_reaction_postId_idx_a7a72715",
+        "table": "building_post_reaction"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"building_post_reaction_postId_idx_a7a72715\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"building_post_reaction_postId_idx_a7a72715\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"building_post_reaction_postId_idx_a7a72715\"",
+        "sql": "CREATE INDEX \"building_post_reaction_postId_idx_a7a72715\" ON \"public\".\"building_post_reaction\" (\"postId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"building_post_reaction_postId_idx_a7a72715\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"building_post_reaction_postId_idx_a7a72715\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.building_post_reaction.building_post_reaction_tenantId_idx_c93ed4f1",
+    "label": "Create index \"building_post_reaction_tenantId_idx_c93ed4f1\" on \"building_post_reaction\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "building_post_reaction_tenantId_idx_c93ed4f1",
+        "table": "building_post_reaction"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"building_post_reaction_tenantId_idx_c93ed4f1\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"building_post_reaction_tenantId_idx_c93ed4f1\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"building_post_reaction_tenantId_idx_c93ed4f1\"",
+        "sql": "CREATE INDEX \"building_post_reaction_tenantId_idx_c93ed4f1\" ON \"public\".\"building_post_reaction\" (\"tenantId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"building_post_reaction_tenantId_idx_c93ed4f1\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"building_post_reaction_tenantId_idx_c93ed4f1\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.complaint.complaint_assignedStaffId_idx_6da9f5f2",
+    "label": "Create index \"complaint_assignedStaffId_idx_6da9f5f2\" on \"complaint\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "complaint_assignedStaffId_idx_6da9f5f2",
+        "table": "complaint"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"complaint_assignedStaffId_idx_6da9f5f2\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"complaint_assignedStaffId_idx_6da9f5f2\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"complaint_assignedStaffId_idx_6da9f5f2\"",
+        "sql": "CREATE INDEX \"complaint_assignedStaffId_idx_6da9f5f2\" ON \"public\".\"complaint\" (\"assignedStaffId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"complaint_assignedStaffId_idx_6da9f5f2\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"complaint_assignedStaffId_idx_6da9f5f2\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.complaint.complaint_status_idx_e98638ab",
+    "label": "Create index \"complaint_status_idx_e98638ab\" on \"complaint\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "complaint_status_idx_e98638ab",
+        "table": "complaint"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"complaint_status_idx_e98638ab\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"complaint_status_idx_e98638ab\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"complaint_status_idx_e98638ab\"",
+        "sql": "CREATE INDEX \"complaint_status_idx_e98638ab\" ON \"public\".\"complaint\" (\"status\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"complaint_status_idx_e98638ab\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"complaint_status_idx_e98638ab\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.complaint.complaint_tenantId_idx_c93ed4f1",
+    "label": "Create index \"complaint_tenantId_idx_c93ed4f1\" on \"complaint\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "complaint_tenantId_idx_c93ed4f1",
+        "table": "complaint"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"complaint_tenantId_idx_c93ed4f1\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"complaint_tenantId_idx_c93ed4f1\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"complaint_tenantId_idx_c93ed4f1\"",
+        "sql": "CREATE INDEX \"complaint_tenantId_idx_c93ed4f1\" ON \"public\".\"complaint\" (\"tenantId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"complaint_tenantId_idx_c93ed4f1\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"complaint_tenantId_idx_c93ed4f1\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.complaint_message.complaint_message_complaintId_idx_7b731d46",
+    "label": "Create index \"complaint_message_complaintId_idx_7b731d46\" on \"complaint_message\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "complaint_message_complaintId_idx_7b731d46",
+        "table": "complaint_message"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"complaint_message_complaintId_idx_7b731d46\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"complaint_message_complaintId_idx_7b731d46\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"complaint_message_complaintId_idx_7b731d46\"",
+        "sql": "CREATE INDEX \"complaint_message_complaintId_idx_7b731d46\" ON \"public\".\"complaint_message\" (\"complaintId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"complaint_message_complaintId_idx_7b731d46\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"complaint_message_complaintId_idx_7b731d46\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.complaint_message.complaint_message_senderStaffId_idx_f113dfb3",
+    "label": "Create index \"complaint_message_senderStaffId_idx_f113dfb3\" on \"complaint_message\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "complaint_message_senderStaffId_idx_f113dfb3",
+        "table": "complaint_message"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"complaint_message_senderStaffId_idx_f113dfb3\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"complaint_message_senderStaffId_idx_f113dfb3\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"complaint_message_senderStaffId_idx_f113dfb3\"",
+        "sql": "CREATE INDEX \"complaint_message_senderStaffId_idx_f113dfb3\" ON \"public\".\"complaint_message\" (\"senderStaffId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"complaint_message_senderStaffId_idx_f113dfb3\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"complaint_message_senderStaffId_idx_f113dfb3\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.complaint_message.complaint_message_senderTenantId_idx_86cb4507",
+    "label": "Create index \"complaint_message_senderTenantId_idx_86cb4507\" on \"complaint_message\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "complaint_message_senderTenantId_idx_86cb4507",
+        "table": "complaint_message"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"complaint_message_senderTenantId_idx_86cb4507\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"complaint_message_senderTenantId_idx_86cb4507\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"complaint_message_senderTenantId_idx_86cb4507\"",
+        "sql": "CREATE INDEX \"complaint_message_senderTenantId_idx_86cb4507\" ON \"public\".\"complaint_message\" (\"senderTenantId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"complaint_message_senderTenantId_idx_86cb4507\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"complaint_message_senderTenantId_idx_86cb4507\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.direct_notice_message.direct_notice_message_senderStaffId_idx_f113dfb3",
+    "label": "Create index \"direct_notice_message_senderStaffId_idx_f113dfb3\" on \"direct_notice_message\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "direct_notice_message_senderStaffId_idx_f113dfb3",
+        "table": "direct_notice_message"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"direct_notice_message_senderStaffId_idx_f113dfb3\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"direct_notice_message_senderStaffId_idx_f113dfb3\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"direct_notice_message_senderStaffId_idx_f113dfb3\"",
+        "sql": "CREATE INDEX \"direct_notice_message_senderStaffId_idx_f113dfb3\" ON \"public\".\"direct_notice_message\" (\"senderStaffId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"direct_notice_message_senderStaffId_idx_f113dfb3\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"direct_notice_message_senderStaffId_idx_f113dfb3\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.direct_notice_message.direct_notice_message_senderTenantId_idx_86cb4507",
+    "label": "Create index \"direct_notice_message_senderTenantId_idx_86cb4507\" on \"direct_notice_message\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "direct_notice_message_senderTenantId_idx_86cb4507",
+        "table": "direct_notice_message"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"direct_notice_message_senderTenantId_idx_86cb4507\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"direct_notice_message_senderTenantId_idx_86cb4507\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"direct_notice_message_senderTenantId_idx_86cb4507\"",
+        "sql": "CREATE INDEX \"direct_notice_message_senderTenantId_idx_86cb4507\" ON \"public\".\"direct_notice_message\" (\"senderTenantId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"direct_notice_message_senderTenantId_idx_86cb4507\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"direct_notice_message_senderTenantId_idx_86cb4507\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.direct_notice_message.direct_notice_message_threadId_idx_6deac339",
+    "label": "Create index \"direct_notice_message_threadId_idx_6deac339\" on \"direct_notice_message\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "direct_notice_message_threadId_idx_6deac339",
+        "table": "direct_notice_message"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"direct_notice_message_threadId_idx_6deac339\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"direct_notice_message_threadId_idx_6deac339\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"direct_notice_message_threadId_idx_6deac339\"",
+        "sql": "CREATE INDEX \"direct_notice_message_threadId_idx_6deac339\" ON \"public\".\"direct_notice_message\" (\"threadId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"direct_notice_message_threadId_idx_6deac339\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"direct_notice_message_threadId_idx_6deac339\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.push_subscription.push_subscription_tenantId_idx_c93ed4f1",
+    "label": "Create index \"push_subscription_tenantId_idx_c93ed4f1\" on \"push_subscription\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "push_subscription_tenantId_idx_c93ed4f1",
+        "table": "push_subscription"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"push_subscription_tenantId_idx_c93ed4f1\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"push_subscription_tenantId_idx_c93ed4f1\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"push_subscription_tenantId_idx_c93ed4f1\"",
+        "sql": "CREATE INDEX \"push_subscription_tenantId_idx_c93ed4f1\" ON \"public\".\"push_subscription\" (\"tenantId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"push_subscription_tenantId_idx_c93ed4f1\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"push_subscription_tenantId_idx_c93ed4f1\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.building_post.building_post_buildingId_fkey",
+    "label": "Add foreign key \"building_post_buildingId_fkey\" on \"building_post\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "building_post_buildingId_fkey",
+        "table": "building_post"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"building_post_buildingId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "building_post_buildingId_fkey",
+          "public",
+          "\"public\".\"building_post\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"building_post_buildingId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"building_post\"\nADD CONSTRAINT \"building_post_buildingId_fkey\"\nFOREIGN KEY (\"buildingId\")\nREFERENCES \"public\".\"building\" (\"id\")\nON DELETE CASCADE"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"building_post_buildingId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "building_post_buildingId_fkey",
+          "public",
+          "\"public\".\"building_post\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.building_post.building_post_authorTenantId_fkey",
+    "label": "Add foreign key \"building_post_authorTenantId_fkey\" on \"building_post\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "building_post_authorTenantId_fkey",
+        "table": "building_post"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"building_post_authorTenantId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "building_post_authorTenantId_fkey",
+          "public",
+          "\"public\".\"building_post\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"building_post_authorTenantId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"building_post\"\nADD CONSTRAINT \"building_post_authorTenantId_fkey\"\nFOREIGN KEY (\"authorTenantId\")\nREFERENCES \"public\".\"tenant\" (\"id\")\nON DELETE CASCADE"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"building_post_authorTenantId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "building_post_authorTenantId_fkey",
+          "public",
+          "\"public\".\"building_post\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.building_post.building_post_authorStaffId_fkey",
+    "label": "Add foreign key \"building_post_authorStaffId_fkey\" on \"building_post\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "building_post_authorStaffId_fkey",
+        "table": "building_post"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"building_post_authorStaffId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "building_post_authorStaffId_fkey",
+          "public",
+          "\"public\".\"building_post\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"building_post_authorStaffId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"building_post\"\nADD CONSTRAINT \"building_post_authorStaffId_fkey\"\nFOREIGN KEY (\"authorStaffId\")\nREFERENCES \"public\".\"staff\" (\"id\")\nON DELETE CASCADE"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"building_post_authorStaffId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "building_post_authorStaffId_fkey",
+          "public",
+          "\"public\".\"building_post\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.building_post_comment.building_post_comment_postId_fkey",
+    "label": "Add foreign key \"building_post_comment_postId_fkey\" on \"building_post_comment\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "building_post_comment_postId_fkey",
+        "table": "building_post_comment"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"building_post_comment_postId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "building_post_comment_postId_fkey",
+          "public",
+          "\"public\".\"building_post_comment\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"building_post_comment_postId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"building_post_comment\"\nADD CONSTRAINT \"building_post_comment_postId_fkey\"\nFOREIGN KEY (\"postId\")\nREFERENCES \"public\".\"building_post\" (\"id\")\nON DELETE CASCADE"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"building_post_comment_postId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "building_post_comment_postId_fkey",
+          "public",
+          "\"public\".\"building_post_comment\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.building_post_comment.building_post_comment_authorId_fkey",
+    "label": "Add foreign key \"building_post_comment_authorId_fkey\" on \"building_post_comment\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "building_post_comment_authorId_fkey",
+        "table": "building_post_comment"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"building_post_comment_authorId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "building_post_comment_authorId_fkey",
+          "public",
+          "\"public\".\"building_post_comment\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"building_post_comment_authorId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"building_post_comment\"\nADD CONSTRAINT \"building_post_comment_authorId_fkey\"\nFOREIGN KEY (\"authorId\")\nREFERENCES \"public\".\"tenant\" (\"id\")\nON DELETE CASCADE"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"building_post_comment_authorId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "building_post_comment_authorId_fkey",
+          "public",
+          "\"public\".\"building_post_comment\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.building_post_reaction.building_post_reaction_postId_fkey",
+    "label": "Add foreign key \"building_post_reaction_postId_fkey\" on \"building_post_reaction\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "building_post_reaction_postId_fkey",
+        "table": "building_post_reaction"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"building_post_reaction_postId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "building_post_reaction_postId_fkey",
+          "public",
+          "\"public\".\"building_post_reaction\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"building_post_reaction_postId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"building_post_reaction\"\nADD CONSTRAINT \"building_post_reaction_postId_fkey\"\nFOREIGN KEY (\"postId\")\nREFERENCES \"public\".\"building_post\" (\"id\")\nON DELETE CASCADE"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"building_post_reaction_postId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "building_post_reaction_postId_fkey",
+          "public",
+          "\"public\".\"building_post_reaction\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.building_post_reaction.building_post_reaction_tenantId_fkey",
+    "label": "Add foreign key \"building_post_reaction_tenantId_fkey\" on \"building_post_reaction\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "building_post_reaction_tenantId_fkey",
+        "table": "building_post_reaction"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"building_post_reaction_tenantId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "building_post_reaction_tenantId_fkey",
+          "public",
+          "\"public\".\"building_post_reaction\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"building_post_reaction_tenantId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"building_post_reaction\"\nADD CONSTRAINT \"building_post_reaction_tenantId_fkey\"\nFOREIGN KEY (\"tenantId\")\nREFERENCES \"public\".\"tenant\" (\"id\")\nON DELETE CASCADE"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"building_post_reaction_tenantId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "building_post_reaction_tenantId_fkey",
+          "public",
+          "\"public\".\"building_post_reaction\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.chat_group.chat_group_unitId_fkey",
+    "label": "Add foreign key \"chat_group_unitId_fkey\" on \"chat_group\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "chat_group_unitId_fkey",
+        "table": "chat_group"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"chat_group_unitId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "chat_group_unitId_fkey",
+          "public",
+          "\"public\".\"chat_group\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"chat_group_unitId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"chat_group\"\nADD CONSTRAINT \"chat_group_unitId_fkey\"\nFOREIGN KEY (\"unitId\")\nREFERENCES \"public\".\"unit\" (\"id\")\nON DELETE CASCADE"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"chat_group_unitId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "chat_group_unitId_fkey",
+          "public",
+          "\"public\".\"chat_group\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.complaint.complaint_tenantId_fkey",
+    "label": "Add foreign key \"complaint_tenantId_fkey\" on \"complaint\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "complaint_tenantId_fkey",
+        "table": "complaint"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"complaint_tenantId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "complaint_tenantId_fkey",
+          "public",
+          "\"public\".\"complaint\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"complaint_tenantId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"complaint\"\nADD CONSTRAINT \"complaint_tenantId_fkey\"\nFOREIGN KEY (\"tenantId\")\nREFERENCES \"public\".\"tenant\" (\"id\")\nON DELETE CASCADE"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"complaint_tenantId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "complaint_tenantId_fkey",
+          "public",
+          "\"public\".\"complaint\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.complaint.complaint_assignedStaffId_fkey",
+    "label": "Add foreign key \"complaint_assignedStaffId_fkey\" on \"complaint\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "complaint_assignedStaffId_fkey",
+        "table": "complaint"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"complaint_assignedStaffId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "complaint_assignedStaffId_fkey",
+          "public",
+          "\"public\".\"complaint\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"complaint_assignedStaffId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"complaint\"\nADD CONSTRAINT \"complaint_assignedStaffId_fkey\"\nFOREIGN KEY (\"assignedStaffId\")\nREFERENCES \"public\".\"staff\" (\"id\")\nON DELETE SET NULL"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"complaint_assignedStaffId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "complaint_assignedStaffId_fkey",
+          "public",
+          "\"public\".\"complaint\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.complaint_message.complaint_message_complaintId_fkey",
+    "label": "Add foreign key \"complaint_message_complaintId_fkey\" on \"complaint_message\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "complaint_message_complaintId_fkey",
+        "table": "complaint_message"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"complaint_message_complaintId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "complaint_message_complaintId_fkey",
+          "public",
+          "\"public\".\"complaint_message\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"complaint_message_complaintId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"complaint_message\"\nADD CONSTRAINT \"complaint_message_complaintId_fkey\"\nFOREIGN KEY (\"complaintId\")\nREFERENCES \"public\".\"complaint\" (\"id\")\nON DELETE CASCADE"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"complaint_message_complaintId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "complaint_message_complaintId_fkey",
+          "public",
+          "\"public\".\"complaint_message\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.complaint_message.complaint_message_senderTenantId_fkey",
+    "label": "Add foreign key \"complaint_message_senderTenantId_fkey\" on \"complaint_message\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "complaint_message_senderTenantId_fkey",
+        "table": "complaint_message"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"complaint_message_senderTenantId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "complaint_message_senderTenantId_fkey",
+          "public",
+          "\"public\".\"complaint_message\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"complaint_message_senderTenantId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"complaint_message\"\nADD CONSTRAINT \"complaint_message_senderTenantId_fkey\"\nFOREIGN KEY (\"senderTenantId\")\nREFERENCES \"public\".\"tenant\" (\"id\")\nON DELETE CASCADE"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"complaint_message_senderTenantId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "complaint_message_senderTenantId_fkey",
+          "public",
+          "\"public\".\"complaint_message\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.complaint_message.complaint_message_senderStaffId_fkey",
+    "label": "Add foreign key \"complaint_message_senderStaffId_fkey\" on \"complaint_message\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "complaint_message_senderStaffId_fkey",
+        "table": "complaint_message"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"complaint_message_senderStaffId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "complaint_message_senderStaffId_fkey",
+          "public",
+          "\"public\".\"complaint_message\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"complaint_message_senderStaffId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"complaint_message\"\nADD CONSTRAINT \"complaint_message_senderStaffId_fkey\"\nFOREIGN KEY (\"senderStaffId\")\nREFERENCES \"public\".\"staff\" (\"id\")\nON DELETE CASCADE"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"complaint_message_senderStaffId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "complaint_message_senderStaffId_fkey",
+          "public",
+          "\"public\".\"complaint_message\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.direct_notice_message.direct_notice_message_threadId_fkey",
+    "label": "Add foreign key \"direct_notice_message_threadId_fkey\" on \"direct_notice_message\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "direct_notice_message_threadId_fkey",
+        "table": "direct_notice_message"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"direct_notice_message_threadId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "direct_notice_message_threadId_fkey",
+          "public",
+          "\"public\".\"direct_notice_message\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"direct_notice_message_threadId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"direct_notice_message\"\nADD CONSTRAINT \"direct_notice_message_threadId_fkey\"\nFOREIGN KEY (\"threadId\")\nREFERENCES \"public\".\"direct_notice_thread\" (\"id\")\nON DELETE CASCADE"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"direct_notice_message_threadId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "direct_notice_message_threadId_fkey",
+          "public",
+          "\"public\".\"direct_notice_message\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.direct_notice_message.direct_notice_message_senderStaffId_fkey",
+    "label": "Add foreign key \"direct_notice_message_senderStaffId_fkey\" on \"direct_notice_message\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "direct_notice_message_senderStaffId_fkey",
+        "table": "direct_notice_message"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"direct_notice_message_senderStaffId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "direct_notice_message_senderStaffId_fkey",
+          "public",
+          "\"public\".\"direct_notice_message\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"direct_notice_message_senderStaffId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"direct_notice_message\"\nADD CONSTRAINT \"direct_notice_message_senderStaffId_fkey\"\nFOREIGN KEY (\"senderStaffId\")\nREFERENCES \"public\".\"staff\" (\"id\")\nON DELETE CASCADE"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"direct_notice_message_senderStaffId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "direct_notice_message_senderStaffId_fkey",
+          "public",
+          "\"public\".\"direct_notice_message\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.direct_notice_message.direct_notice_message_senderTenantId_fkey",
+    "label": "Add foreign key \"direct_notice_message_senderTenantId_fkey\" on \"direct_notice_message\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "direct_notice_message_senderTenantId_fkey",
+        "table": "direct_notice_message"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"direct_notice_message_senderTenantId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "direct_notice_message_senderTenantId_fkey",
+          "public",
+          "\"public\".\"direct_notice_message\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"direct_notice_message_senderTenantId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"direct_notice_message\"\nADD CONSTRAINT \"direct_notice_message_senderTenantId_fkey\"\nFOREIGN KEY (\"senderTenantId\")\nREFERENCES \"public\".\"tenant\" (\"id\")\nON DELETE CASCADE"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"direct_notice_message_senderTenantId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "direct_notice_message_senderTenantId_fkey",
+          "public",
+          "\"public\".\"direct_notice_message\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.direct_notice_thread.direct_notice_thread_tenantId_fkey",
+    "label": "Add foreign key \"direct_notice_thread_tenantId_fkey\" on \"direct_notice_thread\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "direct_notice_thread_tenantId_fkey",
+        "table": "direct_notice_thread"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"direct_notice_thread_tenantId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "direct_notice_thread_tenantId_fkey",
+          "public",
+          "\"public\".\"direct_notice_thread\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"direct_notice_thread_tenantId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"direct_notice_thread\"\nADD CONSTRAINT \"direct_notice_thread_tenantId_fkey\"\nFOREIGN KEY (\"tenantId\")\nREFERENCES \"public\".\"tenant\" (\"id\")\nON DELETE CASCADE"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"direct_notice_thread_tenantId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "direct_notice_thread_tenantId_fkey",
+          "public",
+          "\"public\".\"direct_notice_thread\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.push_subscription.push_subscription_tenantId_fkey",
+    "label": "Add foreign key \"push_subscription_tenantId_fkey\" on \"push_subscription\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "push_subscription_tenantId_fkey",
+        "table": "push_subscription"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"push_subscription_tenantId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "push_subscription_tenantId_fkey",
+          "public",
+          "\"public\".\"push_subscription\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"push_subscription_tenantId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"push_subscription\"\nADD CONSTRAINT \"push_subscription_tenantId_fkey\"\nFOREIGN KEY (\"tenantId\")\nREFERENCES \"public\".\"tenant\" (\"id\")\nON DELETE CASCADE"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"push_subscription_tenantId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "push_subscription_tenantId_fkey",
+          "public",
+          "\"public\".\"push_subscription\""
+        ]
+      }
+    ]
+  }
+]

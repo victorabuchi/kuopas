@@ -7,6 +7,7 @@ import { db } from '../../../prisma/db';
 import TopBar from '../TopBar';
 import { getLocale } from '../../../lib/i18n';
 import { getDictionary } from '../../../lib/dictionary';
+import { displayNameFor } from '../../../lib/names';
 
 export const metadata: Metadata = {
   title: 'Groups - Kuopas',
@@ -64,7 +65,7 @@ export default async function GroupsPage() {
                 <div className={styles.memberChips}>
                   {group.members.map((member) => (
                     <span key={member.id} className={styles.memberChip}>
-                      {member.tenant!.name}
+                      {displayNameFor(member.tenant!, group.scope)}
                     </span>
                   ))}
                 </div>

@@ -5,6 +5,41 @@ enum group_scope {
   building  = "building"
   stairwell = "stairwell"
   floor     = "floor"
+  unit      = "unit"
+}
+
+enum building_post_type {
+  @@type("pg/text@1")
+  announcement = "announcement"
+  noticeboard  = "noticeboard"
+}
+
+enum noticeboard_category {
+  @@type("pg/text@1")
+  furniture  = "furniture"
+  lost_found = "lost_found"
+  borrow     = "borrow"
+  giveaway   = "giveaway"
+  other      = "other"
+}
+
+enum complaint_category {
+  @@type("pg/text@1")
+  plumbing   = "plumbing"
+  electrical = "electrical"
+  heating    = "heating"
+  appliance  = "appliance"
+  pest       = "pest"
+  noise      = "noise"
+  structural = "structural"
+  other      = "other"
+}
+
+enum complaint_status {
+  @@type("pg/text@1")
+  new         = "new"
+  in_progress = "in_progress"
+  resolved    = "resolved"
 }
 
 enum news_category {
@@ -36,6 +71,7 @@ model Building {
   laundryMachines LaundryMachine[]
   saunaSlots      SaunaSlot[]
   parkingSpots    ParkingSpot[]
+  posts           BuildingPost[]
 
   @@map("building")
 }
@@ -116,12 +152,13 @@ model Stairwell {
 }
 
 model Unit {
-  id          Uuid      @id @default(uuid())
-  stairwell   Stairwell @relation(fields: [stairwellId], references: [id], onDelete: Cascade)
+  id          Uuid       @id @default(uuid())
+  stairwell   Stairwell  @relation(fields: [stairwellId], references: [id], onDelete: Cascade)
   stairwellId Uuid
   code        String
   floor       Int
   tenants     Tenant[]
+  chatGroup   ChatGroup?
 
   @@unique([stairwellId, code])
   @@map("unit")
@@ -139,23 +176,46 @@ model FloorGroup {
 }
 
 model Tenant {
-  id              Uuid              @id @default(uuid())
-  name            String
-  email           String            @unique
-  passwordHash    String?
-  suomiFiPersonId String?           @unique
-  unit            Unit              @relation(fields: [unitId], references: [id], onDelete: Cascade)
-  unitId          Uuid
-  memberships     ChatGroupMember[]
-  messages        Message[]
-  laundryBookings LaundryBooking[]
-  saunaBookings   SaunaBooking[]
-  parkingSpot     ParkingSpot?
-  directConvosA   DirectConversation[] @relation("direct_conversations_as_a")
-  directConvosB   DirectConversation[] @relation("direct_conversations_as_b")
-  directMessages  DirectMessage[]      @relation("direct_messages_sent")
+  id                Uuid              @id @default(uuid())
+  name              String
+  pseudonym         String?           @unique
+  email             String            @unique
+  passwordHash      String?
+  suomiFiPersonId   String?           @unique
+  unit              Unit              @relation(fields: [unitId], references: [id], onDelete: Cascade)
+  unitId            Uuid
+  memberships       ChatGroupMember[]
+  messages          Message[]
+  laundryBookings   LaundryBooking[]
+  saunaBookings     SaunaBooking[]
+  parkingSpot       ParkingSpot?
+  directConvosA     DirectConversation[] @relation("direct_conversations_as_a")
+  directConvosB     DirectConversation[] @relation("direct_conversations_as_b")
+  directMessages    DirectMessage[]      @relation("direct_messages_sent")
+  buildingPosts     BuildingPost[]
+  postComments      BuildingPostComment[]
+  postReactions     BuildingPostReaction[]
+  complaints        Complaint[]
+  complaintMessages ComplaintMessage[]
+  noticeThread      DirectNoticeThread?
+  noticeMessages    DirectNoticeMessage[]
+  pushSubscriptions PushSubscription[]
 
   @@map("tenant")
+}
+
+model Staff {
+  id                 Uuid                @id @default(uuid())
+  name               String
+  email              String              @unique
+  passwordHash       String
+  createdAt          TimestamptzString   @default(now())
+  posts              BuildingPost[]
+  assignedComplaints Complaint[]
+  complaintMessages  ComplaintMessage[]
+  noticeMessages     DirectNoticeMessage[]
+
+  @@map("staff")
 }
 
 model ChatGroup {
@@ -168,6 +228,8 @@ model ChatGroup {
   stairwellId  Uuid?             @unique
   floorGroup   FloorGroup?       @relation(fields: [floorGroupId], references: [id], onDelete: Cascade)
   floorGroupId Uuid?             @unique
+  unit         Unit?             @relation(fields: [unitId], references: [id], onDelete: Cascade)
+  unitId       Uuid?             @unique
   members      ChatGroupMember[]
   messages     Message[]
 
@@ -222,4 +284,122 @@ model DirectMessage {
 
   @@index([conversationId])
   @@map("direct_message")
+}
+
+model BuildingPost {
+  id                   Uuid                   @id @default(uuid())
+  building             Building               @relation(fields: [buildingId], references: [id], onDelete: Cascade)
+  buildingId           Uuid
+  type                 building_post_type
+  noticeboardCategory  noticeboard_category?
+  authorTenant         Tenant?                @relation(fields: [authorTenantId], references: [id], onDelete: Cascade)
+  authorTenantId       Uuid?
+  authorStaff          Staff?                 @relation(fields: [authorStaffId], references: [id], onDelete: Cascade)
+  authorStaffId        Uuid?
+  title                String
+  content              String
+  photoUrl             String?
+  createdAt            TimestamptzString      @default(now())
+  comments             BuildingPostComment[]
+  reactions            BuildingPostReaction[]
+
+  @@index([buildingId, createdAt])
+  @@map("building_post")
+}
+
+model BuildingPostComment {
+  id        Uuid              @id @default(uuid())
+  post      BuildingPost      @relation(fields: [postId], references: [id], onDelete: Cascade)
+  postId    Uuid
+  author    Tenant            @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  authorId  Uuid
+  content   String
+  createdAt TimestamptzString @default(now())
+
+  @@index([postId])
+  @@map("building_post_comment")
+}
+
+model BuildingPostReaction {
+  id        Uuid              @id @default(uuid())
+  post      BuildingPost      @relation(fields: [postId], references: [id], onDelete: Cascade)
+  postId    Uuid
+  tenant    Tenant            @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  tenantId  Uuid
+  emoji     String            @default("👍")
+  createdAt TimestamptzString @default(now())
+
+  @@unique([postId, tenantId])
+  @@map("building_post_reaction")
+}
+
+model Complaint {
+  id             Uuid               @id @default(uuid())
+  tenant         Tenant             @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  tenantId       Uuid
+  category       complaint_category
+  description    String
+  photoUrl       String?
+  status         complaint_status   @default(new)
+  assignedStaff  Staff?             @relation(fields: [assignedStaffId], references: [id], onDelete: SetNull)
+  assignedStaffId Uuid?
+  createdAt      TimestamptzString  @default(now())
+  updatedAt      TimestamptzString  @default(now())
+  messages       ComplaintMessage[]
+
+  @@index([tenantId])
+  @@index([status])
+  @@map("complaint")
+}
+
+model ComplaintMessage {
+  id              Uuid              @id @default(uuid())
+  complaint       Complaint         @relation(fields: [complaintId], references: [id], onDelete: Cascade)
+  complaintId     Uuid
+  senderTenant    Tenant?           @relation(fields: [senderTenantId], references: [id], onDelete: Cascade)
+  senderTenantId  Uuid?
+  senderStaff     Staff?            @relation(fields: [senderStaffId], references: [id], onDelete: Cascade)
+  senderStaffId   Uuid?
+  content         String
+  sentAt          TimestamptzString @default(now())
+
+  @@index([complaintId])
+  @@map("complaint_message")
+}
+
+model DirectNoticeThread {
+  id       Uuid                  @id @default(uuid())
+  tenant   Tenant                @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  tenantId Uuid                  @unique
+  messages DirectNoticeMessage[]
+
+  @@map("direct_notice_thread")
+}
+
+model DirectNoticeMessage {
+  id             Uuid                @id @default(uuid())
+  thread         DirectNoticeThread  @relation(fields: [threadId], references: [id], onDelete: Cascade)
+  threadId       Uuid
+  senderStaff    Staff?              @relation(fields: [senderStaffId], references: [id], onDelete: Cascade)
+  senderStaffId  Uuid?
+  senderTenant   Tenant?             @relation(fields: [senderTenantId], references: [id], onDelete: Cascade)
+  senderTenantId Uuid?
+  content        String
+  sentAt         TimestamptzString   @default(now())
+
+  @@index([threadId])
+  @@map("direct_notice_message")
+}
+
+model PushSubscription {
+  id        Uuid              @id @default(uuid())
+  tenant    Tenant            @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  tenantId  Uuid
+  endpoint  String            @unique
+  p256dh    String
+  auth      String
+  createdAt TimestamptzString @default(now())
+
+  @@index([tenantId])
+  @@map("push_subscription")
 }

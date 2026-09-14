@@ -1,0 +1,236 @@
+.page {
+  --bg: #ffffff;
+  --fg: #000000;
+  --fg-muted: #767676;
+  --green-dark: #046a38;
+  --green-hover: #598000;
+  --border: #e7e7e7;
+
+  min-height: 100%;
+  background: var(--bg);
+  color: var(--fg);
+}
+.page * {
+  box-sizing: border-box;
+}
+
+.tabs {
+  display: flex;
+  gap: 8px;
+  padding: 12px 20px;
+  border-bottom: 1px solid var(--border);
+}
+.tab {
+  display: inline-flex;
+  align-items: center;
+  height: 32px;
+  padding: 0 14px;
+  border-radius: 999px;
+  background: #f0f2f0;
+  color: var(--fg);
+  font-size: 13.5px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.tabActive {
+  background: var(--green-dark);
+  color: #fff;
+}
+
+.composer {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 16px 20px;
+  border-bottom: 8px solid #f6f7f6;
+}
+.composerRow {
+  display: flex;
+  gap: 10px;
+}
+.composerRow > * {
+  flex: 1;
+}
+.composer input,
+.composer select,
+.composer textarea {
+  width: 100%;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  padding: 10px 12px;
+  font-size: 14px;
+  font-family: inherit;
+  color: var(--fg);
+  background: var(--bg);
+}
+.composer textarea {
+  min-height: 70px;
+  resize: vertical;
+}
+.composer input[type="file"] {
+  border: none;
+  padding: 0;
+  font-size: 13px;
+}
+.submit {
+  align-self: flex-start;
+  height: 38px;
+  padding: 0 18px;
+  border-radius: 10px;
+  border: none;
+  background: var(--green-dark);
+  color: #fff;
+  font-weight: 700;
+  font-size: 14px;
+  cursor: pointer;
+}
+.submit:hover {
+  background: var(--green-hover);
+}
+
+.feed {
+  display: flex;
+  flex-direction: column;
+  padding-bottom: 40px;
+}
+.post {
+  border-bottom: 1px solid var(--border);
+  padding: 16px 20px;
+}
+.postHeader {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.postAvatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--green-dark);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 13px;
+  flex-shrink: 0;
+}
+.postAvatarNoticeboard {
+  background: #f0f2f0;
+  color: var(--green-dark);
+}
+.postHeaderText {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+.postSender {
+  font-weight: 700;
+  font-size: 14px;
+}
+.postMeta {
+  font-size: 12.5px;
+  color: var(--fg-muted);
+}
+.postTitle {
+  margin-top: 10px;
+  font-size: 15.5px;
+  font-weight: 800;
+}
+.postContent {
+  margin-top: 6px;
+  font-size: 15px;
+  line-height: 1.5;
+  white-space: pre-wrap;
+}
+.postPhoto {
+  margin-top: 10px;
+  border-radius: 10px;
+  max-width: 100%;
+  display: block;
+}
+.categoryBadge {
+  display: inline-flex;
+  align-items: center;
+  margin-top: 8px;
+  height: 22px;
+  padding: 0 10px;
+  border-radius: 999px;
+  background: #f0f2f0;
+  color: var(--fg-muted);
+  font-size: 11.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.postActions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-top: 12px;
+}
+.postAction {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--fg-muted);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+}
+.postActionActive {
+  color: var(--green-dark);
+}
+.reactionsOnlyNote {
+  font-size: 12.5px;
+  color: var(--fg-muted);
+  font-style: italic;
+}
+
+.commentsPreview {
+  margin-top: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.comment {
+  font-size: 13.5px;
+  line-height: 1.4;
+}
+.commentAuthor {
+  font-weight: 700;
+  margin-right: 6px;
+}
+.commentForm {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+}
+.commentForm input {
+  flex: 1;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  padding: 8px 14px;
+  font-size: 13.5px;
+  font-family: inherit;
+}
+.commentSubmit {
+  border: none;
+  background: var(--green-dark);
+  color: #fff;
+  border-radius: 999px;
+  padding: 0 16px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.empty {
+  padding: 60px 20px;
+  text-align: center;
+  color: var(--fg-muted);
+}

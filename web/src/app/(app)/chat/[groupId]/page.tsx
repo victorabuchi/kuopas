@@ -6,6 +6,7 @@ import { sendMessageAction } from '../../../actions';
 import { getSession } from '../../../../lib/session';
 import { getLocale } from '../../../../lib/i18n';
 import { getDictionary } from '../../../../lib/dictionary';
+import { displayNameFor } from '../../../../lib/names';
 
 export default async function ChatGroupPage({ params }: { params: Promise<{ groupId: string }> }) {
   const { groupId } = await params;
@@ -53,7 +54,11 @@ export default async function ChatGroupPage({ params }: { params: Promise<{ grou
           const isOwn = message.sender!.id === session.tenantId;
           return (
             <div key={message.id} className={`${styles.row} ${isOwn ? styles.rowOut : styles.rowIn}`}>
-              {!isOwn && <span className={styles.senderName}>{message.sender!.name}</span>}
+              {!isOwn && (
+                <span className={styles.senderName}>
+                  {displayNameFor(message.sender!, group.scope)}
+                </span>
+              )}
               <div className={`${styles.bubble} ${isOwn ? styles.bubbleOut : styles.bubbleIn}`}>
                 <span>{message.content}</span>
                 <span className={styles.time}>

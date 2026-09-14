@@ -1,7 +1,24 @@
 import { db } from '../prisma/db';
 import { floorFromUnitCode } from './units';
+import { generatePseudonym } from './names';
 
 type DbOrTx = Pick<typeof db, 'orm'>;
+
+async function getOrCreateUnitChatGroup(
+  tx: DbOrTx,
+  unitId: string,
+  buildingName: string,
+  stairwellLabel: string,
+  unitCode: string,
+) {
+  const existing = await tx.orm.public.ChatGroup.where({ unitId }).first();
+  if (existing) return existing;
+  return tx.orm.public.ChatGroup.create({
+    name: `${buildingName} ${stairwellLabel}${unitCode}`,
+    scope: 'unit',
+    unitId,
+  });
+}
 
 async function getOrCreateBuildingChatGroup(tx: DbOrTx, buildingId: string, buildingName: string) {
   const existing = await tx.orm.public.ChatGroup.where({ buildingId }).first();
@@ -86,16 +103,28 @@ export async function assignTenantToChatGroups(tenantId: string, tx: DbOrTx = db
     stairwell.label,
     unit.floor,
   );
+  // The apartment chat: automatic on day one, already populated with
+  // whichever flatmates have already registered under this unit.
+  const unitChatGroup = await getOrCreateUnitChatGroup(
+    tx,
+    unit.id,
+    building.name,
+    stairwell.label,
+    unit.code,
+  );
 
   await ensureMembership(tx, tenantId, buildingGroup.id);
   await ensureMembership(tx, tenantId, stairwellGroup.id);
   await ensureMembership(tx, tenantId, floorChatGroup.id);
+  await ensureMembership(tx, tenantId, unitChatGroup.id);
 
-  return { buildingGroup, stairwellGroup, floorChatGroup };
+  return { buildingGroup, stairwellGroup, floorChatGroup, unitChatGroup };
 }
 
 // Creates a tenant under the given unit and immediately joins them to their
-// building, stairwell, and floor chat groups, all in one transaction.
+// building, stairwell, floor, and apartment chat groups, all in one
+// transaction. The apartment chat already has their flatmates in it, and
+// they land in it too, no setup required.
 export async function createTenantWithGroups(input: {
   name: string;
   email: string;
@@ -103,7 +132,8 @@ export async function createTenantWithGroups(input: {
   passwordHash?: string;
 }) {
   return db.transaction(async (tx) => {
-    const tenant = await tx.orm.public.Tenant.create(input);
+    const pseudonym = await generatePseudonym(tx);
+    const tenant = await tx.orm.public.Tenant.create({ ...input, pseudonym });
     const groups = await assignTenantToChatGroups(tenant.id, tx);
     return { tenant, ...groups };
   });

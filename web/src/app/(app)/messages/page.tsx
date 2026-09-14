@@ -77,6 +77,18 @@ export default async function MessagesPage() {
     <div className={styles.page}>
       <TopBar title={dict.messages.title} />
 
+      <div className={styles.chatList}>
+        <Link href="/notices" className={styles.chatRow}>
+          <div className={styles.chatAvatar}>K</div>
+          <div className={styles.chatRowText}>
+            <div className={styles.chatRowTop}>
+              <span className={styles.chatRowName}>{dict.notices.fromKuopas}</span>
+            </div>
+            <span className={styles.chatRowPreview}>{dict.notices.title}</span>
+          </div>
+        </Link>
+      </div>
+
       <div className={styles.sectionHeading}>{dict.messages.conversations}</div>
       {conversationRows.length === 0 ? (
         <div className={styles.empty}>{dict.messages.noneYet}</div>

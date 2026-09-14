@@ -8,6 +8,18 @@
       "model": "Building",
       "namespace": "public"
     },
+    "building_post": {
+      "model": "BuildingPost",
+      "namespace": "public"
+    },
+    "building_post_comment": {
+      "model": "BuildingPostComment",
+      "namespace": "public"
+    },
+    "building_post_reaction": {
+      "model": "BuildingPostReaction",
+      "namespace": "public"
+    },
     "chat_group": {
       "model": "ChatGroup",
       "namespace": "public"
@@ -16,12 +28,28 @@
       "model": "ChatGroupMember",
       "namespace": "public"
     },
+    "complaint": {
+      "model": "Complaint",
+      "namespace": "public"
+    },
+    "complaint_message": {
+      "model": "ComplaintMessage",
+      "namespace": "public"
+    },
     "direct_conversation": {
       "model": "DirectConversation",
       "namespace": "public"
     },
     "direct_message": {
       "model": "DirectMessage",
+      "namespace": "public"
+    },
+    "direct_notice_message": {
+      "model": "DirectNoticeMessage",
+      "namespace": "public"
+    },
+    "direct_notice_thread": {
+      "model": "DirectNoticeThread",
       "namespace": "public"
     },
     "floor_group": {
@@ -48,12 +76,20 @@
       "model": "ParkingSpot",
       "namespace": "public"
     },
+    "push_subscription": {
+      "model": "PushSubscription",
+      "namespace": "public"
+    },
     "sauna_booking": {
       "model": "SaunaBooking",
       "namespace": "public"
     },
     "sauna_slot": {
       "model": "SaunaSlot",
+      "namespace": "public"
+    },
+    "staff": {
+      "model": "Staff",
       "namespace": "public"
     },
     "stairwell": {
@@ -73,6 +109,73 @@
     "namespaces": {
       "public": {
         "enum": {
+          "building_post_type": {
+            "codecId": "pg/text@1",
+            "members": [
+              {
+                "name": "announcement",
+                "value": "announcement"
+              },
+              {
+                "name": "noticeboard",
+                "value": "noticeboard"
+              }
+            ]
+          },
+          "complaint_category": {
+            "codecId": "pg/text@1",
+            "members": [
+              {
+                "name": "plumbing",
+                "value": "plumbing"
+              },
+              {
+                "name": "electrical",
+                "value": "electrical"
+              },
+              {
+                "name": "heating",
+                "value": "heating"
+              },
+              {
+                "name": "appliance",
+                "value": "appliance"
+              },
+              {
+                "name": "pest",
+                "value": "pest"
+              },
+              {
+                "name": "noise",
+                "value": "noise"
+              },
+              {
+                "name": "structural",
+                "value": "structural"
+              },
+              {
+                "name": "other",
+                "value": "other"
+              }
+            ]
+          },
+          "complaint_status": {
+            "codecId": "pg/text@1",
+            "members": [
+              {
+                "name": "new",
+                "value": "new"
+              },
+              {
+                "name": "in_progress",
+                "value": "in_progress"
+              },
+              {
+                "name": "resolved",
+                "value": "resolved"
+              }
+            ]
+          },
           "group_scope": {
             "codecId": "pg/text@1",
             "members": [
@@ -87,6 +190,10 @@
               {
                 "name": "floor",
                 "value": "floor"
+              },
+              {
+                "name": "unit",
+                "value": "unit"
               }
             ]
           },
@@ -112,6 +219,31 @@
               {
                 "name": "events",
                 "value": "events"
+              }
+            ]
+          },
+          "noticeboard_category": {
+            "codecId": "pg/text@1",
+            "members": [
+              {
+                "name": "furniture",
+                "value": "furniture"
+              },
+              {
+                "name": "lost_found",
+                "value": "lost_found"
+              },
+              {
+                "name": "borrow",
+                "value": "borrow"
+              },
+              {
+                "name": "giveaway",
+                "value": "giveaway"
+              },
+              {
+                "name": "other",
+                "value": "other"
               }
             ]
           }
@@ -188,6 +320,21 @@
                   "namespace": "public"
                 }
               },
+              "posts": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "buildingId"
+                  ]
+                },
+                "to": {
+                  "model": "BuildingPost",
+                  "namespace": "public"
+                }
+              },
               "saunaSlots": {
                 "cardinality": "1:N",
                 "on": {
@@ -235,6 +382,396 @@
               "table": "building"
             }
           },
+          "BuildingPost": {
+            "fields": {
+              "authorStaffId": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/uuid@1",
+                  "kind": "scalar"
+                }
+              },
+              "authorTenantId": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/uuid@1",
+                  "kind": "scalar"
+                }
+              },
+              "buildingId": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/uuid@1",
+                  "kind": "scalar"
+                }
+              },
+              "content": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "createdAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              },
+              "id": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/uuid@1",
+                  "kind": "scalar"
+                }
+              },
+              "noticeboardCategory": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                },
+                "valueSet": {
+                  "entityKind": "enum",
+                  "entityName": "noticeboard_category",
+                  "namespaceId": "public",
+                  "plane": "domain"
+                }
+              },
+              "photoUrl": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "title": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "type": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                },
+                "valueSet": {
+                  "entityKind": "enum",
+                  "entityName": "building_post_type",
+                  "namespaceId": "public",
+                  "plane": "domain"
+                }
+              }
+            },
+            "relations": {
+              "authorStaff": {
+                "cardinality": "N:1",
+                "nullable": true,
+                "on": {
+                  "localFields": [
+                    "authorStaffId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "Staff",
+                  "namespace": "public"
+                }
+              },
+              "authorTenant": {
+                "cardinality": "N:1",
+                "nullable": true,
+                "on": {
+                  "localFields": [
+                    "authorTenantId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "Tenant",
+                  "namespace": "public"
+                }
+              },
+              "building": {
+                "cardinality": "N:1",
+                "nullable": false,
+                "on": {
+                  "localFields": [
+                    "buildingId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "Building",
+                  "namespace": "public"
+                }
+              },
+              "comments": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "postId"
+                  ]
+                },
+                "to": {
+                  "model": "BuildingPostComment",
+                  "namespace": "public"
+                }
+              },
+              "reactions": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "postId"
+                  ]
+                },
+                "to": {
+                  "model": "BuildingPostReaction",
+                  "namespace": "public"
+                }
+              }
+            },
+            "storage": {
+              "fields": {
+                "authorStaffId": {
+                  "column": "authorStaffId"
+                },
+                "authorTenantId": {
+                  "column": "authorTenantId"
+                },
+                "buildingId": {
+                  "column": "buildingId"
+                },
+                "content": {
+                  "column": "content"
+                },
+                "createdAt": {
+                  "column": "createdAt"
+                },
+                "id": {
+                  "column": "id"
+                },
+                "noticeboardCategory": {
+                  "column": "noticeboardCategory"
+                },
+                "photoUrl": {
+                  "column": "photoUrl"
+                },
+                "title": {
+                  "column": "title"
+                },
+                "type": {
+                  "column": "type"
+                }
+              },
+              "namespaceId": "public",
+              "table": "building_post"
+            }
+          },
+          "BuildingPostComment": {
+            "fields": {
+              "authorId": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/uuid@1",
+                  "kind": "scalar"
+                }
+              },
+              "content": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "createdAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              },
+              "id": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/uuid@1",
+                  "kind": "scalar"
+                }
+              },
+              "postId": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/uuid@1",
+                  "kind": "scalar"
+                }
+              }
+            },
+            "relations": {
+              "author": {
+                "cardinality": "N:1",
+                "nullable": false,
+                "on": {
+                  "localFields": [
+                    "authorId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "Tenant",
+                  "namespace": "public"
+                }
+              },
+              "post": {
+                "cardinality": "N:1",
+                "nullable": false,
+                "on": {
+                  "localFields": [
+                    "postId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "BuildingPost",
+                  "namespace": "public"
+                }
+              }
+            },
+            "storage": {
+              "fields": {
+                "authorId": {
+                  "column": "authorId"
+                },
+                "content": {
+                  "column": "content"
+                },
+                "createdAt": {
+                  "column": "createdAt"
+                },
+                "id": {
+                  "column": "id"
+                },
+                "postId": {
+                  "column": "postId"
+                }
+              },
+              "namespaceId": "public",
+              "table": "building_post_comment"
+            }
+          },
+          "BuildingPostReaction": {
+            "fields": {
+              "createdAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              },
+              "emoji": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "id": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/uuid@1",
+                  "kind": "scalar"
+                }
+              },
+              "postId": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/uuid@1",
+                  "kind": "scalar"
+                }
+              },
+              "tenantId": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/uuid@1",
+                  "kind": "scalar"
+                }
+              }
+            },
+            "relations": {
+              "post": {
+                "cardinality": "N:1",
+                "nullable": false,
+                "on": {
+                  "localFields": [
+                    "postId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "BuildingPost",
+                  "namespace": "public"
+                }
+              },
+              "tenant": {
+                "cardinality": "N:1",
+                "nullable": false,
+                "on": {
+                  "localFields": [
+                    "tenantId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "Tenant",
+                  "namespace": "public"
+                }
+              }
+            },
+            "storage": {
+              "fields": {
+                "createdAt": {
+                  "column": "createdAt"
+                },
+                "emoji": {
+                  "column": "emoji"
+                },
+                "id": {
+                  "column": "id"
+                },
+                "postId": {
+                  "column": "postId"
+                },
+                "tenantId": {
+                  "column": "tenantId"
+                }
+              },
+              "namespaceId": "public",
+              "table": "building_post_reaction"
+            }
+          },
           "ChatGroup": {
             "fields": {
               "buildingId": {
@@ -279,6 +816,13 @@
                 }
               },
               "stairwellId": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/uuid@1",
+                  "kind": "scalar"
+                }
+              },
+              "unitId": {
                 "nullable": true,
                 "type": {
                   "codecId": "pg/uuid@1",
@@ -364,6 +908,22 @@
                   "model": "Stairwell",
                   "namespace": "public"
                 }
+              },
+              "unit": {
+                "cardinality": "N:1",
+                "nullable": true,
+                "on": {
+                  "localFields": [
+                    "unitId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "Unit",
+                  "namespace": "public"
+                }
               }
             },
             "storage": {
@@ -385,6 +945,9 @@
                 },
                 "stairwellId": {
                   "column": "stairwellId"
+                },
+                "unitId": {
+                  "column": "unitId"
                 }
               },
               "namespaceId": "public",
@@ -473,6 +1036,287 @@
               },
               "namespaceId": "public",
               "table": "chat_group_member"
+            }
+          },
+          "Complaint": {
+            "fields": {
+              "assignedStaffId": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/uuid@1",
+                  "kind": "scalar"
+                }
+              },
+              "category": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                },
+                "valueSet": {
+                  "entityKind": "enum",
+                  "entityName": "complaint_category",
+                  "namespaceId": "public",
+                  "plane": "domain"
+                }
+              },
+              "createdAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              },
+              "description": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "id": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/uuid@1",
+                  "kind": "scalar"
+                }
+              },
+              "photoUrl": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "status": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                },
+                "valueSet": {
+                  "entityKind": "enum",
+                  "entityName": "complaint_status",
+                  "namespaceId": "public",
+                  "plane": "domain"
+                }
+              },
+              "tenantId": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/uuid@1",
+                  "kind": "scalar"
+                }
+              },
+              "updatedAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              }
+            },
+            "relations": {
+              "assignedStaff": {
+                "cardinality": "N:1",
+                "nullable": true,
+                "on": {
+                  "localFields": [
+                    "assignedStaffId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "Staff",
+                  "namespace": "public"
+                }
+              },
+              "messages": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "complaintId"
+                  ]
+                },
+                "to": {
+                  "model": "ComplaintMessage",
+                  "namespace": "public"
+                }
+              },
+              "tenant": {
+                "cardinality": "N:1",
+                "nullable": false,
+                "on": {
+                  "localFields": [
+                    "tenantId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "Tenant",
+                  "namespace": "public"
+                }
+              }
+            },
+            "storage": {
+              "fields": {
+                "assignedStaffId": {
+                  "column": "assignedStaffId"
+                },
+                "category": {
+                  "column": "category"
+                },
+                "createdAt": {
+                  "column": "createdAt"
+                },
+                "description": {
+                  "column": "description"
+                },
+                "id": {
+                  "column": "id"
+                },
+                "photoUrl": {
+                  "column": "photoUrl"
+                },
+                "status": {
+                  "column": "status"
+                },
+                "tenantId": {
+                  "column": "tenantId"
+                },
+                "updatedAt": {
+                  "column": "updatedAt"
+                }
+              },
+              "namespaceId": "public",
+              "table": "complaint"
+            }
+          },
+          "ComplaintMessage": {
+            "fields": {
+              "complaintId": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/uuid@1",
+                  "kind": "scalar"
+                }
+              },
+              "content": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "id": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/uuid@1",
+                  "kind": "scalar"
+                }
+              },
+              "senderStaffId": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/uuid@1",
+                  "kind": "scalar"
+                }
+              },
+              "senderTenantId": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/uuid@1",
+                  "kind": "scalar"
+                }
+              },
+              "sentAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              }
+            },
+            "relations": {
+              "complaint": {
+                "cardinality": "N:1",
+                "nullable": false,
+                "on": {
+                  "localFields": [
+                    "complaintId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "Complaint",
+                  "namespace": "public"
+                }
+              },
+              "senderStaff": {
+                "cardinality": "N:1",
+                "nullable": true,
+                "on": {
+                  "localFields": [
+                    "senderStaffId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "Staff",
+                  "namespace": "public"
+                }
+              },
+              "senderTenant": {
+                "cardinality": "N:1",
+                "nullable": true,
+                "on": {
+                  "localFields": [
+                    "senderTenantId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "Tenant",
+                  "namespace": "public"
+                }
+              }
+            },
+            "storage": {
+              "fields": {
+                "complaintId": {
+                  "column": "complaintId"
+                },
+                "content": {
+                  "column": "content"
+                },
+                "id": {
+                  "column": "id"
+                },
+                "senderStaffId": {
+                  "column": "senderStaffId"
+                },
+                "senderTenantId": {
+                  "column": "senderTenantId"
+                },
+                "sentAt": {
+                  "column": "sentAt"
+                }
+              },
+              "namespaceId": "public",
+              "table": "complaint_message"
             }
           },
           "DirectConversation": {
@@ -656,6 +1500,189 @@
               },
               "namespaceId": "public",
               "table": "direct_message"
+            }
+          },
+          "DirectNoticeMessage": {
+            "fields": {
+              "content": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "id": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/uuid@1",
+                  "kind": "scalar"
+                }
+              },
+              "senderStaffId": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/uuid@1",
+                  "kind": "scalar"
+                }
+              },
+              "senderTenantId": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/uuid@1",
+                  "kind": "scalar"
+                }
+              },
+              "sentAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              },
+              "threadId": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/uuid@1",
+                  "kind": "scalar"
+                }
+              }
+            },
+            "relations": {
+              "senderStaff": {
+                "cardinality": "N:1",
+                "nullable": true,
+                "on": {
+                  "localFields": [
+                    "senderStaffId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "Staff",
+                  "namespace": "public"
+                }
+              },
+              "senderTenant": {
+                "cardinality": "N:1",
+                "nullable": true,
+                "on": {
+                  "localFields": [
+                    "senderTenantId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "Tenant",
+                  "namespace": "public"
+                }
+              },
+              "thread": {
+                "cardinality": "N:1",
+                "nullable": false,
+                "on": {
+                  "localFields": [
+                    "threadId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "DirectNoticeThread",
+                  "namespace": "public"
+                }
+              }
+            },
+            "storage": {
+              "fields": {
+                "content": {
+                  "column": "content"
+                },
+                "id": {
+                  "column": "id"
+                },
+                "senderStaffId": {
+                  "column": "senderStaffId"
+                },
+                "senderTenantId": {
+                  "column": "senderTenantId"
+                },
+                "sentAt": {
+                  "column": "sentAt"
+                },
+                "threadId": {
+                  "column": "threadId"
+                }
+              },
+              "namespaceId": "public",
+              "table": "direct_notice_message"
+            }
+          },
+          "DirectNoticeThread": {
+            "fields": {
+              "id": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/uuid@1",
+                  "kind": "scalar"
+                }
+              },
+              "tenantId": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/uuid@1",
+                  "kind": "scalar"
+                }
+              }
+            },
+            "relations": {
+              "messages": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "threadId"
+                  ]
+                },
+                "to": {
+                  "model": "DirectNoticeMessage",
+                  "namespace": "public"
+                }
+              },
+              "tenant": {
+                "cardinality": "N:1",
+                "nullable": false,
+                "on": {
+                  "localFields": [
+                    "tenantId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "Tenant",
+                  "namespace": "public"
+                }
+              }
+            },
+            "storage": {
+              "fields": {
+                "id": {
+                  "column": "id"
+                },
+                "tenantId": {
+                  "column": "tenantId"
+                }
+              },
+              "namespaceId": "public",
+              "table": "direct_notice_thread"
             }
           },
           "FloorGroup": {
@@ -1154,6 +2181,94 @@
               "table": "parking_spot"
             }
           },
+          "PushSubscription": {
+            "fields": {
+              "auth": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "createdAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              },
+              "endpoint": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "id": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/uuid@1",
+                  "kind": "scalar"
+                }
+              },
+              "p256dh": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "tenantId": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/uuid@1",
+                  "kind": "scalar"
+                }
+              }
+            },
+            "relations": {
+              "tenant": {
+                "cardinality": "N:1",
+                "nullable": false,
+                "on": {
+                  "localFields": [
+                    "tenantId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "Tenant",
+                  "namespace": "public"
+                }
+              }
+            },
+            "storage": {
+              "fields": {
+                "auth": {
+                  "column": "auth"
+                },
+                "createdAt": {
+                  "column": "createdAt"
+                },
+                "endpoint": {
+                  "column": "endpoint"
+                },
+                "id": {
+                  "column": "id"
+                },
+                "p256dh": {
+                  "column": "p256dh"
+                },
+                "tenantId": {
+                  "column": "tenantId"
+                }
+              },
+              "namespaceId": "public",
+              "table": "push_subscription"
+            }
+          },
           "SaunaBooking": {
             "fields": {
               "endsAt": {
@@ -1321,6 +2436,128 @@
               "table": "sauna_slot"
             }
           },
+          "Staff": {
+            "fields": {
+              "createdAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              },
+              "email": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "id": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/uuid@1",
+                  "kind": "scalar"
+                }
+              },
+              "name": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "passwordHash": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              }
+            },
+            "relations": {
+              "assignedComplaints": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "assignedStaffId"
+                  ]
+                },
+                "to": {
+                  "model": "Complaint",
+                  "namespace": "public"
+                }
+              },
+              "complaintMessages": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "senderStaffId"
+                  ]
+                },
+                "to": {
+                  "model": "ComplaintMessage",
+                  "namespace": "public"
+                }
+              },
+              "noticeMessages": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "senderStaffId"
+                  ]
+                },
+                "to": {
+                  "model": "DirectNoticeMessage",
+                  "namespace": "public"
+                }
+              },
+              "posts": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "authorStaffId"
+                  ]
+                },
+                "to": {
+                  "model": "BuildingPost",
+                  "namespace": "public"
+                }
+              }
+            },
+            "storage": {
+              "fields": {
+                "createdAt": {
+                  "column": "createdAt"
+                },
+                "email": {
+                  "column": "email"
+                },
+                "id": {
+                  "column": "id"
+                },
+                "name": {
+                  "column": "name"
+                },
+                "passwordHash": {
+                  "column": "passwordHash"
+                }
+              },
+              "namespaceId": "public",
+              "table": "staff"
+            }
+          },
           "Stairwell": {
             "fields": {
               "buildingId": {
@@ -1455,6 +2692,13 @@
                   "kind": "scalar"
                 }
               },
+              "pseudonym": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
               "suomiFiPersonId": {
                 "nullable": true,
                 "type": {
@@ -1471,6 +2715,51 @@
               }
             },
             "relations": {
+              "buildingPosts": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "authorTenantId"
+                  ]
+                },
+                "to": {
+                  "model": "BuildingPost",
+                  "namespace": "public"
+                }
+              },
+              "complaintMessages": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "senderTenantId"
+                  ]
+                },
+                "to": {
+                  "model": "ComplaintMessage",
+                  "namespace": "public"
+                }
+              },
+              "complaints": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "tenantId"
+                  ]
+                },
+                "to": {
+                  "model": "Complaint",
+                  "namespace": "public"
+                }
+              },
               "directConvosA": {
                 "cardinality": "1:N",
                 "on": {
@@ -1561,6 +2850,37 @@
                   "namespace": "public"
                 }
               },
+              "noticeMessages": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "senderTenantId"
+                  ]
+                },
+                "to": {
+                  "model": "DirectNoticeMessage",
+                  "namespace": "public"
+                }
+              },
+              "noticeThread": {
+                "cardinality": "1:1",
+                "nullable": true,
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "tenantId"
+                  ]
+                },
+                "to": {
+                  "model": "DirectNoticeThread",
+                  "namespace": "public"
+                }
+              },
               "parkingSpot": {
                 "cardinality": "1:1",
                 "nullable": true,
@@ -1574,6 +2894,51 @@
                 },
                 "to": {
                   "model": "ParkingSpot",
+                  "namespace": "public"
+                }
+              },
+              "postComments": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "authorId"
+                  ]
+                },
+                "to": {
+                  "model": "BuildingPostComment",
+                  "namespace": "public"
+                }
+              },
+              "postReactions": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "tenantId"
+                  ]
+                },
+                "to": {
+                  "model": "BuildingPostReaction",
+                  "namespace": "public"
+                }
+              },
+              "pushSubscriptions": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "tenantId"
+                  ]
+                },
+                "to": {
+                  "model": "PushSubscription",
                   "namespace": "public"
                 }
               },
@@ -1623,6 +2988,9 @@
                 "passwordHash": {
                   "column": "passwordHash"
                 },
+                "pseudonym": {
+                  "column": "pseudonym"
+                },
                 "suomiFiPersonId": {
                   "column": "suomiFiPersonId"
                 },
@@ -1666,6 +3034,22 @@
               }
             },
             "relations": {
+              "chatGroup": {
+                "cardinality": "1:1",
+                "nullable": true,
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "unitId"
+                  ]
+                },
+                "to": {
+                  "model": "ChatGroup",
+                  "namespace": "public"
+                }
+              },
               "stairwell": {
                 "cardinality": "N:1",
                 "nullable": false,
@@ -1753,11 +3137,384 @@
               },
               "uniques": []
             },
+            "building_post": {
+              "checks": [
+                {
+                  "expression": "\"noticeboardCategory\" IN ('furniture', 'lost_found', 'borrow', 'giveaway', 'other')",
+                  "name": "building_post_noticeboardCategory_check_3ceb2636",
+                  "prefix": "building_post_noticeboardCategory_check"
+                },
+                {
+                  "expression": "\"type\" IN ('announcement', 'noticeboard')",
+                  "name": "building_post_type_check_54f4d5fe",
+                  "prefix": "building_post_type_check"
+                }
+              ],
+              "columns": {
+                "authorStaffId": {
+                  "codecId": "pg/uuid@1",
+                  "nativeType": "uuid",
+                  "nullable": true
+                },
+                "authorTenantId": {
+                  "codecId": "pg/uuid@1",
+                  "nativeType": "uuid",
+                  "nullable": true
+                },
+                "buildingId": {
+                  "codecId": "pg/uuid@1",
+                  "nativeType": "uuid",
+                  "nullable": false
+                },
+                "content": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "createdAt": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "default": {
+                    "expression": "now()",
+                    "kind": "function"
+                  },
+                  "nativeType": "timestamptz",
+                  "nullable": false
+                },
+                "id": {
+                  "codecId": "pg/uuid@1",
+                  "nativeType": "uuid",
+                  "nullable": false
+                },
+                "noticeboardCategory": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true,
+                  "valueSet": {
+                    "entityKind": "valueSet",
+                    "entityName": "noticeboard_category",
+                    "namespaceId": "public",
+                    "plane": "storage"
+                  }
+                },
+                "photoUrl": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true
+                },
+                "title": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "type": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false,
+                  "valueSet": {
+                    "entityKind": "valueSet",
+                    "entityName": "building_post_type",
+                    "namespaceId": "public",
+                    "plane": "storage"
+                  }
+                }
+              },
+              "foreignKeys": [
+                {
+                  "onDelete": "cascade",
+                  "source": {
+                    "columns": [
+                      "buildingId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "building_post"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "building"
+                  }
+                },
+                {
+                  "onDelete": "cascade",
+                  "source": {
+                    "columns": [
+                      "authorTenantId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "building_post"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "tenant"
+                  }
+                },
+                {
+                  "onDelete": "cascade",
+                  "source": {
+                    "columns": [
+                      "authorStaffId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "building_post"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "staff"
+                  }
+                }
+              ],
+              "indexes": [
+                {
+                  "columns": [
+                    "authorStaffId"
+                  ],
+                  "name": "building_post_authorStaffId_idx_9658370a",
+                  "prefix": "building_post_authorStaffId_idx",
+                  "unique": false
+                },
+                {
+                  "columns": [
+                    "authorTenantId"
+                  ],
+                  "name": "building_post_authorTenantId_idx_c661c2b2",
+                  "prefix": "building_post_authorTenantId_idx",
+                  "unique": false
+                },
+                {
+                  "columns": [
+                    "buildingId",
+                    "createdAt"
+                  ],
+                  "name": "building_post_buildingId_createdAt_idx_7b656189",
+                  "prefix": "building_post_buildingId_createdAt_idx",
+                  "unique": false
+                },
+                {
+                  "columns": [
+                    "buildingId"
+                  ],
+                  "name": "building_post_buildingId_idx_c40fd7b4",
+                  "prefix": "building_post_buildingId_idx",
+                  "unique": false
+                }
+              ],
+              "primaryKey": {
+                "columns": [
+                  "id"
+                ]
+              },
+              "uniques": []
+            },
+            "building_post_comment": {
+              "columns": {
+                "authorId": {
+                  "codecId": "pg/uuid@1",
+                  "nativeType": "uuid",
+                  "nullable": false
+                },
+                "content": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "createdAt": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "default": {
+                    "expression": "now()",
+                    "kind": "function"
+                  },
+                  "nativeType": "timestamptz",
+                  "nullable": false
+                },
+                "id": {
+                  "codecId": "pg/uuid@1",
+                  "nativeType": "uuid",
+                  "nullable": false
+                },
+                "postId": {
+                  "codecId": "pg/uuid@1",
+                  "nativeType": "uuid",
+                  "nullable": false
+                }
+              },
+              "foreignKeys": [
+                {
+                  "onDelete": "cascade",
+                  "source": {
+                    "columns": [
+                      "postId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "building_post_comment"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "building_post"
+                  }
+                },
+                {
+                  "onDelete": "cascade",
+                  "source": {
+                    "columns": [
+                      "authorId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "building_post_comment"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "tenant"
+                  }
+                }
+              ],
+              "indexes": [
+                {
+                  "columns": [
+                    "authorId"
+                  ],
+                  "name": "building_post_comment_authorId_idx_e47547ed",
+                  "prefix": "building_post_comment_authorId_idx",
+                  "unique": false
+                },
+                {
+                  "columns": [
+                    "postId"
+                  ],
+                  "name": "building_post_comment_postId_idx_a7a72715",
+                  "prefix": "building_post_comment_postId_idx",
+                  "unique": false
+                }
+              ],
+              "primaryKey": {
+                "columns": [
+                  "id"
+                ]
+              },
+              "uniques": []
+            },
+            "building_post_reaction": {
+              "columns": {
+                "createdAt": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "default": {
+                    "expression": "now()",
+                    "kind": "function"
+                  },
+                  "nativeType": "timestamptz",
+                  "nullable": false
+                },
+                "emoji": {
+                  "codecId": "pg/text@1",
+                  "default": {
+                    "kind": "literal",
+                    "value": "👍"
+                  },
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "id": {
+                  "codecId": "pg/uuid@1",
+                  "nativeType": "uuid",
+                  "nullable": false
+                },
+                "postId": {
+                  "codecId": "pg/uuid@1",
+                  "nativeType": "uuid",
+                  "nullable": false
+                },
+                "tenantId": {
+                  "codecId": "pg/uuid@1",
+                  "nativeType": "uuid",
+                  "nullable": false
+                }
+              },
+              "foreignKeys": [
+                {
+                  "onDelete": "cascade",
+                  "source": {
+                    "columns": [
+                      "postId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "building_post_reaction"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "building_post"
+                  }
+                },
+                {
+                  "onDelete": "cascade",
+                  "source": {
+                    "columns": [
+                      "tenantId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "building_post_reaction"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "tenant"
+                  }
+                }
+              ],
+              "indexes": [
+                {
+                  "columns": [
+                    "postId"
+                  ],
+                  "name": "building_post_reaction_postId_idx_a7a72715",
+                  "prefix": "building_post_reaction_postId_idx",
+                  "unique": false
+                },
+                {
+                  "columns": [
+                    "tenantId"
+                  ],
+                  "name": "building_post_reaction_tenantId_idx_c93ed4f1",
+                  "prefix": "building_post_reaction_tenantId_idx",
+                  "unique": false
+                }
+              ],
+              "primaryKey": {
+                "columns": [
+                  "id"
+                ]
+              },
+              "uniques": [
+                {
+                  "columns": [
+                    "postId",
+                    "tenantId"
+                  ]
+                }
+              ]
+            },
             "chat_group": {
               "checks": [
                 {
-                  "expression": "\"scope\" IN ('building', 'stairwell', 'floor')",
-                  "name": "chat_group_scope_check_a40ae3fc",
+                  "expression": "\"scope\" IN ('building', 'stairwell', 'floor', 'unit')",
+                  "name": "chat_group_scope_check_ce77aac6",
                   "prefix": "chat_group_scope_check"
                 }
               ],
@@ -1794,6 +3551,11 @@
                   }
                 },
                 "stairwellId": {
+                  "codecId": "pg/uuid@1",
+                  "nativeType": "uuid",
+                  "nullable": true
+                },
+                "unitId": {
                   "codecId": "pg/uuid@1",
                   "nativeType": "uuid",
                   "nullable": true
@@ -1850,6 +3612,23 @@
                     "namespaceId": "public",
                     "tableName": "floor_group"
                   }
+                },
+                {
+                  "onDelete": "cascade",
+                  "source": {
+                    "columns": [
+                      "unitId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "chat_group"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "unit"
+                  }
                 }
               ],
               "indexes": [],
@@ -1872,6 +3651,11 @@
                 {
                   "columns": [
                     "floorGroupId"
+                  ]
+                },
+                {
+                  "columns": [
+                    "unitId"
                   ]
                 }
               ]
@@ -1970,6 +3754,282 @@
                   ]
                 }
               ]
+            },
+            "complaint": {
+              "checks": [
+                {
+                  "expression": "\"category\" IN ('plumbing', 'electrical', 'heating', 'appliance', 'pest', 'noise', 'structural', 'other')",
+                  "name": "complaint_category_check_3a483362",
+                  "prefix": "complaint_category_check"
+                },
+                {
+                  "expression": "\"status\" IN ('new', 'in_progress', 'resolved')",
+                  "name": "complaint_status_check_5df1bb4e",
+                  "prefix": "complaint_status_check"
+                }
+              ],
+              "columns": {
+                "assignedStaffId": {
+                  "codecId": "pg/uuid@1",
+                  "nativeType": "uuid",
+                  "nullable": true
+                },
+                "category": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false,
+                  "valueSet": {
+                    "entityKind": "valueSet",
+                    "entityName": "complaint_category",
+                    "namespaceId": "public",
+                    "plane": "storage"
+                  }
+                },
+                "createdAt": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "default": {
+                    "expression": "now()",
+                    "kind": "function"
+                  },
+                  "nativeType": "timestamptz",
+                  "nullable": false
+                },
+                "description": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "id": {
+                  "codecId": "pg/uuid@1",
+                  "nativeType": "uuid",
+                  "nullable": false
+                },
+                "photoUrl": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true
+                },
+                "status": {
+                  "codecId": "pg/text@1",
+                  "default": {
+                    "kind": "literal",
+                    "value": "new"
+                  },
+                  "nativeType": "text",
+                  "nullable": false,
+                  "valueSet": {
+                    "entityKind": "valueSet",
+                    "entityName": "complaint_status",
+                    "namespaceId": "public",
+                    "plane": "storage"
+                  }
+                },
+                "tenantId": {
+                  "codecId": "pg/uuid@1",
+                  "nativeType": "uuid",
+                  "nullable": false
+                },
+                "updatedAt": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "default": {
+                    "expression": "now()",
+                    "kind": "function"
+                  },
+                  "nativeType": "timestamptz",
+                  "nullable": false
+                }
+              },
+              "foreignKeys": [
+                {
+                  "onDelete": "cascade",
+                  "source": {
+                    "columns": [
+                      "tenantId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "complaint"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "tenant"
+                  }
+                },
+                {
+                  "onDelete": "setNull",
+                  "source": {
+                    "columns": [
+                      "assignedStaffId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "complaint"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "staff"
+                  }
+                }
+              ],
+              "indexes": [
+                {
+                  "columns": [
+                    "assignedStaffId"
+                  ],
+                  "name": "complaint_assignedStaffId_idx_6da9f5f2",
+                  "prefix": "complaint_assignedStaffId_idx",
+                  "unique": false
+                },
+                {
+                  "columns": [
+                    "status"
+                  ],
+                  "name": "complaint_status_idx_e98638ab",
+                  "prefix": "complaint_status_idx",
+                  "unique": false
+                },
+                {
+                  "columns": [
+                    "tenantId"
+                  ],
+                  "name": "complaint_tenantId_idx_c93ed4f1",
+                  "prefix": "complaint_tenantId_idx",
+                  "unique": false
+                }
+              ],
+              "primaryKey": {
+                "columns": [
+                  "id"
+                ]
+              },
+              "uniques": []
+            },
+            "complaint_message": {
+              "columns": {
+                "complaintId": {
+                  "codecId": "pg/uuid@1",
+                  "nativeType": "uuid",
+                  "nullable": false
+                },
+                "content": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "id": {
+                  "codecId": "pg/uuid@1",
+                  "nativeType": "uuid",
+                  "nullable": false
+                },
+                "senderStaffId": {
+                  "codecId": "pg/uuid@1",
+                  "nativeType": "uuid",
+                  "nullable": true
+                },
+                "senderTenantId": {
+                  "codecId": "pg/uuid@1",
+                  "nativeType": "uuid",
+                  "nullable": true
+                },
+                "sentAt": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "default": {
+                    "expression": "now()",
+                    "kind": "function"
+                  },
+                  "nativeType": "timestamptz",
+                  "nullable": false
+                }
+              },
+              "foreignKeys": [
+                {
+                  "onDelete": "cascade",
+                  "source": {
+                    "columns": [
+                      "complaintId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "complaint_message"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "complaint"
+                  }
+                },
+                {
+                  "onDelete": "cascade",
+                  "source": {
+                    "columns": [
+                      "senderTenantId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "complaint_message"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "tenant"
+                  }
+                },
+                {
+                  "onDelete": "cascade",
+                  "source": {
+                    "columns": [
+                      "senderStaffId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "complaint_message"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "staff"
+                  }
+                }
+              ],
+              "indexes": [
+                {
+                  "columns": [
+                    "complaintId"
+                  ],
+                  "name": "complaint_message_complaintId_idx_7b731d46",
+                  "prefix": "complaint_message_complaintId_idx",
+                  "unique": false
+                },
+                {
+                  "columns": [
+                    "senderStaffId"
+                  ],
+                  "name": "complaint_message_senderStaffId_idx_f113dfb3",
+                  "prefix": "complaint_message_senderStaffId_idx",
+                  "unique": false
+                },
+                {
+                  "columns": [
+                    "senderTenantId"
+                  ],
+                  "name": "complaint_message_senderTenantId_idx_86cb4507",
+                  "prefix": "complaint_message_senderTenantId_idx",
+                  "unique": false
+                }
+              ],
+              "primaryKey": {
+                "columns": [
+                  "id"
+                ]
+              },
+              "uniques": []
             },
             "direct_conversation": {
               "columns": {
@@ -2149,6 +4209,175 @@
                 ]
               },
               "uniques": []
+            },
+            "direct_notice_message": {
+              "columns": {
+                "content": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "id": {
+                  "codecId": "pg/uuid@1",
+                  "nativeType": "uuid",
+                  "nullable": false
+                },
+                "senderStaffId": {
+                  "codecId": "pg/uuid@1",
+                  "nativeType": "uuid",
+                  "nullable": true
+                },
+                "senderTenantId": {
+                  "codecId": "pg/uuid@1",
+                  "nativeType": "uuid",
+                  "nullable": true
+                },
+                "sentAt": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "default": {
+                    "expression": "now()",
+                    "kind": "function"
+                  },
+                  "nativeType": "timestamptz",
+                  "nullable": false
+                },
+                "threadId": {
+                  "codecId": "pg/uuid@1",
+                  "nativeType": "uuid",
+                  "nullable": false
+                }
+              },
+              "foreignKeys": [
+                {
+                  "onDelete": "cascade",
+                  "source": {
+                    "columns": [
+                      "threadId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "direct_notice_message"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "direct_notice_thread"
+                  }
+                },
+                {
+                  "onDelete": "cascade",
+                  "source": {
+                    "columns": [
+                      "senderStaffId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "direct_notice_message"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "staff"
+                  }
+                },
+                {
+                  "onDelete": "cascade",
+                  "source": {
+                    "columns": [
+                      "senderTenantId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "direct_notice_message"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "tenant"
+                  }
+                }
+              ],
+              "indexes": [
+                {
+                  "columns": [
+                    "senderStaffId"
+                  ],
+                  "name": "direct_notice_message_senderStaffId_idx_f113dfb3",
+                  "prefix": "direct_notice_message_senderStaffId_idx",
+                  "unique": false
+                },
+                {
+                  "columns": [
+                    "senderTenantId"
+                  ],
+                  "name": "direct_notice_message_senderTenantId_idx_86cb4507",
+                  "prefix": "direct_notice_message_senderTenantId_idx",
+                  "unique": false
+                },
+                {
+                  "columns": [
+                    "threadId"
+                  ],
+                  "name": "direct_notice_message_threadId_idx_6deac339",
+                  "prefix": "direct_notice_message_threadId_idx",
+                  "unique": false
+                }
+              ],
+              "primaryKey": {
+                "columns": [
+                  "id"
+                ]
+              },
+              "uniques": []
+            },
+            "direct_notice_thread": {
+              "columns": {
+                "id": {
+                  "codecId": "pg/uuid@1",
+                  "nativeType": "uuid",
+                  "nullable": false
+                },
+                "tenantId": {
+                  "codecId": "pg/uuid@1",
+                  "nativeType": "uuid",
+                  "nullable": false
+                }
+              },
+              "foreignKeys": [
+                {
+                  "onDelete": "cascade",
+                  "source": {
+                    "columns": [
+                      "tenantId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "direct_notice_thread"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "tenant"
+                  }
+                }
+              ],
+              "indexes": [],
+              "primaryKey": {
+                "columns": [
+                  "id"
+                ]
+              },
+              "uniques": [
+                {
+                  "columns": [
+                    "tenantId"
+                  ]
+                }
+              ]
             },
             "floor_group": {
               "columns": {
@@ -2608,6 +4837,85 @@
                 }
               ]
             },
+            "push_subscription": {
+              "columns": {
+                "auth": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "createdAt": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "default": {
+                    "expression": "now()",
+                    "kind": "function"
+                  },
+                  "nativeType": "timestamptz",
+                  "nullable": false
+                },
+                "endpoint": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "id": {
+                  "codecId": "pg/uuid@1",
+                  "nativeType": "uuid",
+                  "nullable": false
+                },
+                "p256dh": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "tenantId": {
+                  "codecId": "pg/uuid@1",
+                  "nativeType": "uuid",
+                  "nullable": false
+                }
+              },
+              "foreignKeys": [
+                {
+                  "onDelete": "cascade",
+                  "source": {
+                    "columns": [
+                      "tenantId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "push_subscription"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "tenant"
+                  }
+                }
+              ],
+              "indexes": [
+                {
+                  "columns": [
+                    "tenantId"
+                  ],
+                  "name": "push_subscription_tenantId_idx_c93ed4f1",
+                  "prefix": "push_subscription_tenantId_idx",
+                  "unique": false
+                }
+              ],
+              "primaryKey": {
+                "columns": [
+                  "id"
+                ]
+              },
+              "uniques": [
+                {
+                  "columns": [
+                    "endpoint"
+                  ]
+                }
+              ]
+            },
             "sauna_booking": {
               "columns": {
                 "endsAt": {
@@ -2765,6 +5073,53 @@
                 }
               ]
             },
+            "staff": {
+              "columns": {
+                "createdAt": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "default": {
+                    "expression": "now()",
+                    "kind": "function"
+                  },
+                  "nativeType": "timestamptz",
+                  "nullable": false
+                },
+                "email": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "id": {
+                  "codecId": "pg/uuid@1",
+                  "nativeType": "uuid",
+                  "nullable": false
+                },
+                "name": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "passwordHash": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                }
+              },
+              "foreignKeys": [],
+              "indexes": [],
+              "primaryKey": {
+                "columns": [
+                  "id"
+                ]
+              },
+              "uniques": [
+                {
+                  "columns": [
+                    "email"
+                  ]
+                }
+              ]
+            },
             "stairwell": {
               "columns": {
                 "buildingId": {
@@ -2848,6 +5203,11 @@
                   "nativeType": "text",
                   "nullable": true
                 },
+                "pseudonym": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true
+                },
                 "suomiFiPersonId": {
                   "codecId": "pg/text@1",
                   "nativeType": "text",
@@ -2894,6 +5254,11 @@
                 ]
               },
               "uniques": [
+                {
+                  "columns": [
+                    "pseudonym"
+                  ]
+                },
                 {
                   "columns": [
                     "email"
@@ -2974,12 +5339,41 @@
             }
           },
           "valueSet": {
+            "building_post_type": {
+              "kind": "valueSet",
+              "values": [
+                "announcement",
+                "noticeboard"
+              ]
+            },
+            "complaint_category": {
+              "kind": "valueSet",
+              "values": [
+                "plumbing",
+                "electrical",
+                "heating",
+                "appliance",
+                "pest",
+                "noise",
+                "structural",
+                "other"
+              ]
+            },
+            "complaint_status": {
+              "kind": "valueSet",
+              "values": [
+                "new",
+                "in_progress",
+                "resolved"
+              ]
+            },
             "group_scope": {
               "kind": "valueSet",
               "values": [
                 "building",
                 "stairwell",
-                "floor"
+                "floor",
+                "unit"
               ]
             },
             "news_category": {
@@ -2991,6 +5385,16 @@
                 "discounts",
                 "events"
               ]
+            },
+            "noticeboard_category": {
+              "kind": "valueSet",
+              "values": [
+                "furniture",
+                "lost_found",
+                "borrow",
+                "giveaway",
+                "other"
+              ]
             }
           }
         },
@@ -2998,10 +5402,10 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "c6a15ff375a7790837767b8ce31871a5eb29e8a7ed62564f1a7bf7892dcdae32"
+    "storageHash": "fd830ccbf4bd4260a0de4fa10b3634e3c2f58f9f9e7f3ee9b1192f51b1faa46f"
   },
   "execution": {
-    "executionHash": "94265764306210def96a7f15badd08d130bef157f83857780d507c3d18530c86",
+    "executionHash": "a40e1d12266e5a78fa537a2091029b726b98a1c689380f9d3f6dfc16877e5b20",
     "mutations": {
       "defaults": [
         {
@@ -3013,6 +5417,39 @@
             "column": "id",
             "namespace": "public",
             "table": "building"
+          }
+        },
+        {
+          "onCreate": {
+            "id": "uuidv4",
+            "kind": "generator"
+          },
+          "ref": {
+            "column": "id",
+            "namespace": "public",
+            "table": "building_post"
+          }
+        },
+        {
+          "onCreate": {
+            "id": "uuidv4",
+            "kind": "generator"
+          },
+          "ref": {
+            "column": "id",
+            "namespace": "public",
+            "table": "building_post_comment"
+          }
+        },
+        {
+          "onCreate": {
+            "id": "uuidv4",
+            "kind": "generator"
+          },
+          "ref": {
+            "column": "id",
+            "namespace": "public",
+            "table": "building_post_reaction"
           }
         },
         {
@@ -3045,6 +5482,28 @@
           "ref": {
             "column": "id",
             "namespace": "public",
+            "table": "complaint"
+          }
+        },
+        {
+          "onCreate": {
+            "id": "uuidv4",
+            "kind": "generator"
+          },
+          "ref": {
+            "column": "id",
+            "namespace": "public",
+            "table": "complaint_message"
+          }
+        },
+        {
+          "onCreate": {
+            "id": "uuidv4",
+            "kind": "generator"
+          },
+          "ref": {
+            "column": "id",
+            "namespace": "public",
             "table": "direct_conversation"
           }
         },
@@ -3057,6 +5516,28 @@
             "column": "id",
             "namespace": "public",
             "table": "direct_message"
+          }
+        },
+        {
+          "onCreate": {
+            "id": "uuidv4",
+            "kind": "generator"
+          },
+          "ref": {
+            "column": "id",
+            "namespace": "public",
+            "table": "direct_notice_message"
+          }
+        },
+        {
+          "onCreate": {
+            "id": "uuidv4",
+            "kind": "generator"
+          },
+          "ref": {
+            "column": "id",
+            "namespace": "public",
+            "table": "direct_notice_thread"
           }
         },
         {
@@ -3133,6 +5614,17 @@
           "ref": {
             "column": "id",
             "namespace": "public",
+            "table": "push_subscription"
+          }
+        },
+        {
+          "onCreate": {
+            "id": "uuidv4",
+            "kind": "generator"
+          },
+          "ref": {
+            "column": "id",
+            "namespace": "public",
             "table": "sauna_booking"
           }
         },
@@ -3145,6 +5637,17 @@
             "column": "id",
             "namespace": "public",
             "table": "sauna_slot"
+          }
+        },
+        {
+          "onCreate": {
+            "id": "uuidv4",
+            "kind": "generator"
+          },
+          "ref": {
+            "column": "id",
+            "namespace": "public",
+            "table": "staff"
           }
         },
         {
