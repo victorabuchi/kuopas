@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Image from 'next/image';
 import type { Metadata } from 'next';
 import { Mulish } from 'next/font/google';
 import styles from '../auth.module.css';
@@ -25,19 +26,13 @@ export default async function LoginPage({
 
   return (
     <div className={`${styles.page} ${mulish.variable}`}>
-      <div className={styles.card}>
-        <div className={styles.topRow}>
-          <div className={styles.logo}>
-            <span className={styles.logoDot} />
-            Kuopas
-          </div>
-          <LanguageSwitcher locale={locale} />
-        </div>
+      <Link href="/" className={styles.logoLink}>
+        <Image src="/Kuopas-logo.png" alt="Kuopas" width={160} height={66} className={styles.logoImg} priority />
+        <h1>{t.heading}</h1>
+      </Link>
 
-        <div className={styles.heading}>
-          <h1>{t.heading}</h1>
-          <p>{t.lede}</p>
-        </div>
+      <div className={styles.card}>
+        <p style={{ margin: 0, textAlign: 'center', color: 'var(--fg-muted)', fontSize: '14px' }}>{t.lede}</p>
 
         {error && <div className={styles.error}>{error}</div>}
 
@@ -61,10 +56,22 @@ export default async function LoginPage({
             {t.submit}
           </button>
         </form>
+      </div>
 
+      <div className={styles.card} style={{ marginTop: '16px', textAlign: 'center' }}>
         <p className={styles.footerNote}>
           {t.newTenant} <Link href="/register">{t.register}</Link>
         </p>
+      </div>
+
+      <div className={styles.langRow}>
+        <LanguageSwitcher locale={locale} />
+      </div>
+
+      <div className={styles.pageLinks}>
+        <Link href="/terms">{dict.landing.footerTerms}</Link>
+        <Link href="/privacy">{dict.landing.footerPrivacy}</Link>
+        <a href="/support">{dict.landing.footerContactUs}</a>
       </div>
     </div>
   );

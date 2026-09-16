@@ -7,6 +7,8 @@ import { getDictionary } from '../lib/dictionary';
 import LanguageSwitcher from './(app)/LanguageSwitcher';
 import AnimatedTenantDemo from './AnimatedTenantDemo';
 import AnimatedStaffDemo from './AnimatedStaffDemo';
+import BuiltForSection from './BuiltForSection';
+import HowItWorksSection from './HowItWorksSection';
 
 const mulish = Mulish({ subsets: ['latin'], weight: ['400', '500', '600', '700', '800'], variable: '--font-mulish' });
 
@@ -192,6 +194,38 @@ export default async function Home() {
         </div>
       </section>
 
+      <section id="built-for" className={styles.section}>
+        <div className={styles.wrap}>
+          <div className={styles.sectionHead}>
+            <h2>{t.builtForHeading}</h2>
+            <p>{t.builtForLede}</p>
+          </div>
+          <BuiltForSection
+            residentsTitle={t.residentsCardTitle}
+            staffTitle={t.staffCardTitle}
+            residentFeatures={t.residentFeatures}
+            staffFeatures={t.staffFeatures}
+            registerLabel={t.registerAsResident}
+            staffLoginLabel={t.staffLogIn}
+          />
+        </div>
+      </section>
+
+      <section id="how-it-works" className={styles.section}>
+        <div className={styles.wrap}>
+          <div className={styles.sectionHead}>
+            <h2>{t.howItWorksHeading}</h2>
+            <p>{t.howItWorksLede}</p>
+          </div>
+          <HowItWorksSection
+            residentsLabel={t.tabResidents}
+            staffLabel={t.tabStaff}
+            residentSteps={t.residentSteps}
+            staffSteps={t.staffSteps}
+          />
+        </div>
+      </section>
+
       <section className={styles.statsSection}>
         <div className={styles.wrap}>
           <div className={styles.sectionHead}>
@@ -230,20 +264,91 @@ export default async function Home() {
 
       <footer className={styles.footer}>
         <div className={styles.wrap}>
-          <div className={styles.footerRow}>
-            <div className={styles.logo}>
-              <span className={styles.logoDot} />
-              Kuopas
+          <div className={styles.footerNewsletter}>
+            <div>
+              <div className={styles.footerNewsletterTitle}>{t.newsletterTitle}</div>
+              <div className={styles.footerNewsletterDesc}>{t.newsletterDesc}</div>
             </div>
-            <div className={styles.footerLinks}>
-              <a href="#chat">{dict.nav.chats}</a>
-              <a href="#feed">{dict.nav.feed}</a>
-              <a href="#laundry">{dict.nav.laundry}</a>
-              <a href="#support">{dict.nav.support}</a>
-              <span>kuopas.fi</span>
+            <form className={styles.footerNewsletterForm}>
+              <input type="email" placeholder={t.enterEmail} className={styles.footerNewsletterInput} />
+              <button type="submit" className={styles.footerNewsletterBtn}>
+                {t.subscribe}
+              </button>
+            </form>
+          </div>
+
+          <div className={styles.footerCols}>
+            {[
+              {
+                title: t.footerPlatform,
+                links: [
+                  [t.footerFeatures, '#chat'],
+                  [t.footerHowItWorks, '#how-it-works'],
+                  [t.footerBuiltForYou, '#built-for'],
+                  [t.footerNoticeboard, '#feed'],
+                ],
+              },
+              {
+                title: t.footerResources,
+                links: [
+                  [t.footerMoveInGuide, '#'],
+                  [t.footerHelpCenter, '#'],
+                  [t.footerFaq, '#'],
+                  [t.footerSystemStatus, '#'],
+                ],
+              },
+              {
+                title: t.footerSupport,
+                links: [
+                  [t.footerContactUs, '#support'],
+                  [t.footerTerms, '/terms'],
+                  [t.footerPrivacy, '/privacy'],
+                  [t.footerCookiePolicy, '#'],
+                ],
+              },
+              {
+                title: t.footerCompany,
+                links: [
+                  [t.footerAboutKuopas, '#'],
+                  ['kuopas.fi', '#'],
+                  [t.footerCareers, '#'],
+                  [t.footerKuopio, '#'],
+                ],
+              },
+            ].map((col) => (
+              <div key={col.title} className={styles.footerCol}>
+                <div className={styles.footerColTitle}>{col.title}</div>
+                <div className={styles.footerColLinks}>
+                  {col.links.map(([label, href]) => (
+                    <a key={label} href={href}>
+                      {label}
+                    </a>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div className={styles.footerBottom}>
+            <p className={styles.footerCopyright}>
+              &copy; {new Date().getFullYear()} Kuopas &middot; <a href="/terms">{t.footerTerms}</a> &middot;{' '}
+              <a href="/privacy">{t.footerPrivacy}</a> &middot; <a href="#">{t.footerSitemap}</a>
+            </p>
+            <div className={styles.footerSocial}>
+              <a href="#" aria-label="Facebook">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M22 12a10 10 0 10-11.56 9.88v-6.99H7.9V12h2.54V9.8c0-2.5 1.49-3.89 3.78-3.89 1.09 0 2.23.2 2.23.2v2.45h-1.26c-1.24 0-1.63.77-1.63 1.56V12h2.78l-.44 2.89h-2.34v6.99A10 10 0 0022 12z" />
+                </svg>
+              </a>
+              <a href="#" aria-label="Instagram">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
+                  <path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z" />
+                  <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" />
+                </svg>
+              </a>
             </div>
           </div>
-          <p className={styles.footerFine}>Kuopas, Kuopion opiskelija-asunnot Oy &middot; owned by the City of Kuopio.</p>
         </div>
       </footer>
     </div>
