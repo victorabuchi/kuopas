@@ -7,6 +7,7 @@ import { loginAction } from '../../lib/auth-actions';
 import { getLocale } from '../../lib/i18n';
 import { getDictionary } from '../../lib/dictionary';
 import LanguageSwitcher from '../(app)/LanguageSwitcher';
+import PasswordField from '../PasswordField';
 
 const mulish = Mulish({ subsets: ['latin'], weight: ['400', '500', '600', '700', '800'], variable: '--font-mulish' });
 
@@ -48,10 +49,7 @@ export default async function LoginPage({
             <label htmlFor="email">{t.email}</label>
             <input id="email" name="email" type="email" autoComplete="email" required />
           </div>
-          <div className={styles.field}>
-            <label htmlFor="password">{t.password}</label>
-            <input id="password" name="password" type="password" autoComplete="current-password" required />
-          </div>
+          <PasswordField label={t.password} id="password" name="password" autoComplete="current-password" />
           <button type="submit" className={styles.submit}>
             {t.submit}
           </button>

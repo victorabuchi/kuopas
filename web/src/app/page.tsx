@@ -226,42 +226,6 @@ export default async function Home() {
         </div>
       </section>
 
-      <section className={styles.statsSection}>
-        <div className={styles.wrap}>
-          <div className={styles.sectionHead}>
-            <h2>{t.statsHeading}</h2>
-            <p>{t.statsLede}</p>
-          </div>
-          <div className={styles.stats}>
-            <div className={styles.stat}>
-              <div className={styles.num}>~3,000</div>
-              <div className={styles.label}>{t.statStudents}</div>
-            </div>
-            <div className={styles.stat}>
-              <div className={styles.num}>30</div>
-              <div className={styles.label}>{t.statBuildings}</div>
-            </div>
-            <div className={styles.stat}>
-              <div className={styles.num}>1</div>
-              <div className={styles.label}>{t.statApp}</div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section className={styles.section}>
-        <div className={styles.wrap}>
-          <div className={styles.ctaBand}>
-            <span className={styles.tag}>{t.ctaTag}</span>
-            <h2>{t.ctaHeading}</h2>
-            <p>{t.ctaBody}</p>
-            <Link href="/login" className={styles.btnPrimary}>
-              {t.heroCta}
-            </Link>
-          </div>
-        </div>
-      </section>
-
       <footer className={styles.footer}>
         <div className={styles.wrap}>
           <div className={styles.footerNewsletter}>
