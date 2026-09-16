@@ -43,7 +43,6 @@ export default async function Home() {
         <div className={styles.heroGlowA} />
         <div className={styles.heroGlowB} />
         <div className={`${styles.wrap} ${styles.heroInner}`}>
-          <div className={`${styles.heroEyebrow} ${styles.fadeUp}`}>{t.eyebrow}</div>
           <h1 className={styles.fadeUp}>
             {t.heroLine1}
             <br />
