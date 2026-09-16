@@ -1,10 +1,12 @@
 import Link from 'next/link';
+import Image from 'next/image';
 import { Mulish } from 'next/font/google';
 import styles from './page.module.css';
 import { getLocale } from '../lib/i18n';
 import { getDictionary } from '../lib/dictionary';
 import LanguageSwitcher from './(app)/LanguageSwitcher';
 import AnimatedTenantDemo from './AnimatedTenantDemo';
+import AnimatedStaffDemo from './AnimatedStaffDemo';
 
 const mulish = Mulish({ subsets: ['latin'], weight: ['400', '500', '600', '700', '800'], variable: '--font-mulish' });
 
@@ -18,7 +20,7 @@ export default async function Home() {
       <nav className={styles.nav}>
         <div className={`${styles.wrap} ${styles.navRow}`}>
           <div className={styles.logo}>
-            <span className={styles.logoDot} />
+            <Image src="/Kuopas-logo.png" alt="Kuopas" width={92} height={38} className={styles.logoImg} priority />
             Kuopas
           </div>
           <div className={styles.navLinks}>
@@ -56,16 +58,16 @@ export default async function Home() {
 
           <div className={styles.heroIcons}>
             {[
-              { delay: '0s', path: 'M20 12a7 7 0 0 1-7 7H8l-4 3 1-4.5A7 7 0 1 1 20 12Z' },
-              { delay: '0.6s', path: 'M3.5 4.5h17v15h-17zM7.5 9h9M7.5 12.5h9M7.5 16h5.5' },
-              { delay: '1.1s', path: 'M4 3.5h16v17H4zM12 13m-5 0a5 5 0 1 0 10 0a5 5 0 1 0 -10 0M12 13m-1.6 0a1.6 1.6 0 1 0 3.2 0a1.6 1.6 0 1 0 -3.2 0' },
-              { delay: '1.6s', path: 'M4 13v-1a8 8 0 0 1 16 0v1M2.5 13h5v6h-5zM16.5 13h5v6h-5zM20 19v1a3 3 0 0 1-3 3h-3' },
-            ].map((icon, i) => (
-              <div key={i} className={styles.heroIcon} style={{ animationDelay: icon.delay }}>
+              { href: '#chat', label: t.chatTitle, path: 'M20 12a7 7 0 0 1-7 7H8l-4 3 1-4.5A7 7 0 1 1 20 12Z' },
+              { href: '#feed', label: t.feedTitle, path: 'M3.5 4.5h17v15h-17zM7.5 9h9M7.5 12.5h9M7.5 16h5.5' },
+              { href: '#laundry', label: t.laundryTitle, path: 'M4 3.5h16v17H4zM12 13m-5 0a5 5 0 1 0 10 0a5 5 0 1 0 -10 0M12 13m-1.6 0a1.6 1.6 0 1 0 3.2 0a1.6 1.6 0 1 0 -3.2 0' },
+              { href: '#support', label: t.supportTitle, path: 'M4 13v-1a8 8 0 0 1 16 0v1M2.5 13h5v6h-5zM16.5 13h5v6h-5zM20 19v1a3 3 0 0 1-3 3h-3' },
+            ].map((icon) => (
+              <a key={icon.href} href={icon.href} className={styles.heroIcon} aria-label={icon.label} title={icon.label}>
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
                   <path d={icon.path} />
                 </svg>
-              </div>
+              </a>
             ))}
           </div>
         </div>
@@ -74,6 +76,16 @@ export default async function Home() {
           <AnimatedTenantDemo />
         </div>
       </header>
+
+      <section id="staff" className={styles.section}>
+        <div className={styles.wrap}>
+          <div className={styles.sectionHead}>
+            <h2>{t.staffHeading}</h2>
+            <p>{t.staffLede}</p>
+          </div>
+          <AnimatedStaffDemo />
+        </div>
+      </section>
 
       <section id="chat" className={styles.section}>
         <div className={styles.wrap}>

@@ -65,6 +65,8 @@ const en = {
     ctaTag: 'It is good to be at home.',
     ctaHeading: "Log in and see your building's chat.",
     ctaBody: 'Your building, stairwell, and floor groups are already waiting, no setup needed.',
+    staffHeading: 'Built for Kuopas staff too',
+    staffLede: 'Email a resident, message everyone in a building at once, and see reports the moment they come in.',
   },
   login: {
     heading: 'Log in',
@@ -371,6 +373,8 @@ const fi: typeof en = {
     ctaTag: 'On hyvä olla kotona.',
     ctaHeading: 'Kirjaudu ja katso talosi keskustelu.',
     ctaBody: 'Talo, rappukäytävä ja kerrosryhmäsi odottavat jo valmiina.',
+    staffHeading: 'Tehty myös Kuopaksen henkilökunnalle',
+    staffLede: 'Lähetä sähköposti asukkaalle, viesti koko talolle kerralla ja näe ilmiannot heti kun ne tulevat.',
   },
   login: {
     heading: 'Kirjaudu sisään',

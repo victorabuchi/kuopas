@@ -118,10 +118,16 @@
   display: flex;
   align-items: center;
   gap: 9px;
+  margin-left: -10px;
   font-family: var(--font-mulish), sans-serif;
   font-weight: 800;
   font-size: 21px;
   color: var(--green-darker);
+}
+.logoImg {
+  height: 32px;
+  width: auto;
+  flex-shrink: 0;
 }
 .logoDot {
   width: 11px;
@@ -258,18 +264,13 @@
   background: var(--bg-card);
   border: 1px solid var(--border);
   color: var(--green-dark);
-  animation: floatY 4.5s ease-in-out infinite;
+  transition: border-color 0.15s, box-shadow 0.15s, transform 0.15s;
 }
-@keyframes floatY {
-  0%,
-  100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-12px);
-  }
+.heroIcon:hover {
+  border-color: var(--green-dark);
+  box-shadow: 0 8px 20px -8px rgba(4, 106, 56, 0.35);
+  transform: translateY(-2px);
 }
-
 /* Demo showcase below the hero */
 .heroDemo {
   position: relative;
