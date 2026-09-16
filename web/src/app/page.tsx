@@ -68,10 +68,10 @@ export default async function Home() {
               </div>
             ))}
           </div>
+        </div>
 
-          <div className={styles.heroDemo}>
-            <AnimatedTenantDemo />
-          </div>
+        <div className={`${styles.wrap} ${styles.heroDemo}`}>
+          <AnimatedTenantDemo />
         </div>
       </header>
 
