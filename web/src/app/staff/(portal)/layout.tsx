@@ -6,6 +6,7 @@ import { getStaffAccess } from '../../../lib/portal-access';
 import { staffLogoutAction } from '../../../lib/staff-auth-actions';
 import { getLocale } from '../../../lib/i18n';
 import { getDictionary } from '../../../lib/dictionary';
+import RoleSwitcher from '../../RoleSwitcher';
 
 const mulish = Mulish({ subsets: ['latin'], weight: ['400', '500', '600', '700', '800'], variable: '--font-mulish' });
 
@@ -25,8 +26,17 @@ export default async function StaffPortalLayout({ children }: { children: React.
           <Link href="/staff/complaints">{dict.staff.complaintsInbox}</Link>
           <Link href="/staff/reports">{dict.staff.reportsInbox}</Link>
           <Link href="/staff/saved-replies">{dict.staff.savedReplies}</Link>
-          {access.isAdmin && <Link href="/home">{dict.staff.residentApp}</Link>}
+          {access.isAdmin && <Link href="/staff/roles">{dict.staff.manageRoles}</Link>}
         </nav>
+        {access.isAdmin && (
+          <RoleSwitcher
+            label={dict.staff.dashboardTitle}
+            items={[
+              { path: '/home', label: dict.staff.residentApp },
+              { path: '/staff', label: dict.staff.dashboardTitle },
+            ]}
+          />
+        )}
         {access.isAdmin ? (
           <span className={styles.logOut}>{dict.staff.adminBadge}</span>
         ) : (
