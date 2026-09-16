@@ -52,6 +52,16 @@
   padding: 24px;
 }
 
+.switchBox {
+  width: 100%;
+  max-width: 360px;
+  margin-top: 16px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 14px 20px;
+  text-align: center;
+}
+
 .topRow {
   display: flex;
   align-items: center;

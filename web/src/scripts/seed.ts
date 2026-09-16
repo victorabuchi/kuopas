@@ -10,7 +10,7 @@ if (existing) {
 
 const building = await db.orm.public.Building.create({
   name: 'Sarkiniementie 30',
-  address: 'Sarkiniementie 30, Helsinki',
+  address: 'Sarkiniementie 30, Kuopio',
 });
 
 const stairwellA = await db.orm.public.Stairwell.create({ buildingId: building.id, label: 'A' });

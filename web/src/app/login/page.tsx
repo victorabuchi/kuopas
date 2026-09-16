@@ -56,7 +56,7 @@ export default async function LoginPage({
         </form>
       </div>
 
-      <div className={styles.card} style={{ marginTop: '16px', textAlign: 'center' }}>
+      <div className={styles.switchBox}>
         <p className={styles.footerNote}>
           {t.newTenant} <Link href="/register">{t.register}</Link>
         </p>

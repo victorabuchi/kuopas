@@ -14,7 +14,8 @@
     "seed:news": "tsx src/scripts/seed-news.ts",
     "seed:laundry": "tsx src/scripts/seed-laundry.ts",
     "seed:sauna-parking": "tsx src/scripts/seed-sauna-parking.ts",
-    "seed:staff": "tsx src/scripts/seed-staff.ts"
+    "seed:staff": "tsx src/scripts/seed-staff.ts",
+    "seed:buildings": "tsx src/scripts/seed-buildings.ts"
   },
   "dependencies": {
     "@prisma/client": "^7.10.0",
