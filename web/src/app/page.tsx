@@ -20,8 +20,7 @@ export default async function Home() {
       <nav className={styles.nav}>
         <div className={`${styles.wrap} ${styles.navRow}`}>
           <div className={styles.logo}>
-            <Image src="/Kuopas-logo.png" alt="Kuopas" width={92} height={38} className={styles.logoImg} priority />
-            Kuopas
+            <Image src="/Kuopas-logo.png" alt="Kuopas" width={140} height={58} className={styles.logoImg} priority />
           </div>
           <div className={styles.navLinks}>
             <a href="#chat">{dict.nav.chats}</a>
