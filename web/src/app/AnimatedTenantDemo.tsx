@@ -631,10 +631,10 @@ function PlayPauseButton({ playing, onClick }: { playing: boolean; onClick: () =
         position: 'absolute',
         right: '20px',
         bottom: '20px',
-        width: '46px',
-        height: '46px',
+        width: '40px',
+        height: '40px',
         borderRadius: '50%',
-        background: 'rgba(4,106,56,0.85)',
+        background: 'rgba(26,26,24,0.55)',
         border: 'none',
         cursor: 'pointer',
         display: 'flex',
@@ -642,15 +642,18 @@ function PlayPauseButton({ playing, onClick }: { playing: boolean; onClick: () =
         justifyContent: 'center',
         color: '#fff',
         zIndex: 5,
+        transition: 'background 0.15s',
       }}
+      onMouseEnter={(e) => (e.currentTarget.style.background = 'rgba(26,26,24,0.78)')}
+      onMouseLeave={(e) => (e.currentTarget.style.background = 'rgba(26,26,24,0.55)')}
     >
       {playing ? (
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
           <rect x="5" y="4" width="5" height="16" rx="1" />
           <rect x="14" y="4" width="5" height="16" rx="1" />
         </svg>
       ) : (
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
           <path d="M7 4l14 8-14 8V4z" />
         </svg>
       )}
@@ -683,51 +686,83 @@ export default function AnimatedTenantDemo() {
 
   const cursorPos = chapter.cursor[Math.min(step, chapter.cursor.length - 1)];
 
+  function selectChapter(i: number) {
+    setChapterIdx(i);
+    setStep(0);
+    setPlaying(true);
+  }
+
   return (
-    <div
-      style={{
-        position: 'relative',
-        width: '100%',
-        maxWidth: '980px',
-        margin: '0 auto',
-        background: '#fff',
-        border: '1px solid #e8e8e3',
-        borderRadius: '32px',
-        padding: '36px',
-        boxShadow: '0 0 140px -20px rgba(4,106,56,0.32), 0 4px 34px rgba(0,0,0,0.07)',
-      }}
-    >
-      <div style={{ height: '640px' }}>
-        <FixedDemoFrame>
-          <div style={{ position: 'relative', width: '740px', flexShrink: 0 }}>
-            <div style={{ background: '#fff', border: '1px solid #e0e0dc', borderRadius: '18px', overflow: 'hidden', boxShadow: '0 34px 90px rgba(0,0,0,0.16)' }}>
-              <BrowserChrome url="kuopas.fi/app" />
-              <div style={{ display: 'flex', height: '580px' }}>
-                <AppSidebar activeKey={chapter.sidebarKey} />
-                <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minWidth: 0 }}>{chapter.render(step)}</div>
+    <div style={{ position: 'relative', width: '100%', maxWidth: '980px', margin: '0 auto', paddingBottom: '30px' }}>
+      <div
+        style={{
+          position: 'relative',
+          background: '#fff',
+          border: '1px solid #e8e8e3',
+          borderRadius: '32px',
+          padding: '36px',
+          boxShadow: '0 0 140px -20px rgba(4,106,56,0.32), 0 4px 34px rgba(0,0,0,0.07)',
+        }}
+      >
+        <div style={{ height: '640px' }}>
+          <FixedDemoFrame>
+            <div style={{ position: 'relative', width: '740px', flexShrink: 0 }}>
+              <div style={{ background: '#fff', border: '1px solid #e0e0dc', borderRadius: '18px', overflow: 'hidden', boxShadow: '0 34px 90px rgba(0,0,0,0.16)' }}>
+                <BrowserChrome url="kuopas.fi/app" />
+                <div style={{ display: 'flex', height: '580px' }}>
+                  <AppSidebar activeKey={chapter.sidebarKey} />
+                  <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minWidth: 0 }}>{chapter.render(step)}</div>
+                </div>
               </div>
+              <CursorArrow pos={cursorPos} />
             </div>
-            <CursorArrow pos={cursorPos} />
-          </div>
-        </FixedDemoFrame>
+          </FixedDemoFrame>
+        </div>
+
+        <PlayPauseButton playing={playing} onClick={() => setPlaying((p) => !p)} />
       </div>
 
-      <div style={{ display: 'flex', justifyContent: 'center', gap: '8px', marginTop: '22px' }}>
+      <div
+        style={{
+          position: 'absolute',
+          left: '50%',
+          bottom: 0,
+          transform: 'translate(-50%, 50%)',
+          display: 'flex',
+          justifyContent: 'center',
+          gap: '4px',
+          flexWrap: 'wrap',
+          background: '#fff',
+          border: '1px solid #e8e8e3',
+          borderRadius: '28px',
+          padding: '6px',
+          boxShadow: '0 12px 32px rgba(0,0,0,0.12)',
+          width: 'max-content',
+          maxWidth: '92vw',
+        }}
+      >
         {CHAPTERS.map((c, i) => (
-          <div
+          <button
             key={c.name}
+            onClick={() => selectChapter(i)}
             style={{
-              height: '5px',
-              width: i === chapterIdx ? '28px' : '5px',
-              borderRadius: '999px',
-              background: i === chapterIdx ? GREEN : '#ddd',
-              transition: 'all 0.3s',
+              padding: '10px 18px',
+              borderRadius: '22px',
+              border: 'none',
+              cursor: 'pointer',
+              fontSize: '13px',
+              fontWeight: 700,
+              fontFamily: 'inherit',
+              background: i === chapterIdx ? GREEN : 'transparent',
+              color: i === chapterIdx ? '#fff' : '#666',
+              transition: 'all 0.2s',
+              whiteSpace: 'nowrap',
             }}
-          />
+          >
+            {c.name}
+          </button>
         ))}
       </div>
-
-      <PlayPauseButton playing={playing} onClick={() => setPlaying((p) => !p)} />
 
       <style>{`
         @keyframes kuopasBlinkCaret { 0%, 100% { opacity: 1 } 50% { opacity: 0 } }
