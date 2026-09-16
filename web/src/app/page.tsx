@@ -4,6 +4,7 @@ import styles from './page.module.css';
 import { getLocale } from '../lib/i18n';
 import { getDictionary } from '../lib/dictionary';
 import LanguageSwitcher from './(app)/LanguageSwitcher';
+import AnimatedTenantDemo from './AnimatedTenantDemo';
 
 const mulish = Mulish({ subsets: ['latin'], weight: ['400', '500', '600', '700', '800'], variable: '--font-mulish' });
 
@@ -35,58 +36,41 @@ export default async function Home() {
         </div>
       </nav>
 
-      <header className={`${styles.wrap} ${styles.hero}`}>
-        <div>
-          <div className={styles.heroEyebrow}>{t.eyebrow}</div>
-          <h1>
+      <header className={styles.hero}>
+        <div className={styles.heroGlowA} />
+        <div className={styles.heroGlowB} />
+        <div className={`${styles.wrap} ${styles.heroInner}`}>
+          <div className={`${styles.heroEyebrow} ${styles.fadeUp}`}>{t.eyebrow}</div>
+          <h1 className={styles.fadeUp}>
             {t.heroLine1}
             <br />
             <em>{t.heroEmphasis}</em>
           </h1>
-          <p className={styles.lede}>{t.heroLede}</p>
-          <div className={styles.heroCta}>
+          <p className={`${styles.lede} ${styles.fadeUp}`}>{t.heroLede}</p>
+          <div className={`${styles.heroCta} ${styles.fadeUp}`}>
             <Link href="/login" className={styles.btnPrimary}>
               {t.heroCta}
             </Link>
             <span className={styles.heroCtaNote}>{t.heroNote}</span>
           </div>
-        </div>
 
-        <div className={styles.mock}>
-          <div className={styles.mockHead}>
-            <div className={styles.mockAvatar}>PK</div>
-            <div className={styles.mockHeadText}>
-              <div className={styles.t1}>Puijonkatu 5 &middot; floor 3</div>
-              <div className={styles.t2}>6 housemates</div>
-            </div>
-          </div>
-          <div className={styles.mockBody}>
-            <div className={styles.bubbleIn}>
-              <div className={styles.bubbleName}>Aino</div>
-              anyone free to grab the sauna slot tonight?
-            </div>
-            <div className={styles.bubbleOut}>yeah I&apos;ll book 8pm</div>
-            <div className={styles.bubbleIn}>
-              <div className={styles.bubbleName}>Eetu</div>
-              Kuopas just posted a water shutoff notice for tmrw morning, saw it in the feed
-            </div>
-            <div className={styles.mockInput}>
-              Message the floor&hellip;
-              <span className={styles.mockSend}>
-                <svg
-                  width="14"
-                  height="14"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="white"
-                  strokeWidth="2.4"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <path d="m5 12 14-7-7 14-2-6z" />
+          <div className={styles.heroIcons}>
+            {[
+              { delay: '0s', path: 'M20 12a7 7 0 0 1-7 7H8l-4 3 1-4.5A7 7 0 1 1 20 12Z' },
+              { delay: '0.6s', path: 'M3.5 4.5h17v15h-17zM7.5 9h9M7.5 12.5h9M7.5 16h5.5' },
+              { delay: '1.1s', path: 'M4 3.5h16v17H4zM12 13m-5 0a5 5 0 1 0 10 0a5 5 0 1 0 -10 0M12 13m-1.6 0a1.6 1.6 0 1 0 3.2 0a1.6 1.6 0 1 0 -3.2 0' },
+              { delay: '1.6s', path: 'M4 13v-1a8 8 0 0 1 16 0v1M2.5 13h5v6h-5zM16.5 13h5v6h-5zM20 19v1a3 3 0 0 1-3 3h-3' },
+            ].map((icon, i) => (
+              <div key={i} className={styles.heroIcon} style={{ animationDelay: icon.delay }}>
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+                  <path d={icon.path} />
                 </svg>
-              </span>
-            </div>
+              </div>
+            ))}
+          </div>
+
+          <div className={styles.heroDemo}>
+            <AnimatedTenantDemo />
           </div>
         </div>
       </header>
