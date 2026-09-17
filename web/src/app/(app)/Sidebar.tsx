@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import styles from './app-shell.module.css';
+import { logoutAction } from '../../lib/auth-actions';
 import type { getDictionary } from '../../lib/dictionary';
 
 type NavDict = ReturnType<typeof getDictionary>['nav'];
@@ -128,16 +129,7 @@ const NAV_ITEMS = [
   },
 ];
 
-function initials(name: string): string {
-  return name
-    .trim()
-    .split(/\s+/)
-    .slice(0, 2)
-    .map((part) => part[0]?.toUpperCase() ?? '')
-    .join('');
-}
-
-export default function Sidebar({ tenantName, nav }: { tenantName: string; nav: NavDict }) {
+export default function Sidebar({ nav }: { nav: NavDict }) {
   const pathname = usePathname();
 
   return (
@@ -159,12 +151,28 @@ export default function Sidebar({ tenantName, nav }: { tenantName: string; nav: 
       </div>
       <div className={styles.railBottom}>
         <Link
-          href="/profile"
-          title={nav.profile}
-          className={`${styles.railAvatar} ${pathname.startsWith('/profile') ? styles.railAvatarActive : ''}`}
+          href="/settings"
+          title={nav.settings}
+          className={`${styles.railLink} ${pathname.startsWith('/settings') ? styles.railLinkActive : ''}`}
         >
-          {initials(tenantName)}
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+            <line x1="4" y1="6" x2="20" y2="6" />
+            <circle cx="9" cy="6" r="2" />
+            <line x1="4" y1="12" x2="20" y2="12" />
+            <circle cx="15" cy="12" r="2" />
+            <line x1="4" y1="18" x2="20" y2="18" />
+            <circle cx="9" cy="18" r="2" />
+          </svg>
         </Link>
+        <form action={logoutAction}>
+          <button type="submit" title={nav.signOut} className={styles.railLink} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, font: 'inherit' }}>
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+              <polyline points="16 17 21 12 16 7" />
+              <line x1="21" y1="12" x2="9" y2="12" />
+            </svg>
+          </button>
+        </form>
       </div>
     </nav>
   );
