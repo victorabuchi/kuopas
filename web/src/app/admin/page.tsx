@@ -26,7 +26,7 @@ export default async function AdminPage() {
   return (
     <>
       <h1 style={{ marginTop: 0 }}>{t.manageRolesHeading}</h1>
-      <p style={{ color: '#767676', marginTop: '-8px' }}>{t.manageRolesLede}</p>
+      <p style={{ color: '#767676', marginTop: '6px', marginBottom: '24px' }}>{t.manageRolesLede}</p>
 
       <div className={styles.card}>
         <h2>{t.residentsHeading}</h2>

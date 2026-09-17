@@ -8,6 +8,7 @@ import TopBar from '../TopBar';
 import LanguageSwitcher from '../LanguageSwitcher';
 import { getLocale } from '../../../lib/i18n';
 import { getDictionary } from '../../../lib/dictionary';
+import { logoutAction } from '../../../lib/auth-actions';
 
 export const metadata: Metadata = {
   title: 'Settings - Kuopas',
@@ -81,7 +82,17 @@ export default async function SettingsPage({ searchParams }: { searchParams: Pro
                 <span className={styles.rowValue}>{unit.floor}</span>
               </div>
             </div>
-          ) : (
+          ) : null}
+          {category === 'general' && (
+            <div className={styles.card}>
+              <form action={logoutAction}>
+                <button type="submit" className={styles.signOut}>
+                  {dict.profile.logOut}
+                </button>
+              </form>
+            </div>
+          )}
+          {category === 'language' && (
             <div className={styles.card}>
               <h2>{dict.settings.languageCategory}</h2>
               <p className={styles.lede}>{dict.settings.languageLede}</p>

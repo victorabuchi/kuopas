@@ -3,7 +3,6 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import styles from './app-shell.module.css';
-import { logoutAction } from '../../lib/auth-actions';
 import type { getDictionary } from '../../lib/dictionary';
 
 type NavDict = ReturnType<typeof getDictionary>['nav'];
@@ -35,18 +34,6 @@ const NAV_ITEMS = [
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
         <rect x="3" y="5" width="18" height="14" rx="2.5" />
         <path d="m4 7 8 6 8-6" />
-      </svg>
-    ),
-  },
-  {
-    href: '/groups',
-    key: 'groups' as const,
-    icon: (
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-        <circle cx="9" cy="8" r="3" />
-        <path d="M2.5 19a6.5 6.5 0 0 1 13 0" />
-        <path d="M16 8.5a3 3 0 1 1 3.5 2.96" />
-        <path d="M16.5 13.2c2.6.4 4.5 2.4 4.9 5.3" />
       </svg>
     ),
   },
@@ -164,15 +151,6 @@ export default function Sidebar({ nav }: { nav: NavDict }) {
             <circle cx="9" cy="18" r="2" />
           </svg>
         </Link>
-        <form action={logoutAction}>
-          <button type="submit" title={nav.signOut} className={styles.railLink} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, font: 'inherit' }}>
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
-              <polyline points="16 17 21 12 16 7" />
-              <line x1="21" y1="12" x2="9" y2="12" />
-            </svg>
-          </button>
-        </form>
       </div>
     </nav>
   );

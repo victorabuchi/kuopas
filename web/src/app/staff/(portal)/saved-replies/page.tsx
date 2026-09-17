@@ -19,7 +19,7 @@ export default async function SavedRepliesPage() {
   return (
     <>
       <h1 style={{ marginTop: 0 }}>{t.savedReplies}</h1>
-      <p style={{ color: '#767676', marginTop: '-8px' }}>{t.savedRepliesLede}</p>
+      <p style={{ color: '#767676', marginTop: '6px', marginBottom: '24px' }}>{t.savedRepliesLede}</p>
 
       <div className={styles.card}>
         <h2>{t.newSavedReply}</h2>

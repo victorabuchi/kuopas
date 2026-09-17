@@ -76,3 +76,20 @@
   font-weight: 600;
   font-size: 14px;
 }
+
+.signOut {
+  height: 40px;
+  padding: 0 20px;
+  border-radius: 10px;
+  border: 1px solid #e7e7e7;
+  background: #fff;
+  color: #b3261e;
+  font-weight: 700;
+  font-size: 14px;
+  font-family: inherit;
+  cursor: pointer;
+}
+.signOut:hover {
+  background: #fef4f3;
+  border-color: #b3261e;
+}

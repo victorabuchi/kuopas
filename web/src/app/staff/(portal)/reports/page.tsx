@@ -30,7 +30,7 @@ export default async function StaffReportsPage() {
   return (
     <>
       <h1 style={{ marginTop: 0 }}>{t.reportsInbox}</h1>
-      <p style={{ color: '#767676', marginTop: '-8px' }}>{t.reportsLede}</p>
+      <p style={{ color: '#767676', marginTop: '6px', marginBottom: '24px' }}>{t.reportsLede}</p>
 
       <div className={styles.list}>
         {reports.length === 0 && <div className={styles.empty}>{t.noReportsYet}</div>}

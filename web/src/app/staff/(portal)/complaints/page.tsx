@@ -59,7 +59,7 @@ export default async function StaffComplaintsPage({
   return (
     <>
       <h1 style={{ marginTop: 0 }}>{t.complaintsInbox}</h1>
-      <p style={{ color: '#767676', marginTop: '-8px' }}>{t.complaintsInboxLede}</p>
+      <p style={{ color: '#767676', marginTop: '6px', marginBottom: '24px' }}>{t.complaintsInboxLede}</p>
 
       <div className={styles.tabs}>
         {TAB_VALUES.map((value) => (
