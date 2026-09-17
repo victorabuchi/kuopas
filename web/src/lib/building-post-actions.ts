@@ -57,7 +57,7 @@ export async function createNoticeboardPostAction(formData: FormData) {
     url: `/feed/${post.id}`,
   });
 
-  revalidatePath('/feed');
+  revalidatePath('/notices');
 }
 
 // Staff posts a general announcement to a whole building. No-reply; residents
@@ -93,7 +93,7 @@ export async function createAnnouncementAction(formData: FormData) {
     url: `/feed/${post.id}`,
   });
 
-  revalidatePath('/feed');
+  revalidatePath('/notices');
   revalidatePath('/staff');
 }
 
@@ -115,7 +115,7 @@ export async function commentOnPostAction(formData: FormData) {
 
   await db.orm.public.BuildingPostComment.create({ postId, authorId: session.tenantId, content });
 
-  revalidatePath('/feed');
+  revalidatePath('/notices');
   revalidatePath(`/feed/${postId}`);
 }
 
@@ -153,7 +153,7 @@ export async function reportPostAction(formData: FormData) {
     reason,
   });
 
-  revalidatePath('/feed');
+  revalidatePath('/notices');
   revalidatePath('/staff/reports');
 }
 
@@ -181,7 +181,7 @@ export async function deleteReportedPostAction(formData: FormData) {
 
   await db.orm.public.BuildingPost.where({ id: postId }).delete();
 
-  revalidatePath('/feed');
+  revalidatePath('/notices');
   revalidatePath('/staff/reports');
 }
 
@@ -193,7 +193,7 @@ export async function deleteReportedCommentAction(formData: FormData) {
 
   await db.orm.public.BuildingPostComment.where({ id: commentId }).delete();
 
-  revalidatePath('/feed');
+  revalidatePath('/notices');
   revalidatePath('/staff/reports');
 }
 
@@ -227,6 +227,6 @@ export async function reactToPostAction(formData: FormData) {
     await db.orm.public.BuildingPostReaction.create({ postId, tenantId: session.tenantId });
   }
 
-  revalidatePath('/feed');
+  revalidatePath('/notices');
   revalidatePath(`/feed/${postId}`);
 }

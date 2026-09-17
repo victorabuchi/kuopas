@@ -32,7 +32,7 @@ export async function submitComplaintAction(formData: FormData) {
     photoUrl,
   });
 
-  revalidatePath('/complaints');
+  revalidatePath('/notices');
 }
 
 // `actingAs` disambiguates an admin, who has both a tenant session and staff

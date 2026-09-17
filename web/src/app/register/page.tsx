@@ -96,7 +96,7 @@ export default async function RegisterPage({
       <div className={styles.pageLinks}>
         <Link href="/terms">{dict.landing.footerTerms}</Link>
         <Link href="/privacy">{dict.landing.footerPrivacy}</Link>
-        <a href="/support">{dict.landing.footerContactUs}</a>
+        <a href="/notices?tab=support">{dict.landing.footerContactUs}</a>
       </div>
     </div>
   );
