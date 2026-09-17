@@ -5,8 +5,10 @@
   --green-dark: #046a38;
   --green-hover: #598000;
   --border: #e7e7e7;
+  --rail-bg: #f6f6f6;
 
-  min-height: 100vh;
+  display: flex;
+  height: 100vh;
   background: var(--bg);
   color: var(--fg);
   font-family: var(--font-mulish), sans-serif;
@@ -16,6 +18,52 @@
   box-sizing: border-box;
 }
 
+.rail {
+  width: 72px;
+  flex-shrink: 0;
+  background: var(--rail-bg);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 16px 0;
+}
+.railTop {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+.railLink {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--fg-muted);
+}
+.railLink:hover {
+  background: color-mix(in srgb, var(--border) 60%, transparent);
+  color: var(--fg);
+}
+.railLinkActive {
+  background: var(--green-dark);
+  color: #fff;
+}
+.railLinkActive:hover {
+  background: var(--green-dark);
+  color: #fff;
+}
+
+.mainCol {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+}
+
 .topBar {
   display: flex;
   align-items: center;
@@ -23,6 +71,7 @@
   height: 60px;
   padding: 0 24px;
   border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
 }
 .logo {
   height: 28px;
@@ -45,6 +94,7 @@
   max-width: 760px;
   margin: 0 auto;
   padding: 32px 24px 60px;
+  width: 100%;
 }
 
 .card {

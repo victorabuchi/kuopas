@@ -23,11 +23,11 @@ export default async function TopBar({ title }: { title: string }) {
         <div className={styles.spacer} />
         {isAdmin && (
           <RoleSwitcher
-            label={dict.staff.residentApp}
+            label={dict.staff.switcherStudent}
             items={[
-              { path: '/home', label: dict.staff.residentApp },
-              { path: '/staff', label: dict.staff.dashboardTitle },
-              { path: '/admin', label: dict.staff.manageRoles },
+              { path: '/home', label: dict.staff.switcherStudent },
+              { path: '/staff', label: dict.staff.switcherStaff },
+              { path: '/admin', label: dict.staff.switcherAdmin },
             ]}
           />
         )}

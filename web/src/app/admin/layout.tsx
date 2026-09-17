@@ -3,6 +3,7 @@ import { redirect } from 'next/navigation';
 import { Mulish } from 'next/font/google';
 import styles from './admin.module.css';
 import RoleSwitcher from '../RoleSwitcher';
+import Sidebar from './Sidebar';
 import { getSession } from '../../lib/session';
 import { db } from '../../prisma/db';
 import { getLocale } from '../../lib/i18n';
@@ -22,21 +23,24 @@ export default async function AdminLayout({ children }: { children: React.ReactN
 
   return (
     <div className={`${styles.shell} ${mulish.variable}`}>
-      <div className={styles.topBar}>
-        <Image src="/Kuopas-logo.png" alt="Kuopas" width={92} height={38} className={styles.logo} priority />
-        <span className={styles.title}>{dict.staff.adminBadge}</span>
-        <div style={{ flex: 1 }} />
-        <RoleSwitcher
-          label={dict.staff.adminBadge}
-          items={[
-            { path: '/home', label: dict.staff.residentApp },
-            { path: '/staff', label: dict.staff.dashboardTitle },
-            { path: '/admin', label: dict.staff.manageRoles },
-          ]}
-        />
+      <Sidebar dict={dict.staff} />
+      <div className={styles.mainCol}>
+        <div className={styles.topBar}>
+          <Image src="/Kuopas-logo.png" alt="Kuopas" width={92} height={38} className={styles.logo} priority />
+          <span className={styles.title}>{dict.staff.adminBadge}</span>
+          <div style={{ flex: 1 }} />
+          <RoleSwitcher
+            label={dict.staff.switcherAdmin}
+            items={[
+              { path: '/home', label: dict.staff.switcherStudent },
+              { path: '/staff', label: dict.staff.switcherStaff },
+              { path: '/admin', label: dict.staff.switcherAdmin },
+            ]}
+          />
+        </div>
+        <div className={styles.accent} />
+        <div className={styles.main}>{children}</div>
       </div>
-      <div className={styles.accent} />
-      <div className={styles.main}>{children}</div>
     </div>
   );
 }

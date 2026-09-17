@@ -27,11 +27,11 @@ export default async function StaffPortalLayout({ children }: { children: React.
           <div style={{ flex: 1 }} />
           {access.isAdmin && (
             <RoleSwitcher
-              label={dict.staff.dashboardTitle}
+              label={dict.staff.switcherStaff}
               items={[
-                { path: '/home', label: dict.staff.residentApp },
-                { path: '/staff', label: dict.staff.dashboardTitle },
-                { path: '/admin', label: dict.staff.manageRoles },
+                { path: '/home', label: dict.staff.switcherStudent },
+                { path: '/staff', label: dict.staff.switcherStaff },
+                { path: '/admin', label: dict.staff.switcherAdmin },
               ]}
             />
           )}
