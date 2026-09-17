@@ -27,6 +27,7 @@ export default async function TopBar({ title }: { title: string }) {
             items={[
               { path: '/home', label: dict.staff.residentApp },
               { path: '/staff', label: dict.staff.dashboardTitle },
+              { path: '/admin', label: dict.staff.manageRoles },
             ]}
           />
         )}

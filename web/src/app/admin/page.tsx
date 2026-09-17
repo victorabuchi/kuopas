@@ -1,25 +1,20 @@
 import type { Metadata } from 'next';
-import { redirect } from 'next/navigation';
-import styles from '../../staff.module.css';
-import { db } from '../../../../prisma/db';
-import { getStaffAccess } from '../../../../lib/portal-access';
-import { getLocale } from '../../../../lib/i18n';
-import { getDictionary } from '../../../../lib/dictionary';
+import styles from './admin.module.css';
+import { db } from '../../prisma/db';
+import { getLocale } from '../../lib/i18n';
+import { getDictionary } from '../../lib/dictionary';
 import {
   grantAdminAction,
   revokeAdminAction,
   createSupportAccountAction,
   removeSupportAccountAction,
-} from '../../../../lib/role-actions';
+} from '../../lib/role-actions';
 
 export const metadata: Metadata = {
-  title: 'Roles - Kuopas staff',
+  title: 'Admin - Kuopas',
 };
 
-export default async function RolesPage() {
-  const access = await getStaffAccess();
-  if (!access?.isAdmin) redirect('/staff');
-
+export default async function AdminPage() {
   const locale = await getLocale();
   const dict = getDictionary(locale);
   const t = dict.staff;

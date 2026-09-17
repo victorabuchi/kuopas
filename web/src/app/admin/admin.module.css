@@ -1,0 +1,147 @@
+.shell {
+  --bg: #ffffff;
+  --fg: #000000;
+  --fg-muted: #767676;
+  --green-dark: #046a38;
+  --green-hover: #598000;
+  --border: #e7e7e7;
+
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-mulish), sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+.shell * {
+  box-sizing: border-box;
+}
+
+.topBar {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  height: 60px;
+  padding: 0 24px;
+  border-bottom: 1px solid var(--border);
+}
+.logo {
+  height: 28px;
+  width: auto;
+  flex-shrink: 0;
+}
+.title {
+  font-weight: 800;
+  font-size: 19px;
+  color: var(--fg);
+}
+.accent {
+  height: 6px;
+  background-image: url('/page-header-bg.svg');
+  background-repeat: repeat-x;
+  background-size: auto 100%;
+}
+
+.main {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 32px 24px 60px;
+}
+
+.card {
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 24px;
+}
+.card h2 {
+  margin: 0 0 14px;
+  font-size: 16px;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.field label {
+  font-size: 13px;
+  font-weight: 700;
+}
+.field input,
+.field select,
+.field textarea {
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  padding: 10px 12px;
+  font-size: 14px;
+  font-family: inherit;
+  color: var(--fg);
+  background: var(--bg);
+}
+.submit {
+  align-self: flex-start;
+  height: 42px;
+  padding: 0 22px;
+  border-radius: 10px;
+  border: none;
+  background: var(--green-dark);
+  color: #fff;
+  font-weight: 700;
+  font-size: 14px;
+  cursor: pointer;
+}
+.submit:hover {
+  background: var(--green-hover);
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 14px 16px;
+}
+.rowText {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+.rowCategory {
+  font-weight: 700;
+  font-size: 14.5px;
+  text-transform: capitalize;
+}
+.rowMeta {
+  font-size: 12.5px;
+  color: var(--fg-muted);
+}
+
+.empty {
+  padding: 30px 0;
+  text-align: center;
+  color: var(--fg-muted);
+}
+
+.inlineSubmit {
+  border: none;
+  background: var(--green-dark);
+  color: #fff;
+  border-radius: 8px;
+  padding: 6px 12px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+}

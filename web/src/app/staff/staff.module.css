@@ -79,6 +79,12 @@
   width: auto;
   flex-shrink: 0;
 }
+.accent {
+  height: 6px;
+  background-image: url('/page-header-bg.svg');
+  background-repeat: repeat-x;
+  background-size: auto 100%;
+}
 .logOut {
   font-size: 13px;
   font-weight: 700;

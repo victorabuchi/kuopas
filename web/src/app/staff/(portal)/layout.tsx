@@ -20,7 +20,7 @@ export default async function StaffPortalLayout({ children }: { children: React.
 
   return (
     <div className={`${styles.shell} ${mulish.variable}`}>
-      <Sidebar dict={dict.staff} isAdmin={access.isAdmin} />
+      <Sidebar dict={dict.staff} />
       <div className={styles.mainCol}>
         <div className={styles.topBar}>
           <Image src="/Kuopas-logo.png" alt="Kuopas" width={92} height={38} className={styles.logo} priority />
@@ -31,6 +31,7 @@ export default async function StaffPortalLayout({ children }: { children: React.
               items={[
                 { path: '/home', label: dict.staff.residentApp },
                 { path: '/staff', label: dict.staff.dashboardTitle },
+                { path: '/admin', label: dict.staff.manageRoles },
               ]}
             />
           )}
@@ -44,6 +45,7 @@ export default async function StaffPortalLayout({ children }: { children: React.
             </form>
           )}
         </div>
+        <div className={styles.accent} />
         <div className={styles.main}>{children}</div>
       </div>
     </div>

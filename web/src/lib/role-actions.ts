@@ -37,7 +37,7 @@ export async function grantAdminAction(formData: FormData) {
 
   await db.orm.public.Tenant.where({ id: tenantId }).update({ role: 'admin', staffId });
 
-  revalidatePath('/staff/roles');
+  revalidatePath('/admin');
 }
 
 export async function revokeAdminAction(formData: FormData) {
@@ -48,7 +48,7 @@ export async function revokeAdminAction(formData: FormData) {
 
   await db.orm.public.Tenant.where({ id: tenantId }).update({ role: 'resident' });
 
-  revalidatePath('/staff/roles');
+  revalidatePath('/admin');
 }
 
 // Creates a standalone customer support (Staff) account, not linked to any
@@ -71,7 +71,7 @@ export async function createSupportAccountAction(formData: FormData) {
   const passwordHash = await hash(password, BCRYPT_ROUNDS);
   await db.orm.public.Staff.create({ name, email, passwordHash });
 
-  revalidatePath('/staff/roles');
+  revalidatePath('/admin');
 }
 
 export async function removeSupportAccountAction(formData: FormData) {
@@ -85,5 +85,5 @@ export async function removeSupportAccountAction(formData: FormData) {
 
   await db.orm.public.Staff.where({ id: staffId }).delete();
 
-  revalidatePath('/staff/roles');
+  revalidatePath('/admin');
 }
