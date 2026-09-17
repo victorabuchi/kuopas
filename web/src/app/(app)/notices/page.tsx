@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import Link from 'next/link';
 import { redirect } from 'next/navigation';
 import styles from '../chat/[groupId]/chat.module.css';
 import { db } from '../../../prisma/db';
@@ -33,6 +34,21 @@ export default async function NoticesPage() {
         <div className={styles.topBarText}>
           <span className={styles.topBarTitle}>{t.fromKuopas}</span>
         </div>
+      </div>
+
+      <div className={styles.tabs}>
+        <Link href="/feed?tab=announcements" className={styles.tab}>
+          {dict.feedBoard.tabAnnouncements}
+        </Link>
+        <Link href="/feed?tab=noticeboard" className={styles.tab}>
+          {dict.feedBoard.tabNoticeboard}
+        </Link>
+        <Link href="/complaints" className={styles.tab}>
+          {dict.nav.complaints}
+        </Link>
+        <Link href="/support" className={styles.tab}>
+          {dict.nav.support}
+        </Link>
       </div>
 
       <div className={styles.messages}>
