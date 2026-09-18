@@ -199,6 +199,7 @@ model Tenant {
   staffAccount            Staff?            @relation(fields: [staffId], references: [id], onDelete: SetNull)
   staffId                 Uuid?             @unique
   blockedFromNoticeboard  Boolean           @default(false)
+  hasSeenMoveInGuide      Boolean           @default(false)
   unit                    Unit              @relation(fields: [unitId], references: [id], onDelete: Cascade)
   unitId                  Uuid
   memberships             ChatGroupMember[]

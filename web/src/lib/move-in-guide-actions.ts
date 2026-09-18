@@ -22,5 +22,14 @@ export async function toggleChecklistItemAction(formData: FormData) {
     await db.orm.public.MoveInChecklistItem.create({ tenantId: session.tenantId, itemKey });
   }
 
-  revalidatePath('/move-in-guide');
+  revalidatePath('/home');
+}
+
+export async function dismissMoveInGuideAction() {
+  const session = await getSession();
+  if (!session) throw new Error('Not signed in');
+
+  await db.orm.public.Tenant.where({ id: session.tenantId }).update({ hasSeenMoveInGuide: true });
+
+  revalidatePath('/home');
 }

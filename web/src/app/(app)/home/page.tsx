@@ -5,6 +5,7 @@ import styles from './home.module.css';
 import { getSession } from '../../../lib/session';
 import { db } from '../../../prisma/db';
 import TopBar from '../TopBar';
+import MoveInGuideOverlay from '../MoveInGuideOverlay';
 import { getLocale } from '../../../lib/i18n';
 import { getDictionary } from '../../../lib/dictionary';
 
@@ -30,6 +31,9 @@ export default async function HomePage({
   const session = await getSession();
   if (!session) redirect('/login');
 
+  const tenant = await db.orm.public.Tenant.where({ id: session.tenantId }).first();
+  if (!tenant) redirect('/login');
+
   const locale = await getLocale();
   const dict = getDictionary(locale);
 
@@ -48,6 +52,7 @@ export default async function HomePage({
 
   return (
     <div className={styles.page}>
+      {!tenant.hasSeenMoveInGuide && <MoveInGuideOverlay tenantId={tenant.id} dict={dict} />}
       <TopBar title={dict.home.title} />
 
       <div className={styles.tabs}>

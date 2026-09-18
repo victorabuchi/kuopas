@@ -3186,6 +3186,13 @@
                   "kind": "scalar"
                 }
               },
+              "hasSeenMoveInGuide": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/bool@1",
+                  "kind": "scalar"
+                }
+              },
               "id": {
                 "nullable": false,
                 "type": {
@@ -3577,6 +3584,9 @@
                 },
                 "email": {
                   "column": "email"
+                },
+                "hasSeenMoveInGuide": {
+                  "column": "hasSeenMoveInGuide"
                 },
                 "id": {
                   "column": "id"
@@ -6205,6 +6215,15 @@
                   "nativeType": "text",
                   "nullable": false
                 },
+                "hasSeenMoveInGuide": {
+                  "codecId": "pg/bool@1",
+                  "default": {
+                    "kind": "literal",
+                    "value": false
+                  },
+                  "nativeType": "bool",
+                  "nullable": false
+                },
                 "id": {
                   "codecId": "pg/uuid@1",
                   "nativeType": "uuid",
@@ -6476,7 +6495,7 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "b295b72c76c7437375bbda018884a0b9874f5f3778fc0de3ab8e523c0831899e"
+    "storageHash": "434851822af20684c655f72bfd644ca5d71e2b296358985a10934cd8a40a3c1b"
   },
   "execution": {
     "executionHash": "da3eb87c32f4f6e35aa2bb124c3db7e07e807e96c4bc5eb2ed0112af361dccac",

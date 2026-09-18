@@ -38,16 +38,6 @@ const NAV_ITEMS = [
     ),
   },
   {
-    href: '/move-in-guide',
-    key: 'moveInGuide' as const,
-    icon: (
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M9 11.5 11 13.5 15.5 9" />
-        <rect x="4" y="4" width="16" height="16" rx="3" />
-      </svg>
-    ),
-  },
-  {
     href: '/laundry',
     key: 'laundry' as const,
     icon: (

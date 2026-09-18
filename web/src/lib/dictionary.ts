@@ -426,6 +426,8 @@ const en = {
     markDone: 'Mark done',
     undo: 'Undo',
     done: 'Done',
+    welcome: 'Welcome to Kuopas',
+    continueButton: 'Continue to Kuopas',
   },
 };
 
@@ -852,6 +854,8 @@ const fi: typeof en = {
     markDone: 'Merkitse tehdyksi',
     undo: 'Kumoa',
     done: 'Tehty',
+    welcome: 'Tervetuloa Kuopakseen',
+    continueButton: 'Jatka Kuopakseen',
   },
 };
 

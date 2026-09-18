@@ -1,0 +1,44 @@
+[
+  {
+    "id": "column.public.tenant.hasSeenMoveInGuide",
+    "label": "Add column \"hasSeenMoveInGuide\" to \"tenant\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "hasSeenMoveInGuide",
+        "table": "tenant"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"hasSeenMoveInGuide\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "tenant",
+          "hasSeenMoveInGuide"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"hasSeenMoveInGuide\"",
+        "sql": "ALTER TABLE \"public\".\"tenant\" ADD COLUMN \"hasSeenMoveInGuide\" bool DEFAULT false NOT NULL"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"hasSeenMoveInGuide\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "tenant",
+          "hasSeenMoveInGuide"
+        ]
+      }
+    ]
+  }
+]
