@@ -69,7 +69,7 @@ export default async function LoginPage({
       <div className={styles.pageLinks}>
         <Link href="/terms">{dict.landing.footerTerms}</Link>
         <Link href="/privacy">{dict.landing.footerPrivacy}</Link>
-        <a href="/notices?tab=support">{dict.landing.footerContactUs}</a>
+        <Link href="/messages?tab=support">{dict.landing.footerContactUs}</Link>
       </div>
     </div>
   );

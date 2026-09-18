@@ -27,9 +27,9 @@ export async function sendDirectNoticeAction(formData: FormData) {
     content,
   });
 
-  await sendPushToTenant(tenantId, { title: 'Message from Kuopas', body: content, url: '/notices' });
+  await sendPushToTenant(tenantId, { title: 'Message from Kuopas', body: content, url: '/messages' });
 
-  revalidatePath('/notices');
+  revalidatePath('/messages');
   revalidatePath('/staff/notices');
 }
 
@@ -51,10 +51,10 @@ export async function sendRentReminderAction(formData: FormData) {
       senderStaffId: access.staffId,
       content,
     });
-    await sendPushToTenant(tenant.id, { title: 'Rent reminder', body: content, url: '/notices' });
+    await sendPushToTenant(tenant.id, { title: 'Rent reminder', body: content, url: '/messages' });
   }
 
-  revalidatePath('/notices');
+  revalidatePath('/messages');
   revalidatePath('/staff/notices');
 }
 
@@ -73,6 +73,6 @@ export async function replyToNoticeAction(formData: FormData) {
     content,
   });
 
-  revalidatePath('/notices');
+  revalidatePath('/messages');
   revalidatePath(`/staff/notices/${session.tenantId}`);
 }

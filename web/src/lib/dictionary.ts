@@ -268,6 +268,7 @@ const en = {
   },
   messages: {
     title: 'Messages',
+    directTab: 'Residents',
     conversations: 'Conversations',
     startNew: 'Start a new conversation',
     noneYet: 'No direct messages yet. Start one below.',
@@ -693,6 +694,7 @@ const fi: typeof en = {
   },
   messages: {
     title: 'Viestit',
+    directTab: 'Asukkaat',
     conversations: 'Keskustelut',
     startNew: 'Aloita uusi keskustelu',
     noneYet: 'Ei viestejä vielä. Aloita alta.',
