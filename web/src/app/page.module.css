@@ -159,10 +159,22 @@
   height: 32px;
 }
 .navBtn {
-  composes: btnPrimary;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   height: 32px;
   padding: 0 16px;
-  font-size: 13px;
+  border: 1px solid #e7e7e7;
+  border-radius: 10px;
+  background: #fff;
+  color: #046a38;
+  font-family: var(--font-mulish), sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+.navBtn:hover {
+  border-color: #046a38;
 }
 
 /* Hero */
@@ -224,7 +236,7 @@
   font-size: 18px;
   line-height: 1.6;
   color: var(--fg-muted);
-  max-width: 660px;
+  max-width: 560px;
 }
 .heroCta {
   margin-top: 32px;

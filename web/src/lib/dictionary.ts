@@ -35,7 +35,7 @@ const en = {
     eyebrow: 'THE NEW KUOPAS APP',
     heroLine1: 'Kuopion Opiskelija-asunnot Oy',
     heroLede:
-      'Kuopas is the student housing company owned by the City of Kuopio, and this is its app for everyone in the building. Residents chat with housemates, get building announcements, book laundry, sauna, and parking, and report faults and complaints. Kuopas staff send notices to one resident or many, answer complaints, and moderate the noticeboard, all from one place.',
+      'Chat with your housemates, catch every Kuopas update, book the laundry machine, and reach customer support, all without leaving one app. Kuopas staff get their own tools to message residents and handle complaints.',
     heroCta: 'Log in to Kuopas',
     heroNote: "For residents across Kuopas' buildings in Kuopio.",
     featuresHeading: 'Everything you need as a Kuopas resident',
@@ -465,7 +465,7 @@ const fi: typeof en = {
     eyebrow: 'UUSI KUOPAS-SOVELLUS',
     heroLine1: 'Kuopion Opiskelija-asunnot Oy',
     heroLede:
-      'Kuopas on Kuopion kaupungin omistama opiskelija-asuntoyhtiö, ja tämä on sen sovellus koko talon väelle. Asukkaat keskustelevat kimppakavereiden kanssa, saavat talon tiedotteet, varaavat pesutuvan, saunan ja pysäköintipaikan sekä tekevät vika- ja häiriöilmoituksia. Kuopaksen henkilökunta lähettää ilmoituksia yhdelle tai usealle asukkaalle, vastaa ilmoituksiin ja valvoo ilmoitustaulua, kaikki samasta paikasta.',
+      'Keskustele kimppakavereiden kanssa, seuraa Kuopaksen ajankohtaisia asioita, varaa pesukone ja ota yhteyttä asiakaspalveluun, kaikki samassa sovelluksessa. Kuopaksen henkilökunnalla on omat työkalut asukkaille viestimiseen ja ilmoitusten hoitamiseen.',
     heroCta: 'Kirjaudu Kuopakseen',
     heroNote: 'Kuopaksen asukkaille ympäri Kuopiota.',
     featuresHeading: 'Kaikki mitä asukkaana tarvitset',
