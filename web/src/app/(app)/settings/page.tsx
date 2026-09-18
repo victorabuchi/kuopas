@@ -43,12 +43,21 @@ export default async function SettingsPage({ searchParams }: { searchParams: Pro
             href="/settings?category=general"
             className={`${styles.category} ${category === 'general' ? styles.categoryActive : ''}`}
           >
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+              <circle cx="12" cy="8" r="3.2" />
+              <path d="M5 19.5a7 7 0 0 1 14 0" />
+            </svg>
             {dict.settings.generalCategory}
           </Link>
           <Link
             href="/settings?category=language"
             className={`${styles.category} ${category === 'language' ? styles.categoryActive : ''}`}
           >
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+              <circle cx="12" cy="12" r="8.5" />
+              <path d="M3.5 12h17" />
+              <path d="M12 3.5a13 13 0 0 1 3.5 8.5A13 13 0 0 1 12 20.5 13 13 0 0 1 8.5 12 13 13 0 0 1 12 3.5Z" />
+            </svg>
             {dict.settings.languageCategory}
           </Link>
         </div>

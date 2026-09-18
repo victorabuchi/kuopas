@@ -16,14 +16,25 @@
   display: flex;
   flex-direction: column;
   gap: 4px;
+  background: #f6f6f6;
+  border: 1px solid #e7e7e7;
+  border-radius: 12px;
+  padding: 10px;
+  align-self: flex-start;
 }
 .category {
-  padding: 10px 14px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
   border-radius: 8px;
   font-size: 14px;
   font-weight: 600;
   color: #767676;
   text-decoration: none;
+}
+.category svg {
+  flex-shrink: 0;
 }
 .category:hover {
   background: #f6f6f6;
