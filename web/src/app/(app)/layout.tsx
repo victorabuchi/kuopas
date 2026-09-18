@@ -23,7 +23,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
   return (
     <div className={`${styles.shell} ${mulish.variable}`}>
       <PushSubscribe />
-      <Sidebar nav={dict.nav} />
+      <Sidebar nav={dict.nav} back={dict.common.back} settings={dict.settings} />
       <main className={styles.main}>{children}</main>
     </div>
   );

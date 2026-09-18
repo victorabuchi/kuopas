@@ -1,11 +1,9 @@
 'use client';
 
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useSearchParams } from 'next/navigation';
 import styles from './app-shell.module.css';
 import type { getDictionary } from '../../lib/dictionary';
-
-type NavDict = ReturnType<typeof getDictionary>['nav'];
 
 const NAV_ITEMS = [
   {
@@ -73,8 +71,56 @@ const NAV_ITEMS = [
   },
 ];
 
-export default function Sidebar({ nav }: { nav: NavDict }) {
+type NavDict = ReturnType<typeof getDictionary>['nav'];
+type SettingsDict = ReturnType<typeof getDictionary>['settings'];
+
+export default function Sidebar({
+  nav,
+  back,
+  settings,
+}: {
+  nav: NavDict;
+  back: string;
+  settings: SettingsDict;
+}) {
   const pathname = usePathname();
+  const searchParams = useSearchParams();
+
+  if (pathname.startsWith('/settings')) {
+    const category = searchParams.get('category') === 'language' ? 'language' : 'general';
+    return (
+      <nav className={styles.rail}>
+        <div className={styles.railTop}>
+          <Link href="/home" title={back} className={styles.railLink}>
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+              <path d="m15 18-6-6 6-6" />
+            </svg>
+          </Link>
+          <Link
+            href="/settings?category=general"
+            title={settings.generalCategory}
+            className={`${styles.railLink} ${category === 'general' ? styles.railLinkActive : ''}`}
+          >
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+              <circle cx="12" cy="8" r="3.2" />
+              <path d="M5 19.5a7 7 0 0 1 14 0" />
+            </svg>
+          </Link>
+          <Link
+            href="/settings?category=language"
+            title={settings.languageCategory}
+            className={`${styles.railLink} ${category === 'language' ? styles.railLinkActive : ''}`}
+          >
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+              <circle cx="12" cy="12" r="8.5" />
+              <path d="M3.5 12h17" />
+              <path d="M12 3.5a13 13 0 0 1 3.5 8.5A13 13 0 0 1 12 20.5 13 13 0 0 1 8.5 12 13 13 0 0 1 12 3.5Z" />
+            </svg>
+          </Link>
+        </div>
+      </nav>
+    );
+  }
 
   return (
     <nav className={styles.rail}>
@@ -94,11 +140,7 @@ export default function Sidebar({ nav }: { nav: NavDict }) {
         })}
       </div>
       <div className={styles.railBottom}>
-        <Link
-          href="/settings"
-          title={nav.settings}
-          className={`${styles.railLink} ${pathname.startsWith('/settings') ? styles.railLinkActive : ''}`}
-        >
+        <Link href="/settings" title={nav.settings} className={styles.railLink}>
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
             <line x1="4" y1="6" x2="20" y2="6" />
             <circle cx="9" cy="6" r="2" />

@@ -3,52 +3,12 @@
 }
 
 .content {
-  display: flex;
-  gap: 32px;
-  max-width: 900px;
+  max-width: 560px;
   margin: 0 auto;
   padding: 28px 24px 60px;
 }
 
-.categories {
-  width: 220px;
-  flex-shrink: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  background: #f6f6f6;
-  border: 1px solid #e7e7e7;
-  border-radius: 12px;
-  padding: 10px;
-  align-self: flex-start;
-}
-.category {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 10px 12px;
-  border-radius: 8px;
-  font-size: 14px;
-  font-weight: 600;
-  color: #767676;
-  text-decoration: none;
-}
-.category svg {
-  flex-shrink: 0;
-}
-.category:hover {
-  background: #f6f6f6;
-}
-.categoryActive {
-  background: #f0f7f0;
-  color: #046a38;
-}
-.categoryActive:hover {
-  background: #f0f7f0;
-}
-
 .panel {
-  flex: 1;
   min-width: 0;
 }
 
