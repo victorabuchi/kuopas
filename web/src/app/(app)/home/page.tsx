@@ -47,7 +47,7 @@ export default async function HomePage({
 
   const posts = await db.orm.public.NewsPost.where({ category: tab })
     .orderBy((n) => n.publishedAt.desc())
-    .limit(30)
+    .limit(60)
     .all();
 
   return (
@@ -73,31 +73,36 @@ export default async function HomePage({
             {dict.home.emptyPrefix} {tabs.find((t) => t.value === tab)?.label.toLowerCase()} {dict.home.emptySuffix}
           </div>
         )}
-        {posts.map((post) => (
-          <a
-            key={post.id}
-            href={post.sourceUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className={styles.post}
-          >
-            <div className={styles.postHeader}>
-              <div className={styles.newsBadge}>
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                  <rect x="3.5" y="4.5" width="17" height="15" rx="3" />
-                  <path d="M7.5 9h9M7.5 12.5h9M7.5 16h5.5" />
-                </svg>
+        {posts.map((post) => {
+          const body = (
+            <>
+              <div className={styles.postHeader}>
+                <div className={styles.newsBadge}>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                    <rect x="3.5" y="4.5" width="17" height="15" rx="3" />
+                    <path d="M7.5 9h9M7.5 12.5h9M7.5 16h5.5" />
+                  </svg>
+                </div>
+                <div className={styles.postHeaderText}>
+                  <span className={styles.postSender}>{dict.home.kuopasNews}</span>
+                  <span className={styles.postMeta}>{new Date(post.publishedAt).toLocaleDateString()}</span>
+                </div>
               </div>
-              <div className={styles.postHeaderText}>
-                <span className={styles.postSender}>{dict.home.kuopasNews}</span>
-                <span className={styles.postMeta}>{new Date(post.publishedAt).toLocaleDateString()}</span>
-              </div>
+              <p className={styles.newsTitle}>{post.title}</p>
+              <p className={styles.postContent}>{post.summary}</p>
+              {post.sourceUrl && <span className={styles.newsLink}>{dict.home.readFullArticle}</span>}
+            </>
+          );
+          return post.sourceUrl ? (
+            <a key={post.id} href={post.sourceUrl} target="_blank" rel="noopener noreferrer" className={styles.post}>
+              {body}
+            </a>
+          ) : (
+            <div key={post.id} className={styles.post}>
+              {body}
             </div>
-            <p className={styles.newsTitle}>{post.title}</p>
-            <p className={styles.postContent}>{post.summary}</p>
-            <span className={styles.newsLink}>{dict.home.readFullArticle}</span>
-          </a>
-        ))}
+          );
+        })}
       </div>
     </div>
   );

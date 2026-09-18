@@ -289,7 +289,7 @@ const en = {
   home: {
     title: 'Feed',
     tabNews: 'News',
-    tabUpdates: 'Updates',
+    tabUpdates: 'Announcements',
     tabPromotions: 'Promotions',
     tabDiscounts: 'Discounts',
     tabEvents: 'Events',
