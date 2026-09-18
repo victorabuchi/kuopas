@@ -1,10 +1,10 @@
 import Link from 'next/link';
-import Image from 'next/image';
 import { Mulish } from 'next/font/google';
 import styles from './page.module.css';
 import { getLocale } from '../lib/i18n';
 import { getDictionary } from '../lib/dictionary';
 import LanguageSwitcher from './(app)/LanguageSwitcher';
+import LandingNav from './LandingNav';
 import AnimatedTenantDemo from './AnimatedTenantDemo';
 import AnimatedStaffDemo from './AnimatedStaffDemo';
 import BuiltForSection from './BuiltForSection';
@@ -19,37 +19,51 @@ export default async function Home() {
 
   return (
     <div className={`${styles.page} ${mulish.variable}`}>
-      <nav className={styles.nav}>
-        <div className={`${styles.wrap} ${styles.navRow}`}>
-          <div className={styles.logo}>
-            <Image src="/Kuopas-logo.png" alt="Kuopas" width={140} height={58} className={styles.logoImg} priority />
-          </div>
-          <div className={styles.navLinks}>
-            <a href="#chat">{dict.nav.chats}</a>
-            <a href="#feed">{dict.nav.feed}</a>
-            <a href="#laundry">{dict.nav.laundry}</a>
-            <a href="#support">{dict.nav.support}</a>
-          </div>
-          <div className={styles.navActions}>
-            <LanguageSwitcher locale={locale} />
-            <Link href="/login" className={styles.navBtn}>
-              {dict.common.logIn}
-            </Link>
-          </div>
-        </div>
-      </nav>
+      <LandingNav
+        menus={[
+          { id: 'residents', ...t.menus.residents },
+          { id: 'staff', ...t.menus.staff },
+          { id: 'resources', ...t.menus.resources },
+        ]}
+        plainLinks={[{ label: t.navSupport, href: '#support' }]}
+        labels={{
+          search: t.searchLabel,
+          searchPlaceholder: t.searchPlaceholder,
+          searchEmpty: t.searchEmpty,
+          logIn: dict.common.logIn,
+          signUp: t.signUp,
+        }}
+        actions={<LanguageSwitcher locale={locale} />}
+      />
 
       <header className={styles.hero}>
-        <div className={styles.heroGlowA} />
-        <div className={styles.heroGlowB} />
         <div className={`${styles.wrap} ${styles.heroInner}`}>
-          <h1 className={styles.fadeUp}>{t.heroLine1}</h1>
+          <h1 className={styles.fadeUp}>
+            {t.heroLine1.split(' ').map((word, i) => (
+              <span key={i} className={word.includes('-') ? styles.noBreak : undefined}>
+                {i > 0 ? ' ' : ''}
+                {word}
+              </span>
+            ))}
+          </h1>
           <p className={`${styles.lede} ${styles.fadeUp}`}>{t.heroLede}</p>
           <div className={`${styles.heroCta} ${styles.fadeUp}`}>
-            <Link href="/login" className={styles.btnPrimary}>
-              {t.heroCta}
+            <form action="/register" method="get" className={styles.heroForm}>
+              <input
+                type="email"
+                name="email"
+                required
+                placeholder={t.heroEmailPlaceholder}
+                aria-label={t.heroEmailPlaceholder}
+                className={styles.heroInput}
+              />
+              <button type="submit" className={styles.heroSubmit}>
+                {t.heroSignUp}
+              </button>
+            </form>
+            <Link href="/staff/login" className={styles.heroSecondary}>
+              {t.staffLogIn}
             </Link>
-            <span className={styles.heroCtaNote}>{t.heroNote}</span>
           </div>
 
           <div className={styles.heroIcons}>

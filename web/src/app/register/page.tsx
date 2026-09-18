@@ -19,9 +19,9 @@ export const metadata: Metadata = {
 export default async function RegisterPage({
   searchParams,
 }: {
-  searchParams: Promise<{ error?: string }>;
+  searchParams: Promise<{ error?: string; email?: string }>;
 }) {
-  const { error } = await searchParams;
+  const { error, email: prefillEmail } = await searchParams;
   const locale = await getLocale();
   const dict = getDictionary(locale);
   const t = dict.register;
@@ -56,7 +56,7 @@ export default async function RegisterPage({
           </div>
           <div className={styles.field}>
             <label htmlFor="email">{t.email}</label>
-            <input id="email" name="email" type="email" autoComplete="email" required />
+            <input id="email" name="email" type="email" autoComplete="email" defaultValue={prefillEmail} required />
           </div>
           <PasswordField label={t.password} id="password" name="password" autoComplete="new-password" minLength={8} hint={t.passwordHint} />
           <div className={styles.field}>

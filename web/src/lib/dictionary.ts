@@ -38,6 +38,105 @@ const en = {
       'Chat with your housemates, catch every Kuopas update, book the laundry machine, and reach customer support, all without leaving one app. Kuopas staff get their own tools to message residents and handle complaints.',
     heroCta: 'Log in to Kuopas',
     heroNote: "For residents across Kuopas' buildings in Kuopio.",
+    signUp: 'Sign up',
+    navSupport: 'Support',
+    searchLabel: 'Search',
+    searchPlaceholder: 'Search Kuopas',
+    searchEmpty: 'No results',
+    heroEmailPlaceholder: 'Enter your email',
+    heroSignUp: 'Sign up for Kuopas',
+    menus: {
+      residents: {
+        label: 'Residents',
+        columns: [
+          {
+            heading: 'Communicate',
+            items: [
+              { title: 'Group chats', desc: 'Building, stairwell, floor, and apartment', href: '#chat', icon: 'chat' },
+              { title: 'Message Kuopas', desc: 'Direct notices and replies', href: '#support', icon: 'mail' },
+              { title: 'Noticeboard', desc: 'Post to the whole building', href: '#feed', icon: 'feed' },
+            ],
+          },
+          {
+            heading: 'Book',
+            items: [
+              { title: 'Laundry', desc: 'See free machines and reserve a slot', href: '#laundry', icon: 'laundry' },
+              { title: 'Sauna', desc: 'Weekly slots for your building', href: '#built-for', icon: 'sauna' },
+              { title: 'Parking', desc: 'Find and book a spot', href: '#built-for', icon: 'parking' },
+            ],
+          },
+          {
+            heading: 'Report',
+            items: [
+              { title: 'Faults and complaints', desc: 'Send a photo, track the status', href: '#built-for', icon: 'alert' },
+              { title: 'Announcements', desc: 'Read them in Finnish or English', href: '#feed', icon: 'feed' },
+            ],
+          },
+        ],
+        explore: {
+          heading: 'Get started',
+          links: [
+            { label: 'Create an account', href: '/register' },
+            { label: 'Log in', href: '/login' },
+            { label: 'How it works', href: '#how-it-works' },
+          ],
+        },
+        footer: { label: 'View all features', href: '#chat' },
+      },
+      staff: {
+        label: 'Staff',
+        columns: [
+          {
+            heading: 'Messaging',
+            items: [
+              { title: 'Announcements', desc: 'Write once in Finnish and English', href: '#staff', icon: 'feed' },
+              { title: 'Message residents', desc: 'One student or a whole building', href: '#staff', icon: 'mail' },
+              { title: 'Saved replies', desc: 'Answer repeat questions in one click', href: '#staff', icon: 'bookmark' },
+            ],
+          },
+          {
+            heading: 'Support',
+            items: [
+              { title: 'Complaints inbox', desc: 'Triage, assign, and resolve', href: '#staff', icon: 'alert' },
+              { title: 'Reports', desc: 'See who is behind a reported post', href: '#staff', icon: 'flag' },
+              { title: 'Read receipts', desc: 'See who opened a notice', href: '#staff', icon: 'check' },
+            ],
+          },
+        ],
+        explore: {
+          heading: 'Get started',
+          links: [
+            { label: 'Staff log in', href: '/staff/login' },
+            { label: 'How it works', href: '#how-it-works' },
+          ],
+        },
+        footer: { label: 'See the staff tools', href: '#staff' },
+      },
+      resources: {
+        label: 'Resources',
+        columns: [
+          {
+            heading: 'Help',
+            items: [
+              { title: 'Contact us', desc: 'Customer service and maintenance', href: '#support', icon: 'help' },
+              { title: 'How it works', desc: 'Simple steps for both sides', href: '#how-it-works', icon: 'book' },
+            ],
+          },
+          {
+            heading: 'Legal',
+            items: [
+              { title: 'Terms of service', desc: 'The rules of using the app', href: '/terms', icon: 'doc' },
+              { title: 'Privacy policy', desc: 'How your data is handled', href: '/privacy', icon: 'lock' },
+            ],
+          },
+        ],
+        explore: {
+          heading: 'Company',
+          links: [{ label: 'kuopas.fi', href: 'https://www.kuopas.fi' }],
+        },
+        footer: { label: 'Contact us', href: '#support' },
+      },
+    },
     featuresHeading: 'Everything you need as a Kuopas resident',
     featuresLede: 'One login, four things you actually use, starting with the one residents asked for most.',
     liveNow: 'Live now',
@@ -468,6 +567,105 @@ const fi: typeof en = {
       'Keskustele kimppakavereiden kanssa, seuraa Kuopaksen ajankohtaisia asioita, varaa pesukone ja ota yhteyttä asiakaspalveluun, kaikki samassa sovelluksessa. Kuopaksen henkilökunnalla on omat työkalut asukkaille viestimiseen ja ilmoitusten hoitamiseen.',
     heroCta: 'Kirjaudu Kuopakseen',
     heroNote: 'Kuopaksen asukkaille ympäri Kuopiota.',
+    signUp: 'Rekisteröidy',
+    navSupport: 'Tuki',
+    searchLabel: 'Haku',
+    searchPlaceholder: 'Hae Kuopaksesta',
+    searchEmpty: 'Ei tuloksia',
+    heroEmailPlaceholder: 'Syötä sähköpostiosoitteesi',
+    heroSignUp: 'Rekisteröidy Kuopakseen',
+    menus: {
+      residents: {
+        label: 'Asukkaat',
+        columns: [
+          {
+            heading: 'Viestintä',
+            items: [
+              { title: 'Ryhmäkeskustelut', desc: 'Talo, rappu, kerros ja asunto', href: '#chat', icon: 'chat' },
+              { title: 'Viesti Kuopakselle', desc: 'Ilmoitukset ja vastaukset', href: '#support', icon: 'mail' },
+              { title: 'Ilmoitustaulu', desc: 'Kirjoita koko talolle', href: '#feed', icon: 'feed' },
+            ],
+          },
+          {
+            heading: 'Varaa',
+            items: [
+              { title: 'Pesutupa', desc: 'Näe vapaat koneet ja varaa vuoro', href: '#laundry', icon: 'laundry' },
+              { title: 'Sauna', desc: 'Viikoittaiset vuorot taloosi', href: '#built-for', icon: 'sauna' },
+              { title: 'Pysäköinti', desc: 'Löydä ja varaa paikka', href: '#built-for', icon: 'parking' },
+            ],
+          },
+          {
+            heading: 'Ilmoita',
+            items: [
+              { title: 'Viat ja häiriöt', desc: 'Lähetä kuva ja seuraa tilaa', href: '#built-for', icon: 'alert' },
+              { title: 'Tiedotteet', desc: 'Lue suomeksi tai englanniksi', href: '#feed', icon: 'feed' },
+            ],
+          },
+        ],
+        explore: {
+          heading: 'Aloita',
+          links: [
+            { label: 'Luo tili', href: '/register' },
+            { label: 'Kirjaudu', href: '/login' },
+            { label: 'Näin se toimii', href: '#how-it-works' },
+          ],
+        },
+        footer: { label: 'Katso kaikki ominaisuudet', href: '#chat' },
+      },
+      staff: {
+        label: 'Henkilökunta',
+        columns: [
+          {
+            heading: 'Viestintä',
+            items: [
+              { title: 'Tiedotteet', desc: 'Kirjoita kerran suomeksi ja englanniksi', href: '#staff', icon: 'feed' },
+              { title: 'Viesti asukkaille', desc: 'Yhdelle opiskelijalle tai koko talolle', href: '#staff', icon: 'mail' },
+              { title: 'Tallennetut vastaukset', desc: 'Vastaa toistuviin kysymyksiin yhdellä klikkauksella', href: '#staff', icon: 'bookmark' },
+            ],
+          },
+          {
+            heading: 'Tuki',
+            items: [
+              { title: 'Vikailmoitukset', desc: 'Lajittele, osoita ja ratkaise', href: '#staff', icon: 'alert' },
+              { title: 'Ilmiannot', desc: 'Näe ilmiannetun viestin kirjoittaja', href: '#staff', icon: 'flag' },
+              { title: 'Lukukuittaukset', desc: 'Näe, kuka avasi tiedotteen', href: '#staff', icon: 'check' },
+            ],
+          },
+        ],
+        explore: {
+          heading: 'Aloita',
+          links: [
+            { label: 'Henkilökunnan kirjautuminen', href: '/staff/login' },
+            { label: 'Näin se toimii', href: '#how-it-works' },
+          ],
+        },
+        footer: { label: 'Katso henkilökunnan työkalut', href: '#staff' },
+      },
+      resources: {
+        label: 'Resurssit',
+        columns: [
+          {
+            heading: 'Apua',
+            items: [
+              { title: 'Ota yhteyttä', desc: 'Asiakaspalvelu ja huolto', href: '#support', icon: 'help' },
+              { title: 'Näin se toimii', desc: 'Yksinkertaiset vaiheet molemmille', href: '#how-it-works', icon: 'book' },
+            ],
+          },
+          {
+            heading: 'Juridiikka',
+            items: [
+              { title: 'Käyttöehdot', desc: 'Sovelluksen käytön säännöt', href: '/terms', icon: 'doc' },
+              { title: 'Tietosuojaseloste', desc: 'Miten tietojasi käsitellään', href: '/privacy', icon: 'lock' },
+            ],
+          },
+        ],
+        explore: {
+          heading: 'Yritys',
+          links: [{ label: 'kuopas.fi', href: 'https://www.kuopas.fi' }],
+        },
+        footer: { label: 'Ota yhteyttä', href: '#support' },
+      },
+    },
     featuresHeading: 'Kaikki mitä asukkaana tarvitset',
     featuresLede: 'Yksi kirjautuminen, neljä oikeasti tarpeellista ominaisuutta.',
     liveNow: 'Käytössä',
