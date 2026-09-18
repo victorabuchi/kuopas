@@ -5,18 +5,18 @@
      shade, #84bd00 is their secondary accent green (mobile menu button,
      active pagination). Everything else here is a derived tint/shade of
      those three confirmed colors, not invented. */
-  --bg: #ffffff;
-  --bg-card: #ffffff;
-  --bg-soft: color-mix(in srgb, #046a38 8%, white);
-  --fg: #000000;
-  --fg-muted: #767676;
+  --bg: #04100a;
+  --bg-card: #0a1a12;
+  --bg-soft: #0a1a12;
+  --fg: #ffffff;
+  --fg-muted: rgba(255, 255, 255, 0.66);
   --green: #84bd00;
   --green-dark: #046a38;
   --green-hover: #598000;
   --green-darker: color-mix(in srgb, #046a38 75%, black);
-  --green-light: color-mix(in srgb, #046a38 12%, white);
+  --green-light: rgba(132, 189, 0, 0.14);
   --green-pale-text: color-mix(in srgb, white 80%, #046a38);
-  --border: #e7e7e7;
+  --border: rgba(255, 255, 255, 0.14);
   --white: #ffffff;
 
   background: var(--bg);
@@ -44,7 +44,7 @@
   text-decoration: none;
 }
 .page :where(a:hover) {
-  color: var(--green-dark);
+  color: var(--green);
 }
 
 .wrap {
@@ -85,7 +85,7 @@
   padding: 0 12px;
   border-radius: 10px;
   background: var(--green-light);
-  color: var(--green-darker);
+  color: var(--green);
   font-size: 12px;
   font-weight: 700;
   letter-spacing: 0.02em;
@@ -252,7 +252,8 @@
 
 /* Sections */
 .section {
-  padding: 88px 0;
+  padding: 104px 0;
+  border-top: 1px solid var(--border);
 }
 .sectionHead {
   max-width: 620px;
@@ -260,9 +261,10 @@
   text-align: center;
 }
 .sectionHead h2 {
-  font-size: 36px;
-  font-weight: 800;
-  line-height: 1.15;
+  font-size: clamp(30px, 4vw, 48px);
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: -0.03em;
 }
 .sectionHead p {
   margin-top: 16px;
@@ -279,7 +281,7 @@
 .featureCard {
   background: var(--bg-card);
   border: 1px solid var(--border);
-  border-radius: 22px;
+  border-radius: 20px;
   padding: 30px;
   display: flex;
   flex-direction: column;
@@ -290,7 +292,7 @@
   height: 48px;
   border-radius: 14px;
   background: var(--green-light);
-  color: var(--green-darker);
+  color: var(--green);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -302,7 +304,7 @@
   gap: 12px;
 }
 .featureCard h3 {
-  font-size: 19px;
+  font-size: 20px;
   font-weight: 700;
 }
 .featureCard p {
@@ -369,7 +371,7 @@
 
 .footer {
   border-top: 1px solid var(--border);
-  background: color-mix(in srgb, #046a38 4%, white);
+  background: #020805;
 }
 .footerNewsletter {
   display: flex;
@@ -405,13 +407,16 @@
   font-size: 13.5px;
   border: 1px solid var(--border);
   border-radius: 8px;
-  background: var(--bg);
+  background: rgba(255, 255, 255, 0.06);
   color: var(--fg);
   font-family: inherit;
 }
+.footerNewsletterInput::placeholder {
+  color: rgba(255, 255, 255, 0.45);
+}
 .footerNewsletterInput:focus {
   outline: none;
-  border-color: var(--green-dark);
+  border-color: var(--green);
 }
 .footerNewsletterBtn {
   height: 40px;
@@ -457,7 +462,7 @@
   color: var(--fg-muted);
 }
 .footerColLinks a:hover {
-  color: var(--green-dark);
+  color: var(--green);
 }
 
 .footerBottom {
@@ -476,7 +481,7 @@
   color: var(--fg-muted);
 }
 .footerCopyright a:hover {
-  color: var(--green-dark);
+  color: var(--green);
 }
 .footerSocial {
   display: flex;
@@ -488,7 +493,7 @@
   color: var(--fg-muted);
 }
 .footerSocial a:hover {
-  color: var(--green-dark);
+  color: var(--green);
 }
 
 /* Role showcase (Built for everyone) */
@@ -498,15 +503,15 @@
   gap: 28px;
 }
 .roleCard {
-  background: linear-gradient(145deg, #fafaf8 0%, color-mix(in srgb, #046a38 8%, #fafaf8) 100%);
+  background: linear-gradient(145deg, #0b1a12 0%, #0d2417 100%);
   border: 1px solid var(--border);
-  border-radius: 24px;
+  border-radius: 20px;
   padding: 40px;
-  box-shadow: 0 0 90px -25px rgba(4, 106, 56, 0.3), 0 4px 24px rgba(0, 0, 0, 0.04);
+  box-shadow: 0 0 90px -30px rgba(52, 168, 96, 0.35);
 }
 .roleCardDark {
-  background: linear-gradient(145deg, #1a1a18 0%, #16261c 100%);
-  border-color: #333;
+  background: linear-gradient(145deg, #070f0b 0%, #0b1c12 100%);
+  border-color: rgba(255, 255, 255, 0.2);
   box-shadow: 0 0 100px -20px rgba(4, 106, 56, 0.45), 0 4px 24px rgba(0, 0, 0, 0.18);
 }
 .roleCardIcon {
@@ -514,7 +519,7 @@
   height: 52px;
   border-radius: 14px;
   background: var(--green-light);
-  color: var(--green-dark);
+  color: var(--green);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -550,7 +555,7 @@
 }
 .roleFeatureRowActive {
   background: var(--green-light);
-  border-color: color-mix(in srgb, #046a38 25%, white);
+  border-color: rgba(132, 189, 0, 0.35);
 }
 .roleCardDark .roleFeatureRowActive {
   background: rgba(4, 106, 56, 0.22);
@@ -560,7 +565,7 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  color: var(--green-dark);
+  color: var(--green);
 }
 .roleCardDark .roleFeatureTop {
   color: #84bd00;
@@ -606,9 +611,9 @@
 }
 .howTab {
   padding: 10px 20px;
-  border-radius: 999px;
+  border-radius: 10px;
   border: 1px solid var(--border);
-  background: var(--bg-card);
+  background: transparent;
   color: var(--fg-muted);
   font-size: 14px;
   font-weight: 700;
@@ -635,7 +640,7 @@
   height: 36px;
   border-radius: 9px;
   background: var(--green-light);
-  color: var(--green-dark);
+  color: var(--green);
   display: flex;
   align-items: center;
   justify-content: center;
