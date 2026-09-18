@@ -153,7 +153,16 @@
 .navActions {
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: 10px;
+}
+.navActions select {
+  height: 32px;
+}
+.navBtn {
+  composes: btnPrimary;
+  height: 32px;
+  padding: 0 16px;
+  font-size: 13px;
 }
 
 /* Hero */
@@ -215,7 +224,7 @@
   font-size: 18px;
   line-height: 1.6;
   color: var(--fg-muted);
-  max-width: 540px;
+  max-width: 660px;
 }
 .heroCta {
   margin-top: 32px;

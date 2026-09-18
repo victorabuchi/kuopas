@@ -32,7 +32,7 @@ export default async function Home() {
           </div>
           <div className={styles.navActions}>
             <LanguageSwitcher locale={locale} />
-            <Link href="/login" className={styles.btnPrimary}>
+            <Link href="/login" className={styles.navBtn}>
               {dict.common.logIn}
             </Link>
           </div>
@@ -43,11 +43,7 @@ export default async function Home() {
         <div className={styles.heroGlowA} />
         <div className={styles.heroGlowB} />
         <div className={`${styles.wrap} ${styles.heroInner}`}>
-          <h1 className={styles.fadeUp}>
-            {t.heroLine1}
-            <br />
-            <em>{t.heroEmphasis}</em>
-          </h1>
+          <h1 className={styles.fadeUp}>{t.heroLine1}</h1>
           <p className={`${styles.lede} ${styles.fadeUp}`}>{t.heroLede}</p>
           <div className={`${styles.heroCta} ${styles.fadeUp}`}>
             <Link href="/login" className={styles.btnPrimary}>
