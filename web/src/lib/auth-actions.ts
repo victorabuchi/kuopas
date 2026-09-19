@@ -5,6 +5,7 @@ import { redirect } from 'next/navigation';
 import { db } from '../prisma/db';
 import { createTenantWithGroups } from './groups';
 import { createSession, destroySession } from './session';
+import { clearSignupCookie, readSignupCookie } from './google-oauth';
 
 const BCRYPT_ROUNDS = 12;
 
@@ -32,6 +33,31 @@ export async function registerAction(formData: FormData) {
   const { tenant } = await createTenantWithGroups({ name, email, unitId, passwordHash });
 
   await createSession(tenant.id);
+  redirect('/home');
+}
+
+export async function completeGoogleRegisterAction(formData: FormData) {
+  const signup = await readSignupCookie();
+  if (!signup) {
+    redirect(`/register?error=${encodeURIComponent('Google sign-in expired. Please try again.')}`);
+  }
+
+  const name = String(formData.get('name') ?? '').trim() || signup.name;
+  const unitId = String(formData.get('unitId') ?? '').trim();
+  if (!name || !unitId) {
+    redirect(`/register/google?error=${encodeURIComponent('Name and apartment are required.')}`);
+  }
+
+  const existing = await db.orm.public.Tenant.where({ email: signup.email }).first();
+  if (existing) {
+    await createSession(existing.id);
+    await clearSignupCookie();
+    redirect('/home');
+  }
+
+  const { tenant } = await createTenantWithGroups({ name, email: signup.email, unitId });
+  await createSession(tenant.id);
+  await clearSignupCookie();
   redirect('/home');
 }
 

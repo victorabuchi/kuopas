@@ -137,6 +137,28 @@
   border-radius: 10px;
 }
 
+.googleBtn {
+  width: 100%;
+  height: 32px;
+  padding: 5px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: #f6f8fa;
+  color: #1a1a18;
+  font-size: 14px;
+  font-weight: 500;
+  border: 1px solid #d0d7de;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.googleBtn:hover {
+  background: #eaeef2;
+  color: #1a1a18;
+}
+
 .divider {
   display: flex;
   align-items: center;

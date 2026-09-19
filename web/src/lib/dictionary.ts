@@ -263,6 +263,8 @@ const en = {
   login: {
     heading: 'Log in',
     lede: 'Access your building, stairwell, and floor chats.',
+    google: 'Continue with Google',
+    orShort: 'or',
     suomiFi: 'Log in with Suomi.fi',
     comingSoon: 'Coming soon',
     or: 'or continue with email',
@@ -274,6 +276,7 @@ const en = {
   },
   register: {
     heading: 'Create your account',
+    googleLede: 'Signed in with Google. Choose your apartment to finish.',
     lede: "You'll be added to your building, stairwell, and floor chats automatically.",
     suomiFi: 'Register with Suomi.fi',
     comingSoon: 'Coming soon',
@@ -817,6 +820,8 @@ const fi: typeof en = {
   login: {
     heading: 'Kirjaudu sisään',
     lede: 'Pääset talosi, rappukäytäväsi ja kerroksesi keskusteluihin.',
+    google: 'Jatka Googlella',
+    orShort: 'tai',
     suomiFi: 'Kirjaudu Suomi.fi:llä',
     comingSoon: 'Tulossa',
     or: 'tai jatka sähköpostilla',
@@ -828,6 +833,7 @@ const fi: typeof en = {
   },
   register: {
     heading: 'Luo tili',
+    googleLede: 'Kirjauduit Googlella. Valitse asuntosi viimeistelläksesi.',
     lede: 'Sinut lisätään automaattisesti talosi, rappukäytäväsi ja kerroksesi keskusteluihin.',
     suomiFi: 'Rekisteröidy Suomi.fi:llä',
     comingSoon: 'Tulossa',
