@@ -21,6 +21,7 @@ export default function Sidebar({ dict }: { dict: StaffDict }) {
             <path d="M16 8.5a3 3 0 1 1 3.5 2.96" />
             <path d="M16.5 13.2c2.6.4 4.5 2.4 4.9 5.3" />
           </svg>
+          <span className={styles.railLabel}>{dict.manageRoles}</span>
         </Link>
       </div>
     </nav>

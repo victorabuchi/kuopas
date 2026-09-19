@@ -10,7 +10,7 @@ type StaffDict = ReturnType<typeof getDictionary>['staff'];
 const NAV_ITEMS = [
   {
     href: '/staff',
-    key: 'dashboardTitle' as const,
+    key: 'railDashboard' as const,
     icon: (
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
         <rect x="3" y="5" width="18" height="14" rx="2.5" />
@@ -20,7 +20,7 @@ const NAV_ITEMS = [
   },
   {
     href: '/staff/complaints',
-    key: 'complaintsInbox' as const,
+    key: 'railComplaints' as const,
     icon: (
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
         <path d="M12 9v4" />
@@ -41,7 +41,7 @@ const NAV_ITEMS = [
   },
   {
     href: '/staff/saved-replies',
-    key: 'savedReplies' as const,
+    key: 'railReplies' as const,
     icon: (
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
         <path d="M7 3.5h10a1 1 0 0 1 1 1V21l-6-3.5L6 21V4.5a1 1 0 0 1 1-1Z" />
@@ -66,6 +66,7 @@ export default function Sidebar({ dict }: { dict: StaffDict }) {
               className={`${styles.railLink} ${active ? styles.railLinkActive : ''}`}
             >
               {item.icon}
+              <span className={styles.railLabel}>{dict[item.key]}</span>
             </Link>
           );
         })}
