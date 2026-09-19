@@ -2,21 +2,7 @@
 
 import { revalidatePath } from 'next/cache';
 import { db } from '../prisma/db';
-import { createTenantWithGroups } from '../lib/groups';
 import { getSession } from '../lib/session';
-
-export async function createTenantAction(formData: FormData) {
-  const name = String(formData.get('name') ?? '').trim();
-  const email = String(formData.get('email') ?? '').trim();
-  const unitId = String(formData.get('unitId') ?? '').trim();
-
-  if (!name || !email || !unitId) {
-    throw new Error('Name, email, and unit are all required');
-  }
-
-  await createTenantWithGroups({ name, email, unitId });
-  revalidatePath('/dashboard');
-}
 
 export async function sendMessageAction(formData: FormData) {
   const chatGroupId = String(formData.get('chatGroupId') ?? '').trim();
