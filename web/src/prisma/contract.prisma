@@ -221,6 +221,9 @@ model Tenant {
   noticeMessages          DirectNoticeMessage[]
   pushSubscriptions       PushSubscription[]
   moveInChecklistItems    MoveInChecklistItem[]
+  communitiesCreated      Community[]
+  communityMemberships    CommunityMember[]
+  communityMessages       CommunityMessage[]
 
   @@map("tenant")
 }
@@ -482,4 +485,42 @@ model SavedReply {
   createdAt        TimestamptzString @default(now())
 
   @@map("saved_reply")
+}
+
+model Community {
+  id          Uuid               @id @default(uuid())
+  name        String
+  description String
+  createdBy   Tenant             @relation(fields: [createdById], references: [id], onDelete: Cascade)
+  createdById Uuid
+  createdAt   TimestamptzString  @default(now())
+  members     CommunityMember[]
+  messages    CommunityMessage[]
+
+  @@map("community")
+}
+
+model CommunityMember {
+  id          Uuid              @id @default(uuid())
+  community   Community         @relation(fields: [communityId], references: [id], onDelete: Cascade)
+  communityId Uuid
+  tenant      Tenant            @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  tenantId    Uuid
+  joinedAt    TimestamptzString @default(now())
+
+  @@unique([communityId, tenantId])
+  @@map("community_member")
+}
+
+model CommunityMessage {
+  id          Uuid              @id @default(uuid())
+  content     String
+  sentAt      TimestamptzString @default(now())
+  community   Community         @relation(fields: [communityId], references: [id], onDelete: Cascade)
+  communityId Uuid
+  sender      Tenant            @relation(fields: [senderId], references: [id], onDelete: Cascade)
+  senderId    Uuid
+
+  @@index([communityId])
+  @@map("community_message")
 }

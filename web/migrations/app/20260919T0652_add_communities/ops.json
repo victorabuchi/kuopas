@@ -1,0 +1,566 @@
+[
+  {
+    "id": "table.community",
+    "label": "Create table \"community\"",
+    "summary": "Creates table \"community\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "community"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"community\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"community\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"community\"",
+        "sql": "CREATE TABLE \"public\".\"community\" (\n  \"createdAt\" timestamptz DEFAULT (now()) NOT NULL,\n  \"createdById\" uuid NOT NULL,\n  \"description\" text NOT NULL,\n  \"id\" uuid NOT NULL,\n  \"name\" text NOT NULL,\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"community\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"community\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "table.community_member",
+    "label": "Create table \"community_member\"",
+    "summary": "Creates table \"community_member\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "community_member"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"community_member\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"community_member\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"community_member\"",
+        "sql": "CREATE TABLE \"public\".\"community_member\" (\n  \"communityId\" uuid NOT NULL,\n  \"id\" uuid NOT NULL,\n  \"joinedAt\" timestamptz DEFAULT (now()) NOT NULL,\n  \"tenantId\" uuid NOT NULL,\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"community_member\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"community_member\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "table.community_message",
+    "label": "Create table \"community_message\"",
+    "summary": "Creates table \"community_message\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "community_message"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"community_message\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"community_message\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"community_message\"",
+        "sql": "CREATE TABLE \"public\".\"community_message\" (\n  \"communityId\" uuid NOT NULL,\n  \"content\" text NOT NULL,\n  \"id\" uuid NOT NULL,\n  \"senderId\" uuid NOT NULL,\n  \"sentAt\" timestamptz DEFAULT (now()) NOT NULL,\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"community_message\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"community_message\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "unique.community_member.community_member_communityId_tenantId_key",
+    "label": "Add unique constraint on \"community_member\" (communityId, tenantId)",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "unique",
+        "name": "community_member_communityId_tenantId_key",
+        "table": "community_member"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"community_member_communityId_tenantId_key\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "community_member_communityId_tenantId_key",
+          "public",
+          "\"public\".\"community_member\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add unique constraint \"community_member_communityId_tenantId_key\"",
+        "sql": "ALTER TABLE \"public\".\"community_member\" ADD CONSTRAINT \"community_member_communityId_tenantId_key\" UNIQUE (\"communityId\", \"tenantId\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"community_member_communityId_tenantId_key\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "community_member_communityId_tenantId_key",
+          "public",
+          "\"public\".\"community_member\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.community.community_createdById_idx_8bf640ed",
+    "label": "Create index \"community_createdById_idx_8bf640ed\" on \"community\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "community_createdById_idx_8bf640ed",
+        "table": "community"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"community_createdById_idx_8bf640ed\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"community_createdById_idx_8bf640ed\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"community_createdById_idx_8bf640ed\"",
+        "sql": "CREATE INDEX \"community_createdById_idx_8bf640ed\" ON \"public\".\"community\" (\"createdById\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"community_createdById_idx_8bf640ed\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"community_createdById_idx_8bf640ed\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.community_member.community_member_communityId_idx_e2c72225",
+    "label": "Create index \"community_member_communityId_idx_e2c72225\" on \"community_member\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "community_member_communityId_idx_e2c72225",
+        "table": "community_member"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"community_member_communityId_idx_e2c72225\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"community_member_communityId_idx_e2c72225\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"community_member_communityId_idx_e2c72225\"",
+        "sql": "CREATE INDEX \"community_member_communityId_idx_e2c72225\" ON \"public\".\"community_member\" (\"communityId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"community_member_communityId_idx_e2c72225\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"community_member_communityId_idx_e2c72225\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.community_member.community_member_tenantId_idx_c93ed4f1",
+    "label": "Create index \"community_member_tenantId_idx_c93ed4f1\" on \"community_member\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "community_member_tenantId_idx_c93ed4f1",
+        "table": "community_member"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"community_member_tenantId_idx_c93ed4f1\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"community_member_tenantId_idx_c93ed4f1\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"community_member_tenantId_idx_c93ed4f1\"",
+        "sql": "CREATE INDEX \"community_member_tenantId_idx_c93ed4f1\" ON \"public\".\"community_member\" (\"tenantId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"community_member_tenantId_idx_c93ed4f1\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"community_member_tenantId_idx_c93ed4f1\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.community_message.community_message_communityId_idx_e2c72225",
+    "label": "Create index \"community_message_communityId_idx_e2c72225\" on \"community_message\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "community_message_communityId_idx_e2c72225",
+        "table": "community_message"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"community_message_communityId_idx_e2c72225\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"community_message_communityId_idx_e2c72225\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"community_message_communityId_idx_e2c72225\"",
+        "sql": "CREATE INDEX \"community_message_communityId_idx_e2c72225\" ON \"public\".\"community_message\" (\"communityId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"community_message_communityId_idx_e2c72225\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"community_message_communityId_idx_e2c72225\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.community_message.community_message_senderId_idx_4689c490",
+    "label": "Create index \"community_message_senderId_idx_4689c490\" on \"community_message\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "community_message_senderId_idx_4689c490",
+        "table": "community_message"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"community_message_senderId_idx_4689c490\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"community_message_senderId_idx_4689c490\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"community_message_senderId_idx_4689c490\"",
+        "sql": "CREATE INDEX \"community_message_senderId_idx_4689c490\" ON \"public\".\"community_message\" (\"senderId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"community_message_senderId_idx_4689c490\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"community_message_senderId_idx_4689c490\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.community.community_createdById_fkey",
+    "label": "Add foreign key \"community_createdById_fkey\" on \"community\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "community_createdById_fkey",
+        "table": "community"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"community_createdById_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "community_createdById_fkey",
+          "public",
+          "\"public\".\"community\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"community_createdById_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"community\"\nADD CONSTRAINT \"community_createdById_fkey\"\nFOREIGN KEY (\"createdById\")\nREFERENCES \"public\".\"tenant\" (\"id\")\nON DELETE CASCADE"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"community_createdById_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "community_createdById_fkey",
+          "public",
+          "\"public\".\"community\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.community_member.community_member_communityId_fkey",
+    "label": "Add foreign key \"community_member_communityId_fkey\" on \"community_member\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "community_member_communityId_fkey",
+        "table": "community_member"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"community_member_communityId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "community_member_communityId_fkey",
+          "public",
+          "\"public\".\"community_member\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"community_member_communityId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"community_member\"\nADD CONSTRAINT \"community_member_communityId_fkey\"\nFOREIGN KEY (\"communityId\")\nREFERENCES \"public\".\"community\" (\"id\")\nON DELETE CASCADE"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"community_member_communityId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "community_member_communityId_fkey",
+          "public",
+          "\"public\".\"community_member\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.community_member.community_member_tenantId_fkey",
+    "label": "Add foreign key \"community_member_tenantId_fkey\" on \"community_member\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "community_member_tenantId_fkey",
+        "table": "community_member"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"community_member_tenantId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "community_member_tenantId_fkey",
+          "public",
+          "\"public\".\"community_member\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"community_member_tenantId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"community_member\"\nADD CONSTRAINT \"community_member_tenantId_fkey\"\nFOREIGN KEY (\"tenantId\")\nREFERENCES \"public\".\"tenant\" (\"id\")\nON DELETE CASCADE"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"community_member_tenantId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "community_member_tenantId_fkey",
+          "public",
+          "\"public\".\"community_member\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.community_message.community_message_communityId_fkey",
+    "label": "Add foreign key \"community_message_communityId_fkey\" on \"community_message\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "community_message_communityId_fkey",
+        "table": "community_message"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"community_message_communityId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "community_message_communityId_fkey",
+          "public",
+          "\"public\".\"community_message\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"community_message_communityId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"community_message\"\nADD CONSTRAINT \"community_message_communityId_fkey\"\nFOREIGN KEY (\"communityId\")\nREFERENCES \"public\".\"community\" (\"id\")\nON DELETE CASCADE"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"community_message_communityId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "community_message_communityId_fkey",
+          "public",
+          "\"public\".\"community_message\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.community_message.community_message_senderId_fkey",
+    "label": "Add foreign key \"community_message_senderId_fkey\" on \"community_message\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "community_message_senderId_fkey",
+        "table": "community_message"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"community_message_senderId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "community_message_senderId_fkey",
+          "public",
+          "\"public\".\"community_message\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"community_message_senderId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"community_message\"\nADD CONSTRAINT \"community_message_senderId_fkey\"\nFOREIGN KEY (\"senderId\")\nREFERENCES \"public\".\"tenant\" (\"id\")\nON DELETE CASCADE"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"community_message_senderId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "community_message_senderId_fkey",
+          "public",
+          "\"public\".\"community_message\""
+        ]
+      }
+    ]
+  }
+]

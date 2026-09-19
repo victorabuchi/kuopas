@@ -3,6 +3,7 @@
   --fg: #000000;
   --fg-muted: #767676;
   --green-dark: #046a38;
+  --green-hover: #598000;
   --border: #e7e7e7;
 
   min-height: 100%;
@@ -13,61 +14,62 @@
   box-sizing: border-box;
 }
 .content {
-  max-width: 640px;
+  max-width: 680px;
   padding: 20px;
   display: flex;
   flex-direction: column;
-  gap: 18px;
+  gap: 24px;
 }
-.community {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  padding: 18px;
-  border: 1px solid var(--border);
-  border-radius: 16px;
-  background: color-mix(in srgb, #046a38 5%, white);
-}
-.communityAvatar,
-.rowAvatar {
-  flex-shrink: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: var(--green-dark);
-  color: #fff;
-  font-weight: 700;
-}
-.communityAvatar {
-  width: 56px;
-  height: 56px;
-  border-radius: 16px;
-  font-size: 18px;
-}
-.rowAvatar {
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
-  font-size: 14px;
-}
-.communityKicker {
-  font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  color: var(--fg-muted);
-}
-.communityName {
-  font-size: 19px;
-  font-weight: 800;
-}
-.communityLede {
-  font-size: 13.5px;
-  color: var(--fg-muted);
-}
-.list {
+.create {
   display: flex;
   flex-direction: column;
+  gap: 10px;
+  padding: 18px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: color-mix(in srgb, #046a38 4%, white);
+}
+.createHeading {
+  font-weight: 800;
+  font-size: 15px;
+}
+.create input {
+  height: 42px;
+  padding: 0 12px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  font-family: inherit;
+  font-size: 14px;
+  background: #fff;
+}
+.create input:focus {
+  outline: none;
+  border-color: var(--green-dark);
+}
+.createBtn {
+  align-self: flex-start;
+  height: 42px;
+  padding: 0 22px;
+  border: none;
+  border-radius: 10px;
+  background: var(--green-dark);
+  color: #fff;
+  font-family: inherit;
+  font-weight: 700;
+  font-size: 14px;
+  cursor: pointer;
+}
+.createBtn:hover {
+  background: var(--green-hover);
+}
+.sectionHeading {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--fg-muted);
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--border);
 }
 .row {
   display: flex;
@@ -75,11 +77,19 @@
   gap: 14px;
   padding: 14px 4px;
   border-bottom: 1px solid var(--border);
-  color: var(--fg);
 }
-.row:hover {
-  background: #f7f9f7;
-  color: var(--fg);
+.rowAvatar {
+  flex-shrink: 0;
+  width: 46px;
+  height: 46px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--green-dark);
+  color: #fff;
+  font-weight: 700;
+  font-size: 15px;
 }
 .rowText {
   flex: 1;
@@ -92,17 +102,74 @@
   font-weight: 700;
   font-size: 15px;
 }
+.rowDesc {
+  font-size: 13.5px;
+  color: var(--fg);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
 .rowMeta {
   font-size: 12.5px;
   color: var(--fg-muted);
 }
-.rowOpen {
-  font-size: 13px;
-  font-weight: 700;
+.rowAction {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  height: 34px;
+  padding: 0 16px;
+  border-radius: 10px;
+  border: 1px solid var(--green-dark);
+  background: #fff;
   color: var(--green-dark);
+  font-family: inherit;
+  font-weight: 700;
+  font-size: 13.5px;
+  cursor: pointer;
+}
+.rowAction:hover {
+  background: var(--green-dark);
+  color: #fff;
 }
 .empty {
-  padding: 30px 0;
-  text-align: center;
+  padding: 24px 0;
   color: var(--fg-muted);
+  font-size: 14px;
+}
+.leaveBtn {
+  height: 32px;
+  padding: 0 12px;
+  border: 1px solid #e7e7e7;
+  border-radius: 8px;
+  background: #fff;
+  color: #b3261e;
+  font-family: inherit;
+  font-weight: 700;
+  font-size: 12.5px;
+  cursor: pointer;
+}
+.gate {
+  max-width: 460px;
+  margin: 60px auto;
+  padding: 0 24px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  color: #000;
+}
+.gateName {
+  font-size: 22px;
+  font-weight: 800;
+}
+.gateDesc {
+  margin: 0;
+  color: #333;
+}
+.gateNote {
+  margin: 0 0 6px;
+  color: #767676;
+  font-size: 14px;
 }

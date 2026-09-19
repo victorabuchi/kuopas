@@ -7,12 +7,11 @@ import { db } from '../../../prisma/db';
 import TopBar from '../TopBar';
 import { getLocale } from '../../../lib/i18n';
 import { getDictionary } from '../../../lib/dictionary';
+import { createCommunityAction, joinCommunityAction } from '../../../lib/community-actions';
 
 export const metadata: Metadata = {
   title: 'Communities - Kuopas',
 };
-
-const SCOPE_ORDER = ['building', 'stairwell', 'floor', 'unit'] as const;
 
 function initials(name: string): string {
   return name
@@ -31,57 +30,71 @@ export default async function CommunitiesPage() {
   const dict = getDictionary(locale);
   const t = dict.communities;
 
-  const tenant = await db.orm.public.Tenant.where({ id: session.tenantId })
-    .include('unit', (unit) => unit.include('stairwell', (stairwell) => stairwell.include('building', (b) => b)))
-    .include('memberships', (memberships) => memberships.include('chatGroup', (g) => g))
-    .first();
-  if (!tenant) redirect('/login');
+  const communities = await db.orm.public.Community.include('members', (m) => m)
+    .orderBy((c) => c.createdAt.desc())
+    .limit(200)
+    .all();
 
-  const building = tenant.unit!.stairwell!.building!;
-  const groups = tenant.memberships
-    .map((m) => m.chatGroup!)
-    .sort((a, b) => SCOPE_ORDER.indexOf(a.scope) - SCOPE_ORDER.indexOf(b.scope));
+  const joined = communities.filter((c) => c.members.some((m) => m.tenantId === session.tenantId));
+  const others = communities.filter((c) => !c.members.some((m) => m.tenantId === session.tenantId));
 
-  const groupIds = groups.map((g) => g.id);
-  const members = groupIds.length === 0 ? [] : await db.orm.public.ChatGroupMember.where((m) => m.chatGroupId.in(groupIds)).all();
-  const counts = new Map<string, number>();
-  for (const m of members) counts.set(m.chatGroupId, (counts.get(m.chatGroupId) ?? 0) + 1);
-
-  const scopeLabel: Record<string, string> = {
-    building: dict.profile.building,
-    stairwell: dict.profile.stairwell,
-    floor: dict.profile.floor,
-    unit: dict.profile.unit,
-  };
+  function Row({ community, isMember }: { community: (typeof communities)[number]; isMember: boolean }) {
+    return (
+      <div className={styles.row}>
+        <div className={styles.rowAvatar}>{initials(community.name)}</div>
+        <div className={styles.rowText}>
+          <span className={styles.rowName}>{community.name}</span>
+          {community.description && <span className={styles.rowDesc}>{community.description}</span>}
+          <span className={styles.rowMeta}>
+            {community.members.length} {t.members}
+          </span>
+        </div>
+        {isMember ? (
+          <Link href={`/communities/${community.id}`} className={styles.rowAction}>
+            {t.open}
+          </Link>
+        ) : (
+          <form action={joinCommunityAction}>
+            <input type="hidden" name="communityId" value={community.id} />
+            <button type="submit" className={styles.rowAction}>
+              {t.join}
+            </button>
+          </form>
+        )}
+      </div>
+    );
+  }
 
   return (
     <div className={styles.page}>
       <TopBar title={t.title} />
       <div className={styles.content}>
-        <div className={styles.community}>
-          <div className={styles.communityAvatar}>{initials(building.name)}</div>
-          <div>
-            <div className={styles.communityKicker}>{t.yourCommunity}</div>
-            <div className={styles.communityName}>{building.name}</div>
-            <div className={styles.communityLede}>{t.lede}</div>
-          </div>
-        </div>
+        <form action={createCommunityAction} className={styles.create}>
+          <div className={styles.createHeading}>{t.createHeading}</div>
+          <input name="name" type="text" required minLength={3} maxLength={50} placeholder={t.namePlaceholder} />
+          <input name="description" type="text" maxLength={200} placeholder={t.descriptionPlaceholder} />
+          <button type="submit" className={styles.createBtn}>
+            {t.create}
+          </button>
+        </form>
 
-        {groups.length === 0 && <div className={styles.empty}>{t.empty}</div>}
-        <div className={styles.list}>
-          {groups.map((group) => (
-            <Link key={group.id} href={`/chat/${group.id}`} className={styles.row}>
-              <div className={styles.rowAvatar}>{initials(group.name)}</div>
-              <div className={styles.rowText}>
-                <span className={styles.rowName}>{group.name}</span>
-                <span className={styles.rowMeta}>
-                  {scopeLabel[group.scope]} · {counts.get(group.id) ?? 0} {dict.groups.members}
-                </span>
-              </div>
-              <span className={styles.rowOpen}>{dict.groups.openChat}</span>
-            </Link>
+        {joined.length > 0 && (
+          <section>
+            <div className={styles.sectionHeading}>{t.yourCommunities}</div>
+            {joined.map((c) => (
+              <Row key={c.id} community={c} isMember />
+            ))}
+          </section>
+        )}
+
+        <section>
+          <div className={styles.sectionHeading}>{t.discover}</div>
+          {communities.length === 0 && <div className={styles.empty}>{t.noneYet}</div>}
+          {communities.length > 0 && others.length === 0 && <div className={styles.empty}>{t.nothingToJoin}</div>}
+          {others.map((c) => (
+            <Row key={c.id} community={c} isMember={false} />
           ))}
-        </div>
+        </section>
       </div>
     </div>
   );
