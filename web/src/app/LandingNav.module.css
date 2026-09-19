@@ -2,10 +2,10 @@
   position: sticky;
   top: 0;
   z-index: 50;
-  background: rgba(3, 20, 12, 0.9);
+  background: rgba(255, 255, 255, 0.92);
   backdrop-filter: blur(12px);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-  color: #fff;
+  border-bottom: 1px solid #e7e7e7;
+  color: #000;
 }
 .wrap {
   max-width: 1160px;
@@ -49,7 +49,7 @@
   border: none;
   border-radius: 8px;
   background: none;
-  color: rgba(255, 255, 255, 0.92);
+  color: #333;
   font-family: inherit;
   font-size: 15px;
   font-weight: 600;
@@ -58,8 +58,8 @@
 .trigger:hover,
 .triggerOpen,
 .plain:hover {
-  color: #fff;
-  background: rgba(255, 255, 255, 0.08);
+  color: #046a38;
+  background: #f0f4f1;
 }
 .trigger svg {
   transition: transform 0.15s;
@@ -76,13 +76,9 @@
 }
 .actions select {
   height: 34px;
-  background-color: rgba(255, 255, 255, 0.06);
-  border-color: rgba(255, 255, 255, 0.28);
-  color: #fff;
-}
-.actions select option {
-  background: #fff;
-  color: #000;
+  background-color: #fff;
+  border-color: #e7e7e7;
+  color: #046a38;
 }
 .iconBtn {
   display: inline-flex;
@@ -90,14 +86,14 @@
   justify-content: center;
   width: 34px;
   height: 34px;
-  border: 1px solid rgba(255, 255, 255, 0.28);
+  border: 1px solid #e7e7e7;
   border-radius: 10px;
-  background: rgba(255, 255, 255, 0.06);
-  color: #fff;
+  background: #fff;
+  color: #046a38;
   cursor: pointer;
 }
 .iconBtn:hover {
-  border-color: #fff;
+  border-color: #046a38;
 }
 .btn {
   display: inline-flex;
@@ -105,26 +101,28 @@
   justify-content: center;
   height: 34px;
   padding: 0 14px;
-  border: 1px solid rgba(255, 255, 255, 0.28);
+  border: 1px solid #e7e7e7;
   border-radius: 10px;
-  background: rgba(255, 255, 255, 0.06);
-  color: #fff;
+  background: #fff;
+  color: #046a38;
   font-family: inherit;
   font-size: 13px;
   font-weight: 700;
   white-space: nowrap;
 }
 .btn:hover {
-  border-color: #fff;
-  color: #fff;
+  border-color: #046a38;
+  color: #046a38;
 }
 .btnSolid {
   background: #046a38;
   border-color: #046a38;
+  color: #fff;
 }
 .btnSolid:hover {
   background: #598000;
   border-color: #598000;
+  color: #fff;
 }
 
 /* Hover card */
@@ -141,10 +139,10 @@
   width: min(1096px, calc(100% - 32px));
   margin: 0 auto;
   overflow: hidden;
-  background: #050b08;
-  border: 1px solid rgba(255, 255, 255, 0.16);
+  background: #fff;
+  border: 1px solid #e7e7e7;
   border-radius: 14px;
-  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.16);
   animation: panelIn 0.14s ease both;
 }
 @keyframes panelIn {
@@ -173,16 +171,16 @@
   font-size: 13px;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.6);
+  color: #767676;
 }
 .item {
   display: flex;
   flex-direction: column;
   gap: 4px;
-  color: #fff;
+  color: #000;
 }
 .item:hover .itemTitle {
-  color: #84bd00;
+  color: #046a38;
 }
 .itemTitle {
   display: flex;
@@ -190,7 +188,7 @@
   gap: 10px;
   font-size: 16px;
   font-weight: 700;
-  color: #fff;
+  color: #000;
 }
 .itemTitle svg {
   flex-shrink: 0;
@@ -198,11 +196,11 @@
 .itemDesc {
   font-size: 14.5px;
   line-height: 1.4;
-  color: rgba(255, 255, 255, 0.62);
+  color: #767676;
 }
 .explore {
   padding-left: 32px;
-  border-left: 1px solid rgba(255, 255, 255, 0.14);
+  border-left: 1px solid #e7e7e7;
   gap: 22px;
 }
 .exploreLink {
@@ -211,23 +209,23 @@
   gap: 8px;
   font-size: 16px;
   font-weight: 700;
-  color: #fff;
+  color: #000;
 }
 .exploreLink:hover {
-  color: #84bd00;
+  color: #046a38;
 }
 .panelFooter {
   display: flex;
   align-items: center;
   gap: 8px;
   padding: 20px 40px;
-  background: #0d1611;
+  background: #f6f8f6;
   font-size: 16px;
   font-weight: 700;
-  color: #fff;
+  color: #000;
 }
 .panelFooter:hover {
-  color: #84bd00;
+  color: #046a38;
 }
 
 /* Search */
@@ -239,7 +237,7 @@
   justify-content: center;
   align-items: flex-start;
   padding: 88px 16px 16px;
-  background: rgba(0, 0, 0, 0.6);
+  background: rgba(0, 0, 0, 0.35);
 }
 .searchCard {
   width: min(640px, 100%);
@@ -247,10 +245,10 @@
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  background: #050b08;
-  border: 1px solid rgba(255, 255, 255, 0.16);
+  background: #fff;
+  border: 1px solid #e7e7e7;
   border-radius: 14px;
-  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.18);
 }
 .searchRow {
   display: flex;
@@ -258,20 +256,20 @@
   gap: 12px;
   padding: 0 18px;
   height: 56px;
-  color: rgba(255, 255, 255, 0.7);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  color: #767676;
+  border-bottom: 1px solid #e7e7e7;
 }
 .searchInput {
   flex: 1;
   border: none;
   outline: none;
   background: none;
-  color: #fff;
+  color: #000;
   font-family: inherit;
   font-size: 16px;
 }
 .searchInput::placeholder {
-  color: rgba(255, 255, 255, 0.45);
+  color: #8a8a8a;
 }
 .results {
   overflow-y: auto;
@@ -286,14 +284,14 @@
   border: none;
   border-radius: 8px;
   background: none;
-  color: rgba(255, 255, 255, 0.8);
+  color: #333;
   font-family: inherit;
   text-align: left;
   cursor: pointer;
 }
 .resultActive {
-  background: rgba(255, 255, 255, 0.09);
-  color: #fff;
+  background: #f0f4f1;
+  color: #046a38;
 }
 .resultText {
   display: flex;
@@ -307,12 +305,12 @@
 }
 .resultDesc {
   font-size: 13px;
-  color: rgba(255, 255, 255, 0.55);
+  color: #767676;
 }
 .empty {
   padding: 24px 12px;
   text-align: center;
-  color: rgba(255, 255, 255, 0.55);
+  color: #767676;
   font-size: 14px;
 }
 

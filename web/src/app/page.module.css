@@ -103,10 +103,7 @@
   position: relative;
   padding: 112px 0 56px;
   overflow: hidden;
-  color: #fff;
-  background:
-    radial-gradient(ellipse 70% 40% at 50% 100%, rgba(52, 168, 96, 0.32) 0%, transparent 70%),
-    linear-gradient(180deg, #03140c 0%, #062417 55%, #0a3320 100%);
+  background: linear-gradient(160deg, color-mix(in srgb, #046a38 6%, white) 0%, #fafaf9 45%, color-mix(in srgb, #84bd00 5%, white) 100%);
 }
 .heroInner {
   position: relative;
@@ -119,7 +116,7 @@
   font-size: clamp(34px, 5vw, 60px);
   line-height: 1.06;
   font-weight: 700;
-  color: #fff;
+  color: var(--fg);
   letter-spacing: -0.035em;
 }
 .noBreak {
@@ -129,7 +126,7 @@
   margin: 26px auto 0;
   font-size: 19px;
   line-height: 1.55;
-  color: rgba(255, 255, 255, 0.86);
+  color: var(--fg-muted);
   max-width: 600px;
 }
 .heroCta {
@@ -147,8 +144,9 @@
   width: min(460px, 100%);
   padding: 5px;
   border-radius: 12px;
-  background: rgba(255, 255, 255, 0.94);
-  border: 1px solid rgba(255, 255, 255, 0.6);
+  background: #fff;
+  border: 1px solid #d0d7de;
+  box-shadow: 0 6px 20px -10px rgba(4, 106, 56, 0.25);
 }
 .heroInput {
   flex: 1;
@@ -163,7 +161,7 @@
   font-size: 16px;
 }
 .heroInput::placeholder {
-  color: #6b6b6b;
+  color: #8a8a8a;
 }
 .heroSubmit {
   height: 44px;
@@ -187,18 +185,18 @@
   justify-content: center;
   height: 56px;
   padding: 0 24px;
-  border: 1px solid rgba(255, 255, 255, 0.75);
+  border: 1px solid #d0d7de;
   border-radius: 12px;
-  background: rgba(255, 255, 255, 0.04);
-  color: #fff;
+  background: #fff;
+  color: #000;
   font-family: var(--font-mulish), sans-serif;
   font-size: 16px;
   font-weight: 700;
   white-space: nowrap;
 }
 .heroSecondary:hover {
-  color: #fff;
-  background: rgba(255, 255, 255, 0.12);
+  color: var(--green-dark);
+  border-color: var(--green-dark);
 }
 .fadeUp {
   animation: fadeUp 0.7s ease both;
@@ -232,15 +230,14 @@
   width: 52px;
   height: 52px;
   border-radius: 16px;
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  color: #fff;
-  transition: border-color 0.15s, background 0.15s, transform 0.15s;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  color: var(--green-dark);
+  transition: border-color 0.15s, box-shadow 0.15s, transform 0.15s;
 }
 .heroIcon:hover {
-  color: #fff;
-  border-color: #84bd00;
-  background: rgba(255, 255, 255, 0.12);
+  border-color: var(--green-dark);
+  box-shadow: 0 8px 20px -8px rgba(4, 106, 56, 0.35);
   transform: translateY(-2px);
 }
 /* Demo showcase below the hero */
