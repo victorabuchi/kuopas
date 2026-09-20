@@ -11,6 +11,7 @@ import { getSession } from '../../../lib/session';
 import { getLocale } from '../../../lib/i18n';
 import { getDictionary } from '../../../lib/dictionary';
 import { displayNameFor } from '../../../lib/names';
+import { getLiving } from '../../../lib/living';
 import { replyToNoticeAction } from '../../../lib/direct-notice-actions';
 import { submitComplaintAction } from '../../../lib/complaint-actions';
 import { startConversationAction } from '../../../lib/direct-message-actions';
@@ -119,7 +120,7 @@ export default async function MessagesPage({
         {(tab === 'announcements' || tab === 'noticeboard') && (
           <FeedTab tenantId={session.tenantId} locale={locale} dict={dict} tab={tab} />
         )}
-        {tab === 'complaints' && <ComplaintsTab tenantId={session.tenantId} dict={dict} />}
+        {tab === 'complaints' && <ComplaintsTab tenantId={session.tenantId} dict={dict} locale={locale} />}
         {tab === 'support' && <SupportTab dict={dict} />}
         {tab === 'direct' && <DirectTab tenantId={session.tenantId} dict={dict} />}
       </div>
@@ -326,7 +327,7 @@ async function FeedTab({
   );
 }
 
-async function ComplaintsTab({ tenantId, dict }: { tenantId: string; dict: ReturnType<typeof getDictionary> }) {
+async function ComplaintsTab({ tenantId, dict, locale }: { tenantId: string; dict: ReturnType<typeof getDictionary>; locale: 'en' | 'fi' }) {
   const t = dict.complaints;
 
   const RESIDENT_STATUS: Record<string, { label: string; style: string }> = {
@@ -367,6 +368,10 @@ async function ComplaintsTab({ tenantId, dict }: { tenantId: string; dict: Retur
         </select>
         <textarea name="description" placeholder={t.description} required />
         <input type="file" name="photo" accept="image/*" />
+        <label style={{ fontSize: 13, color: '#767676' }} htmlFor="video">
+          {getLiving(locale).maintenance.videoLabel}
+        </label>
+        <input id="video" type="file" name="video" accept="video/mp4,video/quicktime,video/webm" />
         <button type="submit" className={complaintsStyles.submit}>
           {t.submit}
         </button>

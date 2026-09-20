@@ -65,6 +65,7 @@ export default async function ComplaintThreadPage({
       <div className={styles.detail}>
         <p className={styles.detailDescription}>{complaint.description}</p>
         {complaint.photoUrl && <img src={complaint.photoUrl} alt="" className={styles.detailPhoto} />}
+        {complaint.videoUrl && <video src={complaint.videoUrl} controls preload="metadata" className={styles.detailPhoto} />}
       </div>
 
       <div className={styles.messages}>

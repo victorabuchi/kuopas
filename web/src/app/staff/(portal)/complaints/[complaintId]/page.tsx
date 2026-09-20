@@ -75,6 +75,9 @@ export default async function StaffComplaintDetailPage({
 
       <div className={styles.card}>
         <p>{complaint.description}</p>
+        {complaint.videoUrl && (
+          <video src={complaint.videoUrl} controls preload="metadata" style={{ maxWidth: '100%', borderRadius: 10, marginTop: 10 }} />
+        )}
         {complaint.photoUrl && (
           <img src={complaint.photoUrl} alt="" style={{ maxWidth: '100%', borderRadius: 10, marginTop: 10 }} />
         )}

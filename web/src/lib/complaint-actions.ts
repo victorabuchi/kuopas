@@ -4,7 +4,8 @@ import { revalidatePath } from 'next/cache';
 import { db } from '../prisma/db';
 import { getSession } from './session';
 import { getStaffAccess, requireStaffAccess } from './portal-access';
-import { savePhotoUpload } from './uploads';
+import { savePhotoUpload, saveMediaUpload } from './uploads';
+import { assignCluster } from './maintenance';
 
 const CATEGORIES = [
   'plumbing', 'electrical', 'heating', 'appliance', 'pest', 'noise', 'structural', 'other',
@@ -24,13 +25,17 @@ export async function submitComplaintAction(formData: FormData) {
   if (!description) throw new Error('Description is required');
 
   const photoUrl = await savePhotoUpload(photo, 'complaints');
+  const video = await saveMediaUpload(formData.get('video') as File | null, 'complaints');
+  if (video && video.kind !== 'video') throw new Error('Use the photo field for pictures');
 
-  await db.orm.public.Complaint.create({
+  const complaint = await db.orm.public.Complaint.create({
     tenantId: session.tenantId,
     category: category as (typeof CATEGORIES)[number],
     description,
     photoUrl,
+    videoUrl: video?.url ?? null,
   });
+  await assignCluster(complaint.id);
 
   revalidatePath('/messages');
 }

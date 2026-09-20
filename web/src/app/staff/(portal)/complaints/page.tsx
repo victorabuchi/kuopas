@@ -4,6 +4,7 @@ import styles from '../../staff.module.css';
 import { db } from '../../../../prisma/db';
 import { getLocale } from '../../../../lib/i18n';
 import { getDictionary } from '../../../../lib/dictionary';
+import { getLiving } from '../../../../lib/living';
 
 export const metadata: Metadata = {
   title: 'Complaints inbox - Kuopas staff',
@@ -34,6 +35,9 @@ export default async function StaffComplaintsPage({
     .orderBy((c) => c.createdAt.desc())
     .limit(100)
     .all();
+
+  const clusterCounts = new Map<string, number>();
+  for (const c of complaints) if (c.clusterId) clusterCounts.set(c.clusterId, (clusterCounts.get(c.clusterId) ?? 0) + 1);
 
   const categoryLabel: Record<string, string> = {
     plumbing: ct.categoryPlumbing,
@@ -78,7 +82,14 @@ export default async function StaffComplaintsPage({
         {complaints.map((complaint) => (
           <Link key={complaint.id} href={`/staff/complaints/${complaint.id}`} className={styles.row}>
             <div className={styles.rowText}>
-              <span className={styles.rowCategory}>{categoryLabel[complaint.category]}</span>
+              <span className={styles.rowCategory}>
+                {categoryLabel[complaint.category]}
+                {complaint.clusterId && (clusterCounts.get(complaint.clusterId) ?? 0) > 1 && (
+                  <span className={styles.status} style={{ marginLeft: 8, background: '#fdf3dc', color: '#8a5a00' }}>
+                    {getLiving(locale).staff.maintenance.related} {clusterCounts.get(complaint.clusterId)}
+                  </span>
+                )}
+              </span>
               <span className={styles.rowMeta}>
                 {t.reportedBy}: {complaint.tenant!.name} &middot; {new Date(complaint.createdAt).toLocaleDateString()}
               </span>
