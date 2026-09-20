@@ -16,8 +16,12 @@ export function addDays(date: Date, days: number): Date {
   return d;
 }
 
+// Local calendar date, not UTC: parseWeekParam reads it back as local midnight,
+// so a UTC conversion would land on the previous day in any timezone ahead of UTC.
 export function formatWeekParam(date: Date): string {
-  return date.toISOString().slice(0, 10);
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${date.getFullYear()}-${month}-${day}`;
 }
 
 export function parseWeekParam(value: string | undefined): Date {

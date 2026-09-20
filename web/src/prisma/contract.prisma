@@ -85,6 +85,8 @@ model Building {
   saunaSlots      SaunaSlot[]
   parkingSpots    ParkingSpot[]
   posts           BuildingPost[]
+  amenities       BuildingAmenity[]
+  spaces          BookableSpace[]
 
   @@map("building")
 }
@@ -94,6 +96,7 @@ model SaunaSlot {
   building   Building       @relation(fields: [buildingId], references: [id], onDelete: Cascade)
   buildingId Uuid
   label      String
+  capacity   Int            @default(6)
   bookings   SaunaBooking[]
 
   @@unique([buildingId, label])
@@ -177,6 +180,7 @@ model Unit {
   listings    Listing[]
   leases      Lease[]
   media       UnitMedia[]
+  amenities   UnitAmenity[]
 
   @@unique([stairwellId, code])
   @@map("unit")
@@ -244,6 +248,8 @@ model Tenant {
   leases                  Lease[]
   guarantorRequests       GuarantorRequest[]
   wellbeingCases          WellbeingCase[]
+  spaceBookings           SpaceBooking[]
+  bookingParticipations   BookingParticipant[]
 
   @@map("tenant")
 }
@@ -872,4 +878,76 @@ model WellbeingEvent {
 
   @@index([caseId])
   @@map("wellbeing_event")
+}
+
+model BuildingAmenity {
+  id         Uuid     @id @default(uuid())
+  building   Building @relation(fields: [buildingId], references: [id], onDelete: Cascade)
+  buildingId Uuid
+  kind       String
+  enabled    Boolean
+
+  @@unique([buildingId, kind])
+  @@map("building_amenity")
+}
+
+model UnitAmenity {
+  id      Uuid    @id @default(uuid())
+  unit    Unit    @relation(fields: [unitId], references: [id], onDelete: Cascade)
+  unitId  Uuid
+  kind    String
+  enabled Boolean
+
+  @@unique([unitId, kind])
+  @@map("unit_amenity")
+}
+
+model BookableSpace {
+  id                 Uuid              @id @default(uuid())
+  building           Building          @relation(fields: [buildingId], references: [id], onDelete: Cascade)
+  buildingId         Uuid
+  kind               String
+  name               String
+  description        String?
+  capacity           Int               @default(6)
+  openHour           Int               @default(8)
+  closeHour          Int               @default(22)
+  maxHoursPerBooking Int               @default(2)
+  maxHoursPerWeek    Int               @default(4)
+  advanceDays        Int               @default(14)
+  createdAt          TimestamptzString @default(now())
+  bookings           SpaceBooking[]
+
+  @@unique([buildingId, name])
+  @@map("bookable_space")
+}
+
+model SpaceBooking {
+  id        Uuid              @id @default(uuid())
+  space     BookableSpace     @relation(fields: [spaceId], references: [id], onDelete: Cascade)
+  spaceId   Uuid
+  tenant    Tenant            @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  tenantId  Uuid
+  startsAt  TimestamptzString
+  endsAt    TimestamptzString
+  note      String?
+  createdAt TimestamptzString @default(now())
+
+  @@index([spaceId, startsAt])
+  @@index([tenantId])
+  @@map("space_booking")
+}
+
+model BookingParticipant {
+  id        Uuid              @id @default(uuid())
+  kind      String
+  bookingId Uuid
+  tenant    Tenant            @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  tenantId  Uuid
+  status    String            @default("invited")
+  createdAt TimestamptzString @default(now())
+
+  @@unique([kind, bookingId, tenantId])
+  @@index([tenantId])
+  @@map("booking_participant")
 }

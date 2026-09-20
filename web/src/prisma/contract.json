@@ -12,8 +12,20 @@
       "model": "BillShare",
       "namespace": "public"
     },
+    "bookable_space": {
+      "model": "BookableSpace",
+      "namespace": "public"
+    },
+    "booking_participant": {
+      "model": "BookingParticipant",
+      "namespace": "public"
+    },
     "building": {
       "model": "Building",
+      "namespace": "public"
+    },
+    "building_amenity": {
+      "model": "BuildingAmenity",
       "namespace": "public"
     },
     "building_post": {
@@ -180,6 +192,10 @@
       "model": "SharedBill",
       "namespace": "public"
     },
+    "space_booking": {
+      "model": "SpaceBooking",
+      "namespace": "public"
+    },
     "staff": {
       "model": "Staff",
       "namespace": "public"
@@ -198,6 +214,10 @@
     },
     "unit": {
       "model": "Unit",
+      "namespace": "public"
+    },
+    "unit_amenity": {
+      "model": "UnitAmenity",
       "namespace": "public"
     },
     "unit_media": {
@@ -576,6 +596,257 @@
               "table": "bill_share"
             }
           },
+          "BookableSpace": {
+            "fields": {
+              "advanceDays": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "buildingId": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/uuid@1",
+                  "kind": "scalar"
+                }
+              },
+              "capacity": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "closeHour": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "createdAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              },
+              "description": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "id": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/uuid@1",
+                  "kind": "scalar"
+                }
+              },
+              "kind": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "maxHoursPerBooking": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "maxHoursPerWeek": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "name": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "openHour": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              }
+            },
+            "relations": {
+              "bookings": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "spaceId"
+                  ]
+                },
+                "to": {
+                  "model": "SpaceBooking",
+                  "namespace": "public"
+                }
+              },
+              "building": {
+                "cardinality": "N:1",
+                "nullable": false,
+                "on": {
+                  "localFields": [
+                    "buildingId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "Building",
+                  "namespace": "public"
+                }
+              }
+            },
+            "storage": {
+              "fields": {
+                "advanceDays": {
+                  "column": "advanceDays"
+                },
+                "buildingId": {
+                  "column": "buildingId"
+                },
+                "capacity": {
+                  "column": "capacity"
+                },
+                "closeHour": {
+                  "column": "closeHour"
+                },
+                "createdAt": {
+                  "column": "createdAt"
+                },
+                "description": {
+                  "column": "description"
+                },
+                "id": {
+                  "column": "id"
+                },
+                "kind": {
+                  "column": "kind"
+                },
+                "maxHoursPerBooking": {
+                  "column": "maxHoursPerBooking"
+                },
+                "maxHoursPerWeek": {
+                  "column": "maxHoursPerWeek"
+                },
+                "name": {
+                  "column": "name"
+                },
+                "openHour": {
+                  "column": "openHour"
+                }
+              },
+              "namespaceId": "public",
+              "table": "bookable_space"
+            }
+          },
+          "BookingParticipant": {
+            "fields": {
+              "bookingId": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/uuid@1",
+                  "kind": "scalar"
+                }
+              },
+              "createdAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              },
+              "id": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/uuid@1",
+                  "kind": "scalar"
+                }
+              },
+              "kind": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "status": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "tenantId": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/uuid@1",
+                  "kind": "scalar"
+                }
+              }
+            },
+            "relations": {
+              "tenant": {
+                "cardinality": "N:1",
+                "nullable": false,
+                "on": {
+                  "localFields": [
+                    "tenantId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "Tenant",
+                  "namespace": "public"
+                }
+              }
+            },
+            "storage": {
+              "fields": {
+                "bookingId": {
+                  "column": "bookingId"
+                },
+                "createdAt": {
+                  "column": "createdAt"
+                },
+                "id": {
+                  "column": "id"
+                },
+                "kind": {
+                  "column": "kind"
+                },
+                "status": {
+                  "column": "status"
+                },
+                "tenantId": {
+                  "column": "tenantId"
+                }
+              },
+              "namespaceId": "public",
+              "table": "booking_participant"
+            }
+          },
           "Building": {
             "fields": {
               "address": {
@@ -601,6 +872,21 @@
               }
             },
             "relations": {
+              "amenities": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "buildingId"
+                  ]
+                },
+                "to": {
+                  "model": "BuildingAmenity",
+                  "namespace": "public"
+                }
+              },
               "chatGroup": {
                 "cardinality": "1:1",
                 "nullable": true,
@@ -677,6 +963,21 @@
                   "namespace": "public"
                 }
               },
+              "spaces": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "buildingId"
+                  ]
+                },
+                "to": {
+                  "model": "BookableSpace",
+                  "namespace": "public"
+                }
+              },
               "stairwells": {
                 "cardinality": "1:N",
                 "on": {
@@ -707,6 +1008,74 @@
               },
               "namespaceId": "public",
               "table": "building"
+            }
+          },
+          "BuildingAmenity": {
+            "fields": {
+              "buildingId": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/uuid@1",
+                  "kind": "scalar"
+                }
+              },
+              "enabled": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/bool@1",
+                  "kind": "scalar"
+                }
+              },
+              "id": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/uuid@1",
+                  "kind": "scalar"
+                }
+              },
+              "kind": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              }
+            },
+            "relations": {
+              "building": {
+                "cardinality": "N:1",
+                "nullable": false,
+                "on": {
+                  "localFields": [
+                    "buildingId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "Building",
+                  "namespace": "public"
+                }
+              }
+            },
+            "storage": {
+              "fields": {
+                "buildingId": {
+                  "column": "buildingId"
+                },
+                "enabled": {
+                  "column": "enabled"
+                },
+                "id": {
+                  "column": "id"
+                },
+                "kind": {
+                  "column": "kind"
+                }
+              },
+              "namespaceId": "public",
+              "table": "building_amenity"
             }
           },
           "BuildingPost": {
@@ -5024,6 +5393,13 @@
                   "kind": "scalar"
                 }
               },
+              "capacity": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
               "id": {
                 "nullable": false,
                 "type": {
@@ -5076,6 +5452,9 @@
               "fields": {
                 "buildingId": {
                   "column": "buildingId"
+                },
+                "capacity": {
+                  "column": "capacity"
                 },
                 "id": {
                   "column": "id"
@@ -5313,6 +5692,120 @@
               },
               "namespaceId": "public",
               "table": "shared_bill"
+            }
+          },
+          "SpaceBooking": {
+            "fields": {
+              "createdAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              },
+              "endsAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              },
+              "id": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/uuid@1",
+                  "kind": "scalar"
+                }
+              },
+              "note": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "spaceId": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/uuid@1",
+                  "kind": "scalar"
+                }
+              },
+              "startsAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              },
+              "tenantId": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/uuid@1",
+                  "kind": "scalar"
+                }
+              }
+            },
+            "relations": {
+              "space": {
+                "cardinality": "N:1",
+                "nullable": false,
+                "on": {
+                  "localFields": [
+                    "spaceId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "BookableSpace",
+                  "namespace": "public"
+                }
+              },
+              "tenant": {
+                "cardinality": "N:1",
+                "nullable": false,
+                "on": {
+                  "localFields": [
+                    "tenantId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "Tenant",
+                  "namespace": "public"
+                }
+              }
+            },
+            "storage": {
+              "fields": {
+                "createdAt": {
+                  "column": "createdAt"
+                },
+                "endsAt": {
+                  "column": "endsAt"
+                },
+                "id": {
+                  "column": "id"
+                },
+                "note": {
+                  "column": "note"
+                },
+                "spaceId": {
+                  "column": "spaceId"
+                },
+                "startsAt": {
+                  "column": "startsAt"
+                },
+                "tenantId": {
+                  "column": "tenantId"
+                }
+              },
+              "namespaceId": "public",
+              "table": "space_booking"
             }
           },
           "Staff": {
@@ -5800,6 +6293,21 @@
                 },
                 "to": {
                   "model": "SharedBill",
+                  "namespace": "public"
+                }
+              },
+              "bookingParticipations": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "tenantId"
+                  ]
+                },
+                "to": {
+                  "model": "BookingParticipant",
                   "namespace": "public"
                 }
               },
@@ -6301,6 +6809,21 @@
                   "namespace": "public"
                 }
               },
+              "spaceBookings": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "tenantId"
+                  ]
+                },
+                "to": {
+                  "model": "SpaceBooking",
+                  "namespace": "public"
+                }
+              },
               "staffAccount": {
                 "cardinality": "N:1",
                 "nullable": true,
@@ -6436,6 +6959,21 @@
               }
             },
             "relations": {
+              "amenities": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "unitId"
+                  ]
+                },
+                "to": {
+                  "model": "UnitAmenity",
+                  "namespace": "public"
+                }
+              },
               "bills": {
                 "cardinality": "1:N",
                 "on": {
@@ -6576,6 +7114,74 @@
               },
               "namespaceId": "public",
               "table": "unit"
+            }
+          },
+          "UnitAmenity": {
+            "fields": {
+              "enabled": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/bool@1",
+                  "kind": "scalar"
+                }
+              },
+              "id": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/uuid@1",
+                  "kind": "scalar"
+                }
+              },
+              "kind": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "unitId": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/uuid@1",
+                  "kind": "scalar"
+                }
+              }
+            },
+            "relations": {
+              "unit": {
+                "cardinality": "N:1",
+                "nullable": false,
+                "on": {
+                  "localFields": [
+                    "unitId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "Unit",
+                  "namespace": "public"
+                }
+              }
+            },
+            "storage": {
+              "fields": {
+                "enabled": {
+                  "column": "enabled"
+                },
+                "id": {
+                  "column": "id"
+                },
+                "kind": {
+                  "column": "kind"
+                },
+                "unitId": {
+                  "column": "unitId"
+                }
+              },
+              "namespaceId": "public",
+              "table": "unit_amenity"
             }
           },
           "UnitMedia": {
@@ -7109,6 +7715,225 @@
                 }
               ]
             },
+            "bookable_space": {
+              "columns": {
+                "advanceDays": {
+                  "codecId": "pg/int4@1",
+                  "default": {
+                    "kind": "literal",
+                    "value": 14
+                  },
+                  "nativeType": "int4",
+                  "nullable": false
+                },
+                "buildingId": {
+                  "codecId": "pg/uuid@1",
+                  "nativeType": "uuid",
+                  "nullable": false
+                },
+                "capacity": {
+                  "codecId": "pg/int4@1",
+                  "default": {
+                    "kind": "literal",
+                    "value": 6
+                  },
+                  "nativeType": "int4",
+                  "nullable": false
+                },
+                "closeHour": {
+                  "codecId": "pg/int4@1",
+                  "default": {
+                    "kind": "literal",
+                    "value": 22
+                  },
+                  "nativeType": "int4",
+                  "nullable": false
+                },
+                "createdAt": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "default": {
+                    "expression": "now()",
+                    "kind": "function"
+                  },
+                  "nativeType": "timestamptz",
+                  "nullable": false
+                },
+                "description": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true
+                },
+                "id": {
+                  "codecId": "pg/uuid@1",
+                  "nativeType": "uuid",
+                  "nullable": false
+                },
+                "kind": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "maxHoursPerBooking": {
+                  "codecId": "pg/int4@1",
+                  "default": {
+                    "kind": "literal",
+                    "value": 2
+                  },
+                  "nativeType": "int4",
+                  "nullable": false
+                },
+                "maxHoursPerWeek": {
+                  "codecId": "pg/int4@1",
+                  "default": {
+                    "kind": "literal",
+                    "value": 4
+                  },
+                  "nativeType": "int4",
+                  "nullable": false
+                },
+                "name": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "openHour": {
+                  "codecId": "pg/int4@1",
+                  "default": {
+                    "kind": "literal",
+                    "value": 8
+                  },
+                  "nativeType": "int4",
+                  "nullable": false
+                }
+              },
+              "foreignKeys": [
+                {
+                  "onDelete": "cascade",
+                  "source": {
+                    "columns": [
+                      "buildingId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "bookable_space"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "building"
+                  }
+                }
+              ],
+              "indexes": [
+                {
+                  "columns": [
+                    "buildingId"
+                  ],
+                  "name": "bookable_space_buildingId_idx_c40fd7b4",
+                  "prefix": "bookable_space_buildingId_idx",
+                  "unique": false
+                }
+              ],
+              "primaryKey": {
+                "columns": [
+                  "id"
+                ]
+              },
+              "uniques": [
+                {
+                  "columns": [
+                    "buildingId",
+                    "name"
+                  ]
+                }
+              ]
+            },
+            "booking_participant": {
+              "columns": {
+                "bookingId": {
+                  "codecId": "pg/uuid@1",
+                  "nativeType": "uuid",
+                  "nullable": false
+                },
+                "createdAt": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "default": {
+                    "expression": "now()",
+                    "kind": "function"
+                  },
+                  "nativeType": "timestamptz",
+                  "nullable": false
+                },
+                "id": {
+                  "codecId": "pg/uuid@1",
+                  "nativeType": "uuid",
+                  "nullable": false
+                },
+                "kind": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "status": {
+                  "codecId": "pg/text@1",
+                  "default": {
+                    "kind": "literal",
+                    "value": "invited"
+                  },
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "tenantId": {
+                  "codecId": "pg/uuid@1",
+                  "nativeType": "uuid",
+                  "nullable": false
+                }
+              },
+              "foreignKeys": [
+                {
+                  "onDelete": "cascade",
+                  "source": {
+                    "columns": [
+                      "tenantId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "booking_participant"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "tenant"
+                  }
+                }
+              ],
+              "indexes": [
+                {
+                  "columns": [
+                    "tenantId"
+                  ],
+                  "name": "booking_participant_tenantId_idx_c93ed4f1",
+                  "prefix": "booking_participant_tenantId_idx",
+                  "unique": false
+                }
+              ],
+              "primaryKey": {
+                "columns": [
+                  "id"
+                ]
+              },
+              "uniques": [
+                {
+                  "columns": [
+                    "kind",
+                    "bookingId",
+                    "tenantId"
+                  ]
+                }
+              ]
+            },
             "building": {
               "columns": {
                 "address": {
@@ -7135,6 +7960,72 @@
                 ]
               },
               "uniques": []
+            },
+            "building_amenity": {
+              "columns": {
+                "buildingId": {
+                  "codecId": "pg/uuid@1",
+                  "nativeType": "uuid",
+                  "nullable": false
+                },
+                "enabled": {
+                  "codecId": "pg/bool@1",
+                  "nativeType": "bool",
+                  "nullable": false
+                },
+                "id": {
+                  "codecId": "pg/uuid@1",
+                  "nativeType": "uuid",
+                  "nullable": false
+                },
+                "kind": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                }
+              },
+              "foreignKeys": [
+                {
+                  "onDelete": "cascade",
+                  "source": {
+                    "columns": [
+                      "buildingId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "building_amenity"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "building"
+                  }
+                }
+              ],
+              "indexes": [
+                {
+                  "columns": [
+                    "buildingId"
+                  ],
+                  "name": "building_amenity_buildingId_idx_c40fd7b4",
+                  "prefix": "building_amenity_buildingId_idx",
+                  "unique": false
+                }
+              ],
+              "primaryKey": {
+                "columns": [
+                  "id"
+                ]
+              },
+              "uniques": [
+                {
+                  "columns": [
+                    "buildingId",
+                    "kind"
+                  ]
+                }
+              ]
             },
             "building_post": {
               "checks": [
@@ -10962,6 +11853,15 @@
                   "nativeType": "uuid",
                   "nullable": false
                 },
+                "capacity": {
+                  "codecId": "pg/int4@1",
+                  "default": {
+                    "kind": "literal",
+                    "value": 6
+                  },
+                  "nativeType": "int4",
+                  "nullable": false
+                },
                 "id": {
                   "codecId": "pg/uuid@1",
                   "nativeType": "uuid",
@@ -11187,6 +12087,118 @@
                   ],
                   "name": "shared_bill_unitId_idx_be785412",
                   "prefix": "shared_bill_unitId_idx",
+                  "unique": false
+                }
+              ],
+              "primaryKey": {
+                "columns": [
+                  "id"
+                ]
+              },
+              "uniques": []
+            },
+            "space_booking": {
+              "columns": {
+                "createdAt": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "default": {
+                    "expression": "now()",
+                    "kind": "function"
+                  },
+                  "nativeType": "timestamptz",
+                  "nullable": false
+                },
+                "endsAt": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "nativeType": "timestamptz",
+                  "nullable": false
+                },
+                "id": {
+                  "codecId": "pg/uuid@1",
+                  "nativeType": "uuid",
+                  "nullable": false
+                },
+                "note": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true
+                },
+                "spaceId": {
+                  "codecId": "pg/uuid@1",
+                  "nativeType": "uuid",
+                  "nullable": false
+                },
+                "startsAt": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "nativeType": "timestamptz",
+                  "nullable": false
+                },
+                "tenantId": {
+                  "codecId": "pg/uuid@1",
+                  "nativeType": "uuid",
+                  "nullable": false
+                }
+              },
+              "foreignKeys": [
+                {
+                  "onDelete": "cascade",
+                  "source": {
+                    "columns": [
+                      "spaceId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "space_booking"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "bookable_space"
+                  }
+                },
+                {
+                  "onDelete": "cascade",
+                  "source": {
+                    "columns": [
+                      "tenantId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "space_booking"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "tenant"
+                  }
+                }
+              ],
+              "indexes": [
+                {
+                  "columns": [
+                    "spaceId"
+                  ],
+                  "name": "space_booking_spaceId_idx_bb21015f",
+                  "prefix": "space_booking_spaceId_idx",
+                  "unique": false
+                },
+                {
+                  "columns": [
+                    "spaceId",
+                    "startsAt"
+                  ],
+                  "name": "space_booking_spaceId_startsAt_idx_4a67bc05",
+                  "prefix": "space_booking_spaceId_startsAt_idx",
+                  "unique": false
+                },
+                {
+                  "columns": [
+                    "tenantId"
+                  ],
+                  "name": "space_booking_tenantId_idx_c93ed4f1",
+                  "prefix": "space_booking_tenantId_idx",
                   "unique": false
                 }
               ],
@@ -11631,6 +12643,72 @@
                 }
               ]
             },
+            "unit_amenity": {
+              "columns": {
+                "enabled": {
+                  "codecId": "pg/bool@1",
+                  "nativeType": "bool",
+                  "nullable": false
+                },
+                "id": {
+                  "codecId": "pg/uuid@1",
+                  "nativeType": "uuid",
+                  "nullable": false
+                },
+                "kind": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "unitId": {
+                  "codecId": "pg/uuid@1",
+                  "nativeType": "uuid",
+                  "nullable": false
+                }
+              },
+              "foreignKeys": [
+                {
+                  "onDelete": "cascade",
+                  "source": {
+                    "columns": [
+                      "unitId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "unit_amenity"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "unit"
+                  }
+                }
+              ],
+              "indexes": [
+                {
+                  "columns": [
+                    "unitId"
+                  ],
+                  "name": "unit_amenity_unitId_idx_be785412",
+                  "prefix": "unit_amenity_unitId_idx",
+                  "unique": false
+                }
+              ],
+              "primaryKey": {
+                "columns": [
+                  "id"
+                ]
+              },
+              "uniques": [
+                {
+                  "columns": [
+                    "unitId",
+                    "kind"
+                  ]
+                }
+              ]
+            },
             "unit_media": {
               "columns": {
                 "caption": {
@@ -12004,10 +13082,10 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "f434d4d71636ad048bfc86ab0c82a7ae0a4609c5ae5ff02ddc5c3db1d473d250"
+    "storageHash": "96eff3c652e7db3b75997b39ad22b2212ecfe414cc22fcbd80fa17035f705900"
   },
   "execution": {
-    "executionHash": "1993ef46989286d220727b0397328667a481b88fade48d745f134c0f899bb8b7",
+    "executionHash": "2959cdf0522aa3856f0361ccd6ed4883536de0bd1b81eab26891313b69213ec4",
     "mutations": {
       "defaults": [
         {
@@ -12040,7 +13118,40 @@
           "ref": {
             "column": "id",
             "namespace": "public",
+            "table": "bookable_space"
+          }
+        },
+        {
+          "onCreate": {
+            "id": "uuidv4",
+            "kind": "generator"
+          },
+          "ref": {
+            "column": "id",
+            "namespace": "public",
+            "table": "booking_participant"
+          }
+        },
+        {
+          "onCreate": {
+            "id": "uuidv4",
+            "kind": "generator"
+          },
+          "ref": {
+            "column": "id",
+            "namespace": "public",
             "table": "building"
+          }
+        },
+        {
+          "onCreate": {
+            "id": "uuidv4",
+            "kind": "generator"
+          },
+          "ref": {
+            "column": "id",
+            "namespace": "public",
+            "table": "building_amenity"
           }
         },
         {
@@ -12502,6 +13613,17 @@
           "ref": {
             "column": "id",
             "namespace": "public",
+            "table": "space_booking"
+          }
+        },
+        {
+          "onCreate": {
+            "id": "uuidv4",
+            "kind": "generator"
+          },
+          "ref": {
+            "column": "id",
+            "namespace": "public",
             "table": "staff"
           }
         },
@@ -12547,6 +13669,17 @@
             "column": "id",
             "namespace": "public",
             "table": "unit"
+          }
+        },
+        {
+          "onCreate": {
+            "id": "uuidv4",
+            "kind": "generator"
+          },
+          "ref": {
+            "column": "id",
+            "namespace": "public",
+            "table": "unit_amenity"
           }
         },
         {

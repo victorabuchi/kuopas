@@ -10,6 +10,7 @@ export const staff = defineSection(
       market: 'Market',
       wellbeing: 'Wellbeing',
       domains: 'Domains',
+      facilities: 'Facilities',
     },
     maintenance: {
       title: 'Maintenance insights',
@@ -167,6 +168,7 @@ export const staff = defineSection(
       market: 'Kauppa',
       wellbeing: 'Hyvinvointi',
       domains: 'Verkkotunnukset',
+      facilities: 'Tilat',
     },
     maintenance: {
       title: 'Kunnossapidon analyysi',

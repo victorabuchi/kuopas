@@ -4,6 +4,7 @@ import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { db } from '../prisma/db';
 import { getSession } from './session';
+import { getBookingContext, isAmenityAvailable } from './booking';
 
 export async function claimParkingSpotAction(formData: FormData) {
   const spotId = String(formData.get('spotId') ?? '');
@@ -17,6 +18,10 @@ export async function claimParkingSpotAction(formData: FormData) {
   const spot = await db.orm.public.ParkingSpot.where({ id: spotId }).first();
   if (!spot) redirect('/parking?error=' + encodeURIComponent('Spot not found.'));
   if (spot.tenantId) redirect('/parking?error=' + encodeURIComponent('That spot was just taken by someone else.'));
+  const ctx = await getBookingContext(session.tenantId);
+  if (!ctx || spot.buildingId !== ctx.buildingId || !(await isAmenityAvailable('parking', ctx))) {
+    redirect('/parking?error=' + encodeURIComponent('Parking is not available for your apartment.'));
+  }
 
   await db.orm.public.ParkingSpot.where({ id: spotId }).update({ tenantId: session.tenantId });
 

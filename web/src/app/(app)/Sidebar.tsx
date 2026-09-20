@@ -5,6 +5,8 @@ import { usePathname, useSearchParams } from 'next/navigation';
 import styles from './app-shell.module.css';
 import type { getDictionary } from '../../lib/dictionary';
 
+type NavDict = ReturnType<typeof getDictionary>['nav'];
+
 function Svg({ children }: { children: React.ReactNode }) {
   return (
     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
@@ -13,7 +15,7 @@ function Svg({ children }: { children: React.ReactNode }) {
   );
 }
 
-const NAV_ITEMS = [
+const NAV_ITEMS: { href: string; key: keyof NavDict; match?: string[]; icon: React.ReactNode }[] = [
   {
     href: '/home',
     key: 'feed' as const,
@@ -119,36 +121,14 @@ const NAV_ITEMS = [
     ),
   },
   {
-    href: '/laundry',
-    key: 'laundry' as const,
+    href: '/booking',
+    key: 'booking' as const,
+    match: ['/booking', '/laundry', '/sauna', '/parking'],
     icon: (
       <Svg>
-        <rect x="4" y="3.5" width="16" height="17" rx="3" />
-        <circle cx="12" cy="13" r="5" />
-        <circle cx="12" cy="13" r="1.6" />
-        <path d="M8 6.5h1M11.5 6.5h1" />
-      </Svg>
-    ),
-  },
-  {
-    href: '/sauna',
-    key: 'sauna' as const,
-    icon: (
-      <Svg>
-        <path d="M8 3c-1 1.5-1 2.5 0 4-1 1.5-1 2.5 0 4" />
-        <path d="M12 3c-1 1.5-1 2.5 0 4-1 1.5-1 2.5 0 4" />
-        <path d="M16 3c-1 1.5-1 2.5 0 4-1 1.5-1 2.5 0 4" />
-        <rect x="3.5" y="13" width="17" height="8" rx="1.5" />
-      </Svg>
-    ),
-  },
-  {
-    href: '/parking',
-    key: 'parking' as const,
-    icon: (
-      <Svg>
-        <rect x="3.5" y="3.5" width="17" height="17" rx="3" />
-        <path d="M9.5 16V8h3a2.5 2.5 0 0 1 0 5h-3" />
+        <rect x="3.5" y="5" width="17" height="15.5" rx="2.5" />
+        <path d="M3.5 10h17M8 3v4M16 3v4" />
+        <path d="m9 15 2 2 4-4" />
       </Svg>
     ),
   },
@@ -161,7 +141,6 @@ const GEAR = (
   </Svg>
 );
 
-type NavDict = ReturnType<typeof getDictionary>['nav'];
 type SettingsDict = ReturnType<typeof getDictionary>['settings'];
 
 export default function Sidebar({
@@ -219,7 +198,7 @@ export default function Sidebar({
     <nav className={styles.rail}>
       <div className={styles.railTop}>
         {NAV_ITEMS.map((item) => {
-          const active = pathname.startsWith(item.href);
+          const active = (item.match ?? [item.href]).some((prefix) => pathname.startsWith(prefix));
           return (
             <Link
               key={item.href}

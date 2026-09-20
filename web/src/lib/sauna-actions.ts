@@ -5,8 +5,18 @@ import { redirect } from 'next/navigation';
 import { db } from '../prisma/db';
 import { getSession } from './session';
 import { getWeekStart, MAX_HOURS_PER_WEEK, MAX_DAYS_IN_ADVANCE, SLOT_LENGTH_HOURS } from './sauna';
+import {
+  getBookingContext,
+  inviteParticipants,
+  isAmenityAvailable,
+  readParticipantInput,
+  removeParticipants,
+  resolveParticipants,
+} from './booking';
+import { getLocale } from './i18n';
+import { getLiving } from './living';
 
-function backTo(slotId: string, week: string, error?: string) {
+function backTo(slotId: string, week: string, error?: string): never {
   const params = new URLSearchParams({ slot: slotId, week });
   if (error) params.set('error', error);
   redirect(`/sauna?${params.toString()}`);
@@ -35,6 +45,16 @@ export async function bookSaunaAction(formData: FormData) {
   const slot = await db.orm.public.SaunaSlot.where({ id: slotId }).first();
   if (!slot) backTo(slotId, week, 'Sauna not found.');
 
+  const ctx = await getBookingContext(session.tenantId);
+  const bk = getLiving(await getLocale()).booking;
+  if (!ctx || slot.buildingId !== ctx.buildingId || !(await isAmenityAvailable('sauna', ctx))) {
+    backTo(slotId, week, bk.errors.notAvailable);
+  }
+  const people = await resolveParticipants(ctx, readParticipantInput(formData), slot.capacity);
+  if (!people.ok) {
+    backTo(slotId, week, people.reason === 'capacity' ? bk.errors.capacity.replace('{n}', String(slot.capacity)) : bk.errors.outsider);
+  }
+
   const existing = await db.orm.public.SaunaBooking.where({ slotId, startsAt: startsAt.toISOString() }).first();
   if (existing) backTo(slotId, week, 'That turn was just booked by someone else.');
 
@@ -55,11 +75,20 @@ export async function bookSaunaAction(formData: FormData) {
   const endsAt = new Date(startsAt);
   endsAt.setHours(endsAt.getHours() + SLOT_LENGTH_HOURS);
 
-  await db.orm.public.SaunaBooking.create({
+  const created = await db.orm.public.SaunaBooking.create({
     slotId,
     tenantId: session.tenantId,
     startsAt: startsAt.toISOString(),
     endsAt: endsAt.toISOString(),
+  });
+  await inviteParticipants({
+    kind: 'sauna',
+    bookingId: created.id,
+    organiserName: ctx.tenantName,
+    ids: people.ids,
+    title: slot.label,
+    when: `${startsAt.toLocaleDateString()} ${String(startsAt.getHours()).padStart(2, '0')}:00`,
+    pushTitle: bk.pushInvite,
   });
 
   revalidatePath('/sauna');
@@ -77,8 +106,10 @@ export async function cancelSaunaBookingAction(formData: FormData) {
   const booking = await db.orm.public.SaunaBooking.where({ id: bookingId }).first();
   if (!booking || booking.tenantId !== session.tenantId) backTo(slotId, week, 'Booking not found.');
 
+  await removeParticipants('sauna', bookingId);
   await db.orm.public.SaunaBooking.where({ id: bookingId }).delete();
 
   revalidatePath('/sauna');
+  revalidatePath('/booking');
   backTo(slotId, week);
 }

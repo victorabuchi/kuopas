@@ -6,7 +6,10 @@ import { getSession } from '../../../lib/session';
 import { db } from '../../../prisma/db';
 import { claimParkingSpotAction, releaseParkingSpotAction } from '../../../lib/parking-actions';
 import { getLocale } from '../../../lib/i18n';
+import Link from 'next/link';
 import { getDictionary } from '../../../lib/dictionary';
+import { getLiving } from '../../../lib/living';
+import { getBookingContext, isAmenityAvailable } from '../../../lib/booking';
 
 export const metadata: Metadata = {
   title: 'Parking - Kuopas',
@@ -32,6 +35,10 @@ export default async function ParkingPage({
 
   const building = tenant.unit!.stairwell!.building!;
 
+  const bctx = await getBookingContext(session.tenantId);
+  if (!bctx || !(await isAmenityAvailable('parking', bctx))) redirect('/booking');
+  const backLabel = getLiving(locale).booking.backToBooking;
+
   const spots = await db.orm.public.ParkingSpot.where({ buildingId: building.id })
     .include('tenant', (t) => t)
     .orderBy((s) => s.label.asc())
@@ -40,6 +47,9 @@ export default async function ParkingPage({
   return (
     <div className={styles.page}>
       <TopBar title={dict.parking.title} />
+      <Link href="/booking" className={styles.backLink}>
+        &lsaquo; {backLabel}
+      </Link>
 
       {error && <div className={styles.error}>{error}</div>}
 

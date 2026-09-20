@@ -5,8 +5,9 @@ import { redirect } from 'next/navigation';
 import { db } from '../prisma/db';
 import { getSession } from './session';
 import { getWeekStart, MAX_HOURS_PER_WEEK, MAX_DAYS_IN_ADVANCE } from './laundry';
+import { getBookingContext, isAmenityAvailable } from './booking';
 
-function backTo(machineId: string, week: string, error?: string) {
+function backTo(machineId: string, week: string, error?: string): never {
   const params = new URLSearchParams({ machine: machineId, week });
   if (error) params.set('error', error);
   redirect(`/laundry?${params.toString()}`);
@@ -34,6 +35,10 @@ export async function bookSlotAction(formData: FormData) {
 
   const machine = await db.orm.public.LaundryMachine.where({ id: machineId }).first();
   if (!machine) backTo(machineId, week, 'Machine not found.');
+  const ctx = await getBookingContext(session.tenantId);
+  if (!ctx || machine.buildingId !== ctx.buildingId || !(await isAmenityAvailable('laundry', ctx))) {
+    backTo(machineId, week, 'Laundry is not available for your apartment.');
+  }
 
   const existing = await db.orm.public.LaundryBooking.where({ machineId, startsAt: startsAt.toISOString() }).first();
   if (existing) backTo(machineId, week, 'That slot was just booked by someone else.');

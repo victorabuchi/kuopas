@@ -1,0 +1,255 @@
+.page {
+  --bg: #ffffff;
+  --fg: #000000;
+  --fg-muted: #767676;
+  --green-dark: #046a38;
+  --green-hover: #598000;
+  --border: #e7e7e7;
+
+  min-height: 100%;
+  background: var(--bg);
+  color: var(--fg);
+}
+.page * {
+  box-sizing: border-box;
+}
+.content {
+  max-width: 860px;
+  padding: 20px 20px 70px;
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+.lede {
+  margin: 0;
+  color: var(--fg-muted);
+  font-size: 14px;
+  line-height: 1.5;
+}
+.heading {
+  margin: 0 0 10px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--fg-muted);
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--border);
+}
+
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 12px;
+}
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 16px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  color: var(--fg);
+  text-decoration: none;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.card:hover {
+  border-color: var(--green-dark);
+  box-shadow: 0 2px 10px rgba(4, 106, 56, 0.1);
+}
+.cardIcon {
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: color-mix(in srgb, #046a38 10%, white);
+  color: var(--green-dark);
+}
+.cardName {
+  font-size: 16px;
+  font-weight: 800;
+}
+.cardBlurb {
+  font-size: 13px;
+  color: var(--fg-muted);
+  line-height: 1.4;
+}
+.cardOpen {
+  margin-top: auto;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--green-dark);
+}
+
+.empty {
+  padding: 28px 20px;
+  border: 1px dashed var(--border);
+  border-radius: 14px;
+  text-align: center;
+  color: var(--fg-muted);
+  font-size: 14px;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding: 14px 16px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+}
+.rowText {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+.rowTitle {
+  font-weight: 700;
+  font-size: 14.5px;
+}
+.rowMeta {
+  font-size: 13px;
+  color: var(--fg-muted);
+}
+.rowActions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.invite {
+  background: color-mix(in srgb, #84bd00 10%, white);
+  border-color: color-mix(in srgb, #84bd00 40%, white);
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  height: 34px;
+  padding: 0 14px;
+  border-radius: 10px;
+  border: none;
+  background: var(--green-dark);
+  color: #fff;
+  font-family: inherit;
+  font-size: 13.5px;
+  font-weight: 700;
+  cursor: pointer;
+  text-decoration: none;
+}
+.btn:hover {
+  background: var(--green-hover);
+}
+.btnGhost {
+  background: #f0f2f0;
+  color: var(--fg);
+}
+.btnGhost:hover {
+  background: #e4e8e4;
+}
+
+.backLink {
+  display: inline-block;
+  margin: 14px 20px 0;
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--green-dark);
+  text-decoration: none;
+}
+
+.cellLink {
+  display: block;
+  width: 100%;
+  height: 100%;
+  min-height: 30px;
+}
+.cellPicked {
+  outline: 2px solid var(--green-dark);
+  outline-offset: -2px;
+}
+
+.panel {
+  margin: 0 20px 16px;
+  padding: 18px;
+  border: 1px solid var(--green-dark);
+  border-radius: 14px;
+  background: color-mix(in srgb, #046a38 4%, white);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  max-width: 720px;
+}
+.panelTitle {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 800;
+}
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 700;
+}
+.input,
+.select {
+  height: 38px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 0 12px;
+  font-family: inherit;
+  font-size: 14px;
+  background: #fff;
+  color: var(--fg);
+}
+.group {
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 12px 14px;
+  background: #fff;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.groupTitle {
+  font-weight: 800;
+  font-size: 14px;
+}
+.hint {
+  font-size: 12.5px;
+  color: var(--fg-muted);
+}
+.check {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 600;
+}
+.people {
+  max-height: 200px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding-top: 6px;
+  border-top: 1px solid var(--border);
+}
+.panelActions {
+  display: flex;
+  gap: 8px;
+}
+.details summary {
+  cursor: pointer;
+  font-weight: 700;
+  font-size: 13.5px;
+}

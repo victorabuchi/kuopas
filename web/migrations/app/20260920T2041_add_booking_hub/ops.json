@@ -1,0 +1,932 @@
+[
+  {
+    "id": "table.bookable_space",
+    "label": "Create table \"bookable_space\"",
+    "summary": "Creates table \"bookable_space\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "bookable_space"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"bookable_space\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"bookable_space\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"bookable_space\"",
+        "sql": "CREATE TABLE \"public\".\"bookable_space\" (\n  \"advanceDays\" int4 DEFAULT 14 NOT NULL,\n  \"buildingId\" uuid NOT NULL,\n  \"capacity\" int4 DEFAULT 6 NOT NULL,\n  \"closeHour\" int4 DEFAULT 22 NOT NULL,\n  \"createdAt\" timestamptz DEFAULT (now()) NOT NULL,\n  \"description\" text,\n  \"id\" uuid NOT NULL,\n  \"kind\" text NOT NULL,\n  \"maxHoursPerBooking\" int4 DEFAULT 2 NOT NULL,\n  \"maxHoursPerWeek\" int4 DEFAULT 4 NOT NULL,\n  \"name\" text NOT NULL,\n  \"openHour\" int4 DEFAULT 8 NOT NULL,\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"bookable_space\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"bookable_space\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "table.booking_participant",
+    "label": "Create table \"booking_participant\"",
+    "summary": "Creates table \"booking_participant\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "booking_participant"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"booking_participant\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"booking_participant\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"booking_participant\"",
+        "sql": "CREATE TABLE \"public\".\"booking_participant\" (\n  \"bookingId\" uuid NOT NULL,\n  \"createdAt\" timestamptz DEFAULT (now()) NOT NULL,\n  \"id\" uuid NOT NULL,\n  \"kind\" text NOT NULL,\n  \"status\" text DEFAULT 'invited' NOT NULL,\n  \"tenantId\" uuid NOT NULL,\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"booking_participant\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"booking_participant\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "table.building_amenity",
+    "label": "Create table \"building_amenity\"",
+    "summary": "Creates table \"building_amenity\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "building_amenity"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"building_amenity\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"building_amenity\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"building_amenity\"",
+        "sql": "CREATE TABLE \"public\".\"building_amenity\" (\n  \"buildingId\" uuid NOT NULL,\n  \"enabled\" bool NOT NULL,\n  \"id\" uuid NOT NULL,\n  \"kind\" text NOT NULL,\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"building_amenity\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"building_amenity\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "table.space_booking",
+    "label": "Create table \"space_booking\"",
+    "summary": "Creates table \"space_booking\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "space_booking"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"space_booking\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"space_booking\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"space_booking\"",
+        "sql": "CREATE TABLE \"public\".\"space_booking\" (\n  \"createdAt\" timestamptz DEFAULT (now()) NOT NULL,\n  \"endsAt\" timestamptz NOT NULL,\n  \"id\" uuid NOT NULL,\n  \"note\" text,\n  \"spaceId\" uuid NOT NULL,\n  \"startsAt\" timestamptz NOT NULL,\n  \"tenantId\" uuid NOT NULL,\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"space_booking\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"space_booking\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "table.unit_amenity",
+    "label": "Create table \"unit_amenity\"",
+    "summary": "Creates table \"unit_amenity\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "unit_amenity"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"unit_amenity\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"unit_amenity\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"unit_amenity\"",
+        "sql": "CREATE TABLE \"public\".\"unit_amenity\" (\n  \"enabled\" bool NOT NULL,\n  \"id\" uuid NOT NULL,\n  \"kind\" text NOT NULL,\n  \"unitId\" uuid NOT NULL,\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"unit_amenity\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"unit_amenity\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "column.public.sauna_slot.capacity",
+    "label": "Add column \"capacity\" to \"sauna_slot\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "capacity",
+        "table": "sauna_slot"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"capacity\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "sauna_slot",
+          "capacity"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"capacity\"",
+        "sql": "ALTER TABLE \"public\".\"sauna_slot\" ADD COLUMN \"capacity\" int4 DEFAULT 6 NOT NULL"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"capacity\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "sauna_slot",
+          "capacity"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "unique.bookable_space.bookable_space_buildingId_name_key",
+    "label": "Add unique constraint on \"bookable_space\" (buildingId, name)",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "unique",
+        "name": "bookable_space_buildingId_name_key",
+        "table": "bookable_space"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"bookable_space_buildingId_name_key\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "bookable_space_buildingId_name_key",
+          "public",
+          "\"public\".\"bookable_space\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add unique constraint \"bookable_space_buildingId_name_key\"",
+        "sql": "ALTER TABLE \"public\".\"bookable_space\" ADD CONSTRAINT \"bookable_space_buildingId_name_key\" UNIQUE (\"buildingId\", \"name\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"bookable_space_buildingId_name_key\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "bookable_space_buildingId_name_key",
+          "public",
+          "\"public\".\"bookable_space\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "unique.booking_participant.booking_participant_kind_bookingId_tenantId_key",
+    "label": "Add unique constraint on \"booking_participant\" (kind, bookingId, tenantId)",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "unique",
+        "name": "booking_participant_kind_bookingId_tenantId_key",
+        "table": "booking_participant"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"booking_participant_kind_bookingId_tenantId_key\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "booking_participant_kind_bookingId_tenantId_key",
+          "public",
+          "\"public\".\"booking_participant\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add unique constraint \"booking_participant_kind_bookingId_tenantId_key\"",
+        "sql": "ALTER TABLE \"public\".\"booking_participant\" ADD CONSTRAINT \"booking_participant_kind_bookingId_tenantId_key\" UNIQUE (\"kind\", \"bookingId\", \"tenantId\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"booking_participant_kind_bookingId_tenantId_key\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "booking_participant_kind_bookingId_tenantId_key",
+          "public",
+          "\"public\".\"booking_participant\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "unique.building_amenity.building_amenity_buildingId_kind_key",
+    "label": "Add unique constraint on \"building_amenity\" (buildingId, kind)",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "unique",
+        "name": "building_amenity_buildingId_kind_key",
+        "table": "building_amenity"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"building_amenity_buildingId_kind_key\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "building_amenity_buildingId_kind_key",
+          "public",
+          "\"public\".\"building_amenity\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add unique constraint \"building_amenity_buildingId_kind_key\"",
+        "sql": "ALTER TABLE \"public\".\"building_amenity\" ADD CONSTRAINT \"building_amenity_buildingId_kind_key\" UNIQUE (\"buildingId\", \"kind\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"building_amenity_buildingId_kind_key\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "building_amenity_buildingId_kind_key",
+          "public",
+          "\"public\".\"building_amenity\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "unique.unit_amenity.unit_amenity_unitId_kind_key",
+    "label": "Add unique constraint on \"unit_amenity\" (unitId, kind)",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "unique",
+        "name": "unit_amenity_unitId_kind_key",
+        "table": "unit_amenity"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"unit_amenity_unitId_kind_key\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "unit_amenity_unitId_kind_key",
+          "public",
+          "\"public\".\"unit_amenity\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add unique constraint \"unit_amenity_unitId_kind_key\"",
+        "sql": "ALTER TABLE \"public\".\"unit_amenity\" ADD CONSTRAINT \"unit_amenity_unitId_kind_key\" UNIQUE (\"unitId\", \"kind\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"unit_amenity_unitId_kind_key\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "unit_amenity_unitId_kind_key",
+          "public",
+          "\"public\".\"unit_amenity\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.bookable_space.bookable_space_buildingId_idx_c40fd7b4",
+    "label": "Create index \"bookable_space_buildingId_idx_c40fd7b4\" on \"bookable_space\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "bookable_space_buildingId_idx_c40fd7b4",
+        "table": "bookable_space"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"bookable_space_buildingId_idx_c40fd7b4\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"bookable_space_buildingId_idx_c40fd7b4\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"bookable_space_buildingId_idx_c40fd7b4\"",
+        "sql": "CREATE INDEX \"bookable_space_buildingId_idx_c40fd7b4\" ON \"public\".\"bookable_space\" (\"buildingId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"bookable_space_buildingId_idx_c40fd7b4\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"bookable_space_buildingId_idx_c40fd7b4\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.booking_participant.booking_participant_tenantId_idx_c93ed4f1",
+    "label": "Create index \"booking_participant_tenantId_idx_c93ed4f1\" on \"booking_participant\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "booking_participant_tenantId_idx_c93ed4f1",
+        "table": "booking_participant"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"booking_participant_tenantId_idx_c93ed4f1\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"booking_participant_tenantId_idx_c93ed4f1\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"booking_participant_tenantId_idx_c93ed4f1\"",
+        "sql": "CREATE INDEX \"booking_participant_tenantId_idx_c93ed4f1\" ON \"public\".\"booking_participant\" (\"tenantId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"booking_participant_tenantId_idx_c93ed4f1\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"booking_participant_tenantId_idx_c93ed4f1\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.building_amenity.building_amenity_buildingId_idx_c40fd7b4",
+    "label": "Create index \"building_amenity_buildingId_idx_c40fd7b4\" on \"building_amenity\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "building_amenity_buildingId_idx_c40fd7b4",
+        "table": "building_amenity"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"building_amenity_buildingId_idx_c40fd7b4\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"building_amenity_buildingId_idx_c40fd7b4\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"building_amenity_buildingId_idx_c40fd7b4\"",
+        "sql": "CREATE INDEX \"building_amenity_buildingId_idx_c40fd7b4\" ON \"public\".\"building_amenity\" (\"buildingId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"building_amenity_buildingId_idx_c40fd7b4\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"building_amenity_buildingId_idx_c40fd7b4\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.space_booking.space_booking_spaceId_idx_bb21015f",
+    "label": "Create index \"space_booking_spaceId_idx_bb21015f\" on \"space_booking\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "space_booking_spaceId_idx_bb21015f",
+        "table": "space_booking"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"space_booking_spaceId_idx_bb21015f\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"space_booking_spaceId_idx_bb21015f\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"space_booking_spaceId_idx_bb21015f\"",
+        "sql": "CREATE INDEX \"space_booking_spaceId_idx_bb21015f\" ON \"public\".\"space_booking\" (\"spaceId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"space_booking_spaceId_idx_bb21015f\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"space_booking_spaceId_idx_bb21015f\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.space_booking.space_booking_spaceId_startsAt_idx_4a67bc05",
+    "label": "Create index \"space_booking_spaceId_startsAt_idx_4a67bc05\" on \"space_booking\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "space_booking_spaceId_startsAt_idx_4a67bc05",
+        "table": "space_booking"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"space_booking_spaceId_startsAt_idx_4a67bc05\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"space_booking_spaceId_startsAt_idx_4a67bc05\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"space_booking_spaceId_startsAt_idx_4a67bc05\"",
+        "sql": "CREATE INDEX \"space_booking_spaceId_startsAt_idx_4a67bc05\" ON \"public\".\"space_booking\" (\"spaceId\", \"startsAt\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"space_booking_spaceId_startsAt_idx_4a67bc05\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"space_booking_spaceId_startsAt_idx_4a67bc05\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.space_booking.space_booking_tenantId_idx_c93ed4f1",
+    "label": "Create index \"space_booking_tenantId_idx_c93ed4f1\" on \"space_booking\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "space_booking_tenantId_idx_c93ed4f1",
+        "table": "space_booking"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"space_booking_tenantId_idx_c93ed4f1\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"space_booking_tenantId_idx_c93ed4f1\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"space_booking_tenantId_idx_c93ed4f1\"",
+        "sql": "CREATE INDEX \"space_booking_tenantId_idx_c93ed4f1\" ON \"public\".\"space_booking\" (\"tenantId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"space_booking_tenantId_idx_c93ed4f1\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"space_booking_tenantId_idx_c93ed4f1\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.unit_amenity.unit_amenity_unitId_idx_be785412",
+    "label": "Create index \"unit_amenity_unitId_idx_be785412\" on \"unit_amenity\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "unit_amenity_unitId_idx_be785412",
+        "table": "unit_amenity"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"unit_amenity_unitId_idx_be785412\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"unit_amenity_unitId_idx_be785412\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"unit_amenity_unitId_idx_be785412\"",
+        "sql": "CREATE INDEX \"unit_amenity_unitId_idx_be785412\" ON \"public\".\"unit_amenity\" (\"unitId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"unit_amenity_unitId_idx_be785412\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"unit_amenity_unitId_idx_be785412\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.bookable_space.bookable_space_buildingId_fkey",
+    "label": "Add foreign key \"bookable_space_buildingId_fkey\" on \"bookable_space\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "bookable_space_buildingId_fkey",
+        "table": "bookable_space"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"bookable_space_buildingId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "bookable_space_buildingId_fkey",
+          "public",
+          "\"public\".\"bookable_space\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"bookable_space_buildingId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"bookable_space\"\nADD CONSTRAINT \"bookable_space_buildingId_fkey\"\nFOREIGN KEY (\"buildingId\")\nREFERENCES \"public\".\"building\" (\"id\")\nON DELETE CASCADE"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"bookable_space_buildingId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "bookable_space_buildingId_fkey",
+          "public",
+          "\"public\".\"bookable_space\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.booking_participant.booking_participant_tenantId_fkey",
+    "label": "Add foreign key \"booking_participant_tenantId_fkey\" on \"booking_participant\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "booking_participant_tenantId_fkey",
+        "table": "booking_participant"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"booking_participant_tenantId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "booking_participant_tenantId_fkey",
+          "public",
+          "\"public\".\"booking_participant\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"booking_participant_tenantId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"booking_participant\"\nADD CONSTRAINT \"booking_participant_tenantId_fkey\"\nFOREIGN KEY (\"tenantId\")\nREFERENCES \"public\".\"tenant\" (\"id\")\nON DELETE CASCADE"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"booking_participant_tenantId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "booking_participant_tenantId_fkey",
+          "public",
+          "\"public\".\"booking_participant\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.building_amenity.building_amenity_buildingId_fkey",
+    "label": "Add foreign key \"building_amenity_buildingId_fkey\" on \"building_amenity\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "building_amenity_buildingId_fkey",
+        "table": "building_amenity"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"building_amenity_buildingId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "building_amenity_buildingId_fkey",
+          "public",
+          "\"public\".\"building_amenity\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"building_amenity_buildingId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"building_amenity\"\nADD CONSTRAINT \"building_amenity_buildingId_fkey\"\nFOREIGN KEY (\"buildingId\")\nREFERENCES \"public\".\"building\" (\"id\")\nON DELETE CASCADE"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"building_amenity_buildingId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "building_amenity_buildingId_fkey",
+          "public",
+          "\"public\".\"building_amenity\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.space_booking.space_booking_spaceId_fkey",
+    "label": "Add foreign key \"space_booking_spaceId_fkey\" on \"space_booking\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "space_booking_spaceId_fkey",
+        "table": "space_booking"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"space_booking_spaceId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "space_booking_spaceId_fkey",
+          "public",
+          "\"public\".\"space_booking\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"space_booking_spaceId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"space_booking\"\nADD CONSTRAINT \"space_booking_spaceId_fkey\"\nFOREIGN KEY (\"spaceId\")\nREFERENCES \"public\".\"bookable_space\" (\"id\")\nON DELETE CASCADE"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"space_booking_spaceId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "space_booking_spaceId_fkey",
+          "public",
+          "\"public\".\"space_booking\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.space_booking.space_booking_tenantId_fkey",
+    "label": "Add foreign key \"space_booking_tenantId_fkey\" on \"space_booking\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "space_booking_tenantId_fkey",
+        "table": "space_booking"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"space_booking_tenantId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "space_booking_tenantId_fkey",
+          "public",
+          "\"public\".\"space_booking\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"space_booking_tenantId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"space_booking\"\nADD CONSTRAINT \"space_booking_tenantId_fkey\"\nFOREIGN KEY (\"tenantId\")\nREFERENCES \"public\".\"tenant\" (\"id\")\nON DELETE CASCADE"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"space_booking_tenantId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "space_booking_tenantId_fkey",
+          "public",
+          "\"public\".\"space_booking\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.unit_amenity.unit_amenity_unitId_fkey",
+    "label": "Add foreign key \"unit_amenity_unitId_fkey\" on \"unit_amenity\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "unit_amenity_unitId_fkey",
+        "table": "unit_amenity"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"unit_amenity_unitId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "unit_amenity_unitId_fkey",
+          "public",
+          "\"public\".\"unit_amenity\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"unit_amenity_unitId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"unit_amenity\"\nADD CONSTRAINT \"unit_amenity_unitId_fkey\"\nFOREIGN KEY (\"unitId\")\nREFERENCES \"public\".\"unit\" (\"id\")\nON DELETE CASCADE"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"unit_amenity_unitId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "unit_amenity_unitId_fkey",
+          "public",
+          "\"public\".\"unit_amenity\""
+        ]
+      }
+    ]
+  }
+]

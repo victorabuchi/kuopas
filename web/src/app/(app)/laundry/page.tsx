@@ -8,6 +8,8 @@ import { db } from '../../../prisma/db';
 import { bookSlotAction, cancelBookingAction } from '../../../lib/laundry-actions';
 import { getLocale } from '../../../lib/i18n';
 import { getDictionary } from '../../../lib/dictionary';
+import { getLiving } from '../../../lib/living';
+import { getBookingContext, isAmenityAvailable } from '../../../lib/booking';
 import {
   SLOT_START_HOURS,
   MAX_HOURS_PER_WEEK,
@@ -52,6 +54,10 @@ export default async function LaundryPage({
 
   const building = tenant.unit!.stairwell!.building!;
 
+  const bctx = await getBookingContext(session.tenantId);
+  if (!bctx || !(await isAmenityAvailable('laundry', bctx))) redirect('/booking');
+  const backLabel = getLiving(locale).booking.backToBooking;
+
   const machines = await db.orm.public.LaundryMachine.where({ buildingId: building.id })
     .orderBy((m) => m.label.asc())
     .all();
@@ -87,6 +93,9 @@ export default async function LaundryPage({
   return (
     <div className={styles.page}>
       <TopBar title={dict.laundry.title} />
+      <Link href="/booking" className={styles.backLink}>
+        &lsaquo; {backLabel}
+      </Link>
 
       <div className={styles.toolbar}>
         <div className={styles.machineTabs}>
