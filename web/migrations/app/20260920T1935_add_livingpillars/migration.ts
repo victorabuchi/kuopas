@@ -1,0 +1,1020 @@
+#!/usr/bin/env -S node
+import type { Contract as Start } from '../../snapshots/57f0fa9f19319e699990ed6899a7a7584ada4aa77745ad3c56617643e1ede8a1/contract';
+import startContract from '../../snapshots/57f0fa9f19319e699990ed6899a7a7584ada4aa77745ad3c56617643e1ede8a1/contract.json' with { type: 'json' };
+import type { Contract as End } from '../../snapshots/f434d4d71636ad048bfc86ab0c82a7ae0a4609c5ae5ff02ddc5c3db1d473d250/contract';
+import endContract from '../../snapshots/f434d4d71636ad048bfc86ab0c82a7ae0a4609c5ae5ff02ddc5c3db1d473d250/contract.json' with { type: 'json' };
+import {
+  Migration,
+  MigrationCLI,
+  checkExpression,
+  col,
+  fn,
+  lit,
+  primaryKey,
+} from '@prisma/orm-postgres/migration';
+
+export default class M extends Migration<Start, End> {
+  override readonly startContractJson = startContract;
+  override readonly endContractJson = endContract;
+
+  override get operations() {
+    return [
+      this.createTable({
+        schema: 'public',
+        table: 'academic_term',
+        columns: [
+          col('createdAt', 'timestamptz', {
+            notNull: true,
+            default: fn('now()'),
+            codecRef: { codecId: 'pg/timestamptz-string@1' },
+          }),
+          col('endDate', 'timestamptz', {
+            notNull: true,
+            codecRef: { codecId: 'pg/timestamptz-string@1' },
+          }),
+          col('id', 'uuid', { notNull: true, codecRef: { codecId: 'pg/uuid@1' } }),
+          col('kind', 'text', { notNull: true, codecRef: { codecId: 'pg/text@1' } }),
+          col('moveInFrom', 'timestamptz', {
+            notNull: true,
+            codecRef: { codecId: 'pg/timestamptz-string@1' },
+          }),
+          col('moveInTo', 'timestamptz', {
+            notNull: true,
+            codecRef: { codecId: 'pg/timestamptz-string@1' },
+          }),
+          col('name', 'text', { notNull: true, codecRef: { codecId: 'pg/text@1' } }),
+          col('startDate', 'timestamptz', {
+            notNull: true,
+            codecRef: { codecId: 'pg/timestamptz-string@1' },
+          }),
+        ],
+        constraints: [primaryKey(['id'])],
+      }),
+      this.createTable({
+        schema: 'public',
+        table: 'bill_share',
+        columns: [
+          col('amountCents', 'int4', { notNull: true, codecRef: { codecId: 'pg/int4@1' } }),
+          col('billId', 'uuid', { notNull: true, codecRef: { codecId: 'pg/uuid@1' } }),
+          col('id', 'uuid', { notNull: true, codecRef: { codecId: 'pg/uuid@1' } }),
+          col('paidAt', 'timestamptz', { codecRef: { codecId: 'pg/timestamptz-string@1' } }),
+          col('tenantId', 'uuid', { notNull: true, codecRef: { codecId: 'pg/uuid@1' } }),
+        ],
+        constraints: [primaryKey(['id'])],
+      }),
+      this.createTable({
+        schema: 'public',
+        table: 'chat_message_report',
+        columns: [
+          col('createdAt', 'timestamptz', {
+            notNull: true,
+            default: fn('now()'),
+            codecRef: { codecId: 'pg/timestamptz-string@1' },
+          }),
+          col('id', 'uuid', { notNull: true, codecRef: { codecId: 'pg/uuid@1' } }),
+          col('messageId', 'uuid', { notNull: true, codecRef: { codecId: 'pg/uuid@1' } }),
+          col('reason', 'text', { codecRef: { codecId: 'pg/text@1' } }),
+          col('reporterId', 'uuid', { notNull: true, codecRef: { codecId: 'pg/uuid@1' } }),
+          col('status', 'text', {
+            notNull: true,
+            default: lit('open'),
+            codecRef: { codecId: 'pg/text@1' },
+          }),
+        ],
+        constraints: [
+          primaryKey(['id']),
+          checkExpression(
+            'chat_message_report_status_check_13409d73',
+            "\"status\" IN ('open', 'dismissed', 'actioned')",
+          ),
+        ],
+      }),
+      this.createTable({
+        schema: 'public',
+        table: 'chore',
+        columns: [
+          col('active', 'bool', {
+            notNull: true,
+            default: lit(true),
+            codecRef: { codecId: 'pg/bool@1' },
+          }),
+          col('createdAt', 'timestamptz', {
+            notNull: true,
+            default: fn('now()'),
+            codecRef: { codecId: 'pg/timestamptz-string@1' },
+          }),
+          col('everyDays', 'int4', { notNull: true, codecRef: { codecId: 'pg/int4@1' } }),
+          col('id', 'uuid', { notNull: true, codecRef: { codecId: 'pg/uuid@1' } }),
+          col('title', 'text', { notNull: true, codecRef: { codecId: 'pg/text@1' } }),
+          col('unitId', 'uuid', { notNull: true, codecRef: { codecId: 'pg/uuid@1' } }),
+        ],
+        constraints: [primaryKey(['id'])],
+      }),
+      this.createTable({
+        schema: 'public',
+        table: 'chore_task',
+        columns: [
+          col('assignedToId', 'uuid', { notNull: true, codecRef: { codecId: 'pg/uuid@1' } }),
+          col('choreId', 'uuid', { notNull: true, codecRef: { codecId: 'pg/uuid@1' } }),
+          col('doneAt', 'timestamptz', { codecRef: { codecId: 'pg/timestamptz-string@1' } }),
+          col('dueDate', 'timestamptz', {
+            notNull: true,
+            codecRef: { codecId: 'pg/timestamptz-string@1' },
+          }),
+          col('id', 'uuid', { notNull: true, codecRef: { codecId: 'pg/uuid@1' } }),
+          col('remindedAt', 'timestamptz', { codecRef: { codecId: 'pg/timestamptz-string@1' } }),
+        ],
+        constraints: [primaryKey(['id'])],
+      }),
+      this.createTable({
+        schema: 'public',
+        table: 'email_verification_code',
+        columns: [
+          col('attempts', 'int4', {
+            notNull: true,
+            default: lit(0),
+            codecRef: { codecId: 'pg/int4@1' },
+          }),
+          col('codeHash', 'text', { notNull: true, codecRef: { codecId: 'pg/text@1' } }),
+          col('createdAt', 'timestamptz', {
+            notNull: true,
+            default: fn('now()'),
+            codecRef: { codecId: 'pg/timestamptz-string@1' },
+          }),
+          col('email', 'text', { notNull: true, codecRef: { codecId: 'pg/text@1' } }),
+          col('expiresAt', 'timestamptz', {
+            notNull: true,
+            codecRef: { codecId: 'pg/timestamptz-string@1' },
+          }),
+          col('id', 'uuid', { notNull: true, codecRef: { codecId: 'pg/uuid@1' } }),
+          col('tenantId', 'uuid', { notNull: true, codecRef: { codecId: 'pg/uuid@1' } }),
+        ],
+        constraints: [primaryKey(['id'])],
+      }),
+      this.createTable({
+        schema: 'public',
+        table: 'guarantor_institution',
+        columns: [
+          col('active', 'bool', {
+            notNull: true,
+            default: lit(true),
+            codecRef: { codecId: 'pg/bool@1' },
+          }),
+          col('description', 'text', { notNull: true, codecRef: { codecId: 'pg/text@1' } }),
+          col('id', 'uuid', { notNull: true, codecRef: { codecId: 'pg/uuid@1' } }),
+          col('name', 'text', { notNull: true, codecRef: { codecId: 'pg/text@1' } }),
+          col('url', 'text', { codecRef: { codecId: 'pg/text@1' } }),
+        ],
+        constraints: [primaryKey(['id'])],
+      }),
+      this.createTable({
+        schema: 'public',
+        table: 'guarantor_request',
+        columns: [
+          col('createdAt', 'timestamptz', {
+            notNull: true,
+            default: fn('now()'),
+            codecRef: { codecId: 'pg/timestamptz-string@1' },
+          }),
+          col('decidedAt', 'timestamptz', { codecRef: { codecId: 'pg/timestamptz-string@1' } }),
+          col('guarantorEmail', 'text', { codecRef: { codecId: 'pg/text@1' } }),
+          col('guarantorName', 'text', { codecRef: { codecId: 'pg/text@1' } }),
+          col('guarantorPhone', 'text', { codecRef: { codecId: 'pg/text@1' } }),
+          col('id', 'uuid', { notNull: true, codecRef: { codecId: 'pg/uuid@1' } }),
+          col('institutionId', 'uuid', { codecRef: { codecId: 'pg/uuid@1' } }),
+          col('kind', 'text', { notNull: true, codecRef: { codecId: 'pg/text@1' } }),
+          col('staffNote', 'text', { codecRef: { codecId: 'pg/text@1' } }),
+          col('status', 'text', {
+            notNull: true,
+            default: lit('pending'),
+            codecRef: { codecId: 'pg/text@1' },
+          }),
+          col('tenantId', 'uuid', { notNull: true, codecRef: { codecId: 'pg/uuid@1' } }),
+        ],
+        constraints: [primaryKey(['id'])],
+      }),
+      this.createTable({
+        schema: 'public',
+        table: 'identity_verification',
+        columns: [
+          col('createdAt', 'timestamptz', {
+            notNull: true,
+            default: fn('now()'),
+            codecRef: { codecId: 'pg/timestamptz-string@1' },
+          }),
+          col('decidedAt', 'timestamptz', { codecRef: { codecId: 'pg/timestamptz-string@1' } }),
+          col('detail', 'text', { codecRef: { codecId: 'pg/text@1' } }),
+          col('docPath', 'text', { codecRef: { codecId: 'pg/text@1' } }),
+          col('id', 'uuid', { notNull: true, codecRef: { codecId: 'pg/uuid@1' } }),
+          col('institution', 'text', { codecRef: { codecId: 'pg/text@1' } }),
+          col('method', 'text', { notNull: true, codecRef: { codecId: 'pg/text@1' } }),
+          col('reviewNote', 'text', { codecRef: { codecId: 'pg/text@1' } }),
+          col('reviewedById', 'uuid', { codecRef: { codecId: 'pg/uuid@1' } }),
+          col('status', 'text', { notNull: true, codecRef: { codecId: 'pg/text@1' } }),
+          col('tenantId', 'uuid', { notNull: true, codecRef: { codecId: 'pg/uuid@1' } }),
+        ],
+        constraints: [primaryKey(['id'])],
+      }),
+      this.createTable({
+        schema: 'public',
+        table: 'lease',
+        columns: [
+          col('createdAt', 'timestamptz', {
+            notNull: true,
+            default: fn('now()'),
+            codecRef: { codecId: 'pg/timestamptz-string@1' },
+          }),
+          col('depositCents', 'int4', {
+            notNull: true,
+            default: lit(0),
+            codecRef: { codecId: 'pg/int4@1' },
+          }),
+          col('endDate', 'timestamptz', {
+            notNull: true,
+            codecRef: { codecId: 'pg/timestamptz-string@1' },
+          }),
+          col('id', 'uuid', { notNull: true, codecRef: { codecId: 'pg/uuid@1' } }),
+          col('kind', 'text', { notNull: true, codecRef: { codecId: 'pg/text@1' } }),
+          col('monthlyRentCents', 'int4', { notNull: true, codecRef: { codecId: 'pg/int4@1' } }),
+          col('startDate', 'timestamptz', {
+            notNull: true,
+            codecRef: { codecId: 'pg/timestamptz-string@1' },
+          }),
+          col('status', 'text', {
+            notNull: true,
+            default: lit('active'),
+            codecRef: { codecId: 'pg/text@1' },
+          }),
+          col('tenantId', 'uuid', { notNull: true, codecRef: { codecId: 'pg/uuid@1' } }),
+          col('termId', 'uuid', { codecRef: { codecId: 'pg/uuid@1' } }),
+          col('unitId', 'uuid', { notNull: true, codecRef: { codecId: 'pg/uuid@1' } }),
+          col('upfrontMonths', 'int4', {
+            notNull: true,
+            default: lit(0),
+            codecRef: { codecId: 'pg/int4@1' },
+          }),
+        ],
+        constraints: [primaryKey(['id'])],
+      }),
+      this.createTable({
+        schema: 'public',
+        table: 'lease_charge',
+        columns: [
+          col('amountCents', 'int4', { notNull: true, codecRef: { codecId: 'pg/int4@1' } }),
+          col('dueDate', 'timestamptz', {
+            notNull: true,
+            codecRef: { codecId: 'pg/timestamptz-string@1' },
+          }),
+          col('id', 'uuid', { notNull: true, codecRef: { codecId: 'pg/uuid@1' } }),
+          col('leaseId', 'uuid', { notNull: true, codecRef: { codecId: 'pg/uuid@1' } }),
+          col('paidAt', 'timestamptz', { codecRef: { codecId: 'pg/timestamptz-string@1' } }),
+          col('periodEnd', 'timestamptz', {
+            notNull: true,
+            codecRef: { codecId: 'pg/timestamptz-string@1' },
+          }),
+          col('periodStart', 'timestamptz', {
+            notNull: true,
+            codecRef: { codecId: 'pg/timestamptz-string@1' },
+          }),
+          col('prorated', 'bool', {
+            notNull: true,
+            default: lit(false),
+            codecRef: { codecId: 'pg/bool@1' },
+          }),
+        ],
+        constraints: [primaryKey(['id'])],
+      }),
+      this.createTable({
+        schema: 'public',
+        table: 'listing',
+        columns: [
+          col('acceptedRequestId', 'uuid', { codecRef: { codecId: 'pg/uuid@1' } }),
+          col('availableFrom', 'timestamptz', { codecRef: { codecId: 'pg/timestamptz-string@1' } }),
+          col('availableTo', 'timestamptz', { codecRef: { codecId: 'pg/timestamptz-string@1' } }),
+          col('createdAt', 'timestamptz', {
+            notNull: true,
+            default: fn('now()'),
+            codecRef: { codecId: 'pg/timestamptz-string@1' },
+          }),
+          col('description', 'text', { notNull: true, codecRef: { codecId: 'pg/text@1' } }),
+          col('id', 'uuid', { notNull: true, codecRef: { codecId: 'pg/uuid@1' } }),
+          col('kind', 'text', { notNull: true, codecRef: { codecId: 'pg/text@1' } }),
+          col('priceCents', 'int4', { codecRef: { codecId: 'pg/int4@1' } }),
+          col('sellerId', 'uuid', { notNull: true, codecRef: { codecId: 'pg/uuid@1' } }),
+          col('status', 'text', {
+            notNull: true,
+            default: lit('open'),
+            codecRef: { codecId: 'pg/text@1' },
+          }),
+          col('title', 'text', { notNull: true, codecRef: { codecId: 'pg/text@1' } }),
+          col('unitId', 'uuid', { notNull: true, codecRef: { codecId: 'pg/uuid@1' } }),
+          col('wanted', 'text', { codecRef: { codecId: 'pg/text@1' } }),
+        ],
+        constraints: [primaryKey(['id'])],
+      }),
+      this.createTable({
+        schema: 'public',
+        table: 'listing_request',
+        columns: [
+          col('createdAt', 'timestamptz', {
+            notNull: true,
+            default: fn('now()'),
+            codecRef: { codecId: 'pg/timestamptz-string@1' },
+          }),
+          col('id', 'uuid', { notNull: true, codecRef: { codecId: 'pg/uuid@1' } }),
+          col('listingId', 'uuid', { notNull: true, codecRef: { codecId: 'pg/uuid@1' } }),
+          col('message', 'text', { notNull: true, codecRef: { codecId: 'pg/text@1' } }),
+          col('requesterId', 'uuid', { notNull: true, codecRef: { codecId: 'pg/uuid@1' } }),
+          col('status', 'text', {
+            notNull: true,
+            default: lit('pending'),
+            codecRef: { codecId: 'pg/text@1' },
+          }),
+        ],
+        constraints: [primaryKey(['id'])],
+      }),
+      this.createTable({
+        schema: 'public',
+        table: 'match_connection',
+        columns: [
+          col('createdAt', 'timestamptz', {
+            notNull: true,
+            default: fn('now()'),
+            codecRef: { codecId: 'pg/timestamptz-string@1' },
+          }),
+          col('fromId', 'uuid', { notNull: true, codecRef: { codecId: 'pg/uuid@1' } }),
+          col('id', 'uuid', { notNull: true, codecRef: { codecId: 'pg/uuid@1' } }),
+          col('status', 'text', {
+            notNull: true,
+            default: lit('pending'),
+            codecRef: { codecId: 'pg/text@1' },
+          }),
+          col('toId', 'uuid', { notNull: true, codecRef: { codecId: 'pg/uuid@1' } }),
+        ],
+        constraints: [primaryKey(['id'])],
+      }),
+      this.createTable({
+        schema: 'public',
+        table: 'match_profile',
+        columns: [
+          col('active', 'bool', {
+            notNull: true,
+            default: lit(true),
+            codecRef: { codecId: 'pg/bool@1' },
+          }),
+          col('alcohol', 'text', { notNull: true, codecRef: { codecId: 'pg/text@1' } }),
+          col('bio', 'text', { notNull: true, codecRef: { codecId: 'pg/text@1' } }),
+          col('cleanliness', 'int4', { notNull: true, codecRef: { codecId: 'pg/int4@1' } }),
+          col('cooking', 'text', { notNull: true, codecRef: { codecId: 'pg/text@1' } }),
+          col('dealbreakers', 'text', { notNull: true, codecRef: { codecId: 'pg/text@1' } }),
+          col('guestPolicy', 'text', { notNull: true, codecRef: { codecId: 'pg/text@1' } }),
+          col('id', 'uuid', { notNull: true, codecRef: { codecId: 'pg/uuid@1' } }),
+          col('noiseTolerance', 'int4', { notNull: true, codecRef: { codecId: 'pg/int4@1' } }),
+          col('sleepSchedule', 'text', { notNull: true, codecRef: { codecId: 'pg/text@1' } }),
+          col('smoking', 'text', { notNull: true, codecRef: { codecId: 'pg/text@1' } }),
+          col('studyHabit', 'text', { notNull: true, codecRef: { codecId: 'pg/text@1' } }),
+          col('tenantId', 'uuid', { notNull: true, codecRef: { codecId: 'pg/uuid@1' } }),
+          col('updatedAt', 'timestamptz', {
+            notNull: true,
+            default: fn('now()'),
+            codecRef: { codecId: 'pg/timestamptz-string@1' },
+          }),
+        ],
+        constraints: [primaryKey(['id'])],
+      }),
+      this.createTable({
+        schema: 'public',
+        table: 'shared_bill',
+        columns: [
+          col('category', 'text', { notNull: true, codecRef: { codecId: 'pg/text@1' } }),
+          col('createdAt', 'timestamptz', {
+            notNull: true,
+            default: fn('now()'),
+            codecRef: { codecId: 'pg/timestamptz-string@1' },
+          }),
+          col('dueDate', 'timestamptz', { codecRef: { codecId: 'pg/timestamptz-string@1' } }),
+          col('id', 'uuid', { notNull: true, codecRef: { codecId: 'pg/uuid@1' } }),
+          col('note', 'text', { codecRef: { codecId: 'pg/text@1' } }),
+          col('paidById', 'uuid', { notNull: true, codecRef: { codecId: 'pg/uuid@1' } }),
+          col('title', 'text', { notNull: true, codecRef: { codecId: 'pg/text@1' } }),
+          col('totalCents', 'int4', { notNull: true, codecRef: { codecId: 'pg/int4@1' } }),
+          col('unitId', 'uuid', { notNull: true, codecRef: { codecId: 'pg/uuid@1' } }),
+        ],
+        constraints: [primaryKey(['id'])],
+      }),
+      this.createTable({
+        schema: 'public',
+        table: 'sublease',
+        columns: [
+          col('approvedById', 'uuid', { codecRef: { codecId: 'pg/uuid@1' } }),
+          col('createdAt', 'timestamptz', {
+            notNull: true,
+            default: fn('now()'),
+            codecRef: { codecId: 'pg/timestamptz-string@1' },
+          }),
+          col('endDate', 'timestamptz', {
+            notNull: true,
+            codecRef: { codecId: 'pg/timestamptz-string@1' },
+          }),
+          col('id', 'uuid', { notNull: true, codecRef: { codecId: 'pg/uuid@1' } }),
+          col('listingId', 'uuid', { notNull: true, codecRef: { codecId: 'pg/uuid@1' } }),
+          col('startDate', 'timestamptz', {
+            notNull: true,
+            codecRef: { codecId: 'pg/timestamptz-string@1' },
+          }),
+          col('subtenantId', 'uuid', { notNull: true, codecRef: { codecId: 'pg/uuid@1' } }),
+        ],
+        constraints: [primaryKey(['id'])],
+      }),
+      this.createTable({
+        schema: 'public',
+        table: 'unit_media',
+        columns: [
+          col('caption', 'text', { codecRef: { codecId: 'pg/text@1' } }),
+          col('createdAt', 'timestamptz', {
+            notNull: true,
+            default: fn('now()'),
+            codecRef: { codecId: 'pg/timestamptz-string@1' },
+          }),
+          col('id', 'uuid', { notNull: true, codecRef: { codecId: 'pg/uuid@1' } }),
+          col('kind', 'text', { notNull: true, codecRef: { codecId: 'pg/text@1' } }),
+          col('unitId', 'uuid', { notNull: true, codecRef: { codecId: 'pg/uuid@1' } }),
+          col('url', 'text', { notNull: true, codecRef: { codecId: 'pg/text@1' } }),
+        ],
+        constraints: [primaryKey(['id'])],
+      }),
+      this.createTable({
+        schema: 'public',
+        table: 'verified_domain',
+        columns: [
+          col('domain', 'text', { notNull: true, codecRef: { codecId: 'pg/text@1' } }),
+          col('id', 'uuid', { notNull: true, codecRef: { codecId: 'pg/uuid@1' } }),
+          col('institution', 'text', { notNull: true, codecRef: { codecId: 'pg/text@1' } }),
+        ],
+        constraints: [primaryKey(['id'])],
+      }),
+      this.createTable({
+        schema: 'public',
+        table: 'wellbeing_case',
+        columns: [
+          col('category', 'text', { notNull: true, codecRef: { codecId: 'pg/text@1' } }),
+          col('consentToShare', 'bool', { notNull: true, codecRef: { codecId: 'pg/bool@1' } }),
+          col('createdAt', 'timestamptz', {
+            notNull: true,
+            default: fn('now()'),
+            codecRef: { codecId: 'pg/timestamptz-string@1' },
+          }),
+          col('description', 'text', { notNull: true, codecRef: { codecId: 'pg/text@1' } }),
+          col('escalatedAt', 'timestamptz', { codecRef: { codecId: 'pg/timestamptz-string@1' } }),
+          col('escalatedTo', 'text', { codecRef: { codecId: 'pg/text@1' } }),
+          col('id', 'uuid', { notNull: true, codecRef: { codecId: 'pg/uuid@1' } }),
+          col('origin', 'text', {
+            notNull: true,
+            default: lit('self'),
+            codecRef: { codecId: 'pg/text@1' },
+          }),
+          col('severity', 'text', { notNull: true, codecRef: { codecId: 'pg/text@1' } }),
+          col('status', 'text', {
+            notNull: true,
+            default: lit('open'),
+            codecRef: { codecId: 'pg/text@1' },
+          }),
+          col('tenantId', 'uuid', { notNull: true, codecRef: { codecId: 'pg/uuid@1' } }),
+        ],
+        constraints: [primaryKey(['id'])],
+      }),
+      this.createTable({
+        schema: 'public',
+        table: 'wellbeing_event',
+        columns: [
+          col('action', 'text', { notNull: true, codecRef: { codecId: 'pg/text@1' } }),
+          col('actor', 'text', { notNull: true, codecRef: { codecId: 'pg/text@1' } }),
+          col('caseId', 'uuid', { notNull: true, codecRef: { codecId: 'pg/uuid@1' } }),
+          col('createdAt', 'timestamptz', {
+            notNull: true,
+            default: fn('now()'),
+            codecRef: { codecId: 'pg/timestamptz-string@1' },
+          }),
+          col('detail', 'text', { codecRef: { codecId: 'pg/text@1' } }),
+          col('id', 'uuid', { notNull: true, codecRef: { codecId: 'pg/uuid@1' } }),
+        ],
+        constraints: [primaryKey(['id'])],
+      }),
+      this.addColumn({
+        schema: 'public',
+        table: 'complaint',
+        column: col('clusterId', 'uuid', { codecRef: { codecId: 'pg/uuid@1' } }),
+      }),
+      this.addColumn({
+        schema: 'public',
+        table: 'complaint',
+        column: col('videoUrl', 'text', { codecRef: { codecId: 'pg/text@1' } }),
+      }),
+      this.addColumn({
+        schema: 'public',
+        table: 'message',
+        column: col('removedAt', 'timestamptz', {
+          codecRef: { codecId: 'pg/timestamptz-string@1' },
+        }),
+      }),
+      this.addUnique({
+        schema: 'public',
+        table: 'bill_share',
+        constraint: 'bill_share_billId_tenantId_key',
+        columns: ['billId', 'tenantId'],
+      }),
+      this.addUnique({
+        schema: 'public',
+        table: 'listing_request',
+        constraint: 'listing_request_listingId_requesterId_key',
+        columns: ['listingId', 'requesterId'],
+      }),
+      this.addUnique({
+        schema: 'public',
+        table: 'match_connection',
+        constraint: 'match_connection_fromId_toId_key',
+        columns: ['fromId', 'toId'],
+      }),
+      this.addUnique({
+        schema: 'public',
+        table: 'match_profile',
+        constraint: 'match_profile_tenantId_key',
+        columns: ['tenantId'],
+      }),
+      this.addUnique({
+        schema: 'public',
+        table: 'verified_domain',
+        constraint: 'verified_domain_domain_key',
+        columns: ['domain'],
+      }),
+      this.createIndex({
+        schema: 'public',
+        table: 'bill_share',
+        index: 'bill_share_billId_idx_1639f7ee',
+        columns: ['billId'],
+      }),
+      this.createIndex({
+        schema: 'public',
+        table: 'bill_share',
+        index: 'bill_share_tenantId_idx_c93ed4f1',
+        columns: ['tenantId'],
+      }),
+      this.createIndex({
+        schema: 'public',
+        table: 'chat_message_report',
+        index: 'chat_message_report_messageId_idx_3cdded8d',
+        columns: ['messageId'],
+      }),
+      this.createIndex({
+        schema: 'public',
+        table: 'chat_message_report',
+        index: 'chat_message_report_reporterId_idx_aa245831',
+        columns: ['reporterId'],
+      }),
+      this.createIndex({
+        schema: 'public',
+        table: 'chore',
+        index: 'chore_unitId_idx_be785412',
+        columns: ['unitId'],
+      }),
+      this.createIndex({
+        schema: 'public',
+        table: 'chore_task',
+        index: 'chore_task_assignedToId_idx_45a131c2',
+        columns: ['assignedToId'],
+      }),
+      this.createIndex({
+        schema: 'public',
+        table: 'chore_task',
+        index: 'chore_task_choreId_idx_858e11f4',
+        columns: ['choreId'],
+      }),
+      this.createIndex({
+        schema: 'public',
+        table: 'chore_task',
+        index: 'chore_task_dueDate_idx_fb527616',
+        columns: ['dueDate'],
+      }),
+      this.createIndex({
+        schema: 'public',
+        table: 'email_verification_code',
+        index: 'email_verification_code_tenantId_idx_c93ed4f1',
+        columns: ['tenantId'],
+      }),
+      this.createIndex({
+        schema: 'public',
+        table: 'guarantor_request',
+        index: 'guarantor_request_institutionId_idx_bab0e331',
+        columns: ['institutionId'],
+      }),
+      this.createIndex({
+        schema: 'public',
+        table: 'guarantor_request',
+        index: 'guarantor_request_tenantId_idx_c93ed4f1',
+        columns: ['tenantId'],
+      }),
+      this.createIndex({
+        schema: 'public',
+        table: 'identity_verification',
+        index: 'identity_verification_status_idx_e98638ab',
+        columns: ['status'],
+      }),
+      this.createIndex({
+        schema: 'public',
+        table: 'identity_verification',
+        index: 'identity_verification_tenantId_idx_c93ed4f1',
+        columns: ['tenantId'],
+      }),
+      this.createIndex({
+        schema: 'public',
+        table: 'lease',
+        index: 'lease_tenantId_idx_c93ed4f1',
+        columns: ['tenantId'],
+      }),
+      this.createIndex({
+        schema: 'public',
+        table: 'lease',
+        index: 'lease_unitId_idx_be785412',
+        columns: ['unitId'],
+      }),
+      this.createIndex({
+        schema: 'public',
+        table: 'lease_charge',
+        index: 'lease_charge_leaseId_idx_f789d0e1',
+        columns: ['leaseId'],
+      }),
+      this.createIndex({
+        schema: 'public',
+        table: 'listing',
+        index: 'listing_sellerId_idx_d71255f2',
+        columns: ['sellerId'],
+      }),
+      this.createIndex({
+        schema: 'public',
+        table: 'listing',
+        index: 'listing_status_idx_e98638ab',
+        columns: ['status'],
+      }),
+      this.createIndex({
+        schema: 'public',
+        table: 'listing',
+        index: 'listing_unitId_idx_be785412',
+        columns: ['unitId'],
+      }),
+      this.createIndex({
+        schema: 'public',
+        table: 'listing_request',
+        index: 'listing_request_listingId_idx_953decda',
+        columns: ['listingId'],
+      }),
+      this.createIndex({
+        schema: 'public',
+        table: 'listing_request',
+        index: 'listing_request_requesterId_idx_a5f4af92',
+        columns: ['requesterId'],
+      }),
+      this.createIndex({
+        schema: 'public',
+        table: 'match_connection',
+        index: 'match_connection_fromId_idx_932a1cba',
+        columns: ['fromId'],
+      }),
+      this.createIndex({
+        schema: 'public',
+        table: 'match_connection',
+        index: 'match_connection_toId_idx_7522c47c',
+        columns: ['toId'],
+      }),
+      this.createIndex({
+        schema: 'public',
+        table: 'shared_bill',
+        index: 'shared_bill_paidById_idx_406e50ef',
+        columns: ['paidById'],
+      }),
+      this.createIndex({
+        schema: 'public',
+        table: 'shared_bill',
+        index: 'shared_bill_unitId_idx_be785412',
+        columns: ['unitId'],
+      }),
+      this.createIndex({
+        schema: 'public',
+        table: 'sublease',
+        index: 'sublease_listingId_idx_953decda',
+        columns: ['listingId'],
+      }),
+      this.createIndex({
+        schema: 'public',
+        table: 'sublease',
+        index: 'sublease_subtenantId_idx_c2994d93',
+        columns: ['subtenantId'],
+      }),
+      this.createIndex({
+        schema: 'public',
+        table: 'unit_media',
+        index: 'unit_media_unitId_idx_be785412',
+        columns: ['unitId'],
+      }),
+      this.createIndex({
+        schema: 'public',
+        table: 'wellbeing_case',
+        index: 'wellbeing_case_status_idx_e98638ab',
+        columns: ['status'],
+      }),
+      this.createIndex({
+        schema: 'public',
+        table: 'wellbeing_case',
+        index: 'wellbeing_case_tenantId_idx_c93ed4f1',
+        columns: ['tenantId'],
+      }),
+      this.createIndex({
+        schema: 'public',
+        table: 'wellbeing_event',
+        index: 'wellbeing_event_caseId_idx_f7093793',
+        columns: ['caseId'],
+      }),
+      this.addForeignKey({
+        schema: 'public',
+        table: 'bill_share',
+        foreignKey: {
+          name: 'bill_share_billId_fkey',
+          columns: ['billId'],
+          references: { schema: 'public', table: 'shared_bill', columns: ['id'] },
+          onDelete: 'cascade',
+        },
+      }),
+      this.addForeignKey({
+        schema: 'public',
+        table: 'bill_share',
+        foreignKey: {
+          name: 'bill_share_tenantId_fkey',
+          columns: ['tenantId'],
+          references: { schema: 'public', table: 'tenant', columns: ['id'] },
+          onDelete: 'cascade',
+        },
+      }),
+      this.addForeignKey({
+        schema: 'public',
+        table: 'chat_message_report',
+        foreignKey: {
+          name: 'chat_message_report_messageId_fkey',
+          columns: ['messageId'],
+          references: { schema: 'public', table: 'message', columns: ['id'] },
+          onDelete: 'cascade',
+        },
+      }),
+      this.addForeignKey({
+        schema: 'public',
+        table: 'chat_message_report',
+        foreignKey: {
+          name: 'chat_message_report_reporterId_fkey',
+          columns: ['reporterId'],
+          references: { schema: 'public', table: 'tenant', columns: ['id'] },
+          onDelete: 'cascade',
+        },
+      }),
+      this.addForeignKey({
+        schema: 'public',
+        table: 'chore',
+        foreignKey: {
+          name: 'chore_unitId_fkey',
+          columns: ['unitId'],
+          references: { schema: 'public', table: 'unit', columns: ['id'] },
+          onDelete: 'cascade',
+        },
+      }),
+      this.addForeignKey({
+        schema: 'public',
+        table: 'chore_task',
+        foreignKey: {
+          name: 'chore_task_choreId_fkey',
+          columns: ['choreId'],
+          references: { schema: 'public', table: 'chore', columns: ['id'] },
+          onDelete: 'cascade',
+        },
+      }),
+      this.addForeignKey({
+        schema: 'public',
+        table: 'chore_task',
+        foreignKey: {
+          name: 'chore_task_assignedToId_fkey',
+          columns: ['assignedToId'],
+          references: { schema: 'public', table: 'tenant', columns: ['id'] },
+          onDelete: 'cascade',
+        },
+      }),
+      this.addForeignKey({
+        schema: 'public',
+        table: 'email_verification_code',
+        foreignKey: {
+          name: 'email_verification_code_tenantId_fkey',
+          columns: ['tenantId'],
+          references: { schema: 'public', table: 'tenant', columns: ['id'] },
+          onDelete: 'cascade',
+        },
+      }),
+      this.addForeignKey({
+        schema: 'public',
+        table: 'guarantor_request',
+        foreignKey: {
+          name: 'guarantor_request_tenantId_fkey',
+          columns: ['tenantId'],
+          references: { schema: 'public', table: 'tenant', columns: ['id'] },
+          onDelete: 'cascade',
+        },
+      }),
+      this.addForeignKey({
+        schema: 'public',
+        table: 'guarantor_request',
+        foreignKey: {
+          name: 'guarantor_request_institutionId_fkey',
+          columns: ['institutionId'],
+          references: { schema: 'public', table: 'guarantor_institution', columns: ['id'] },
+          onDelete: 'setNull',
+        },
+      }),
+      this.addForeignKey({
+        schema: 'public',
+        table: 'identity_verification',
+        foreignKey: {
+          name: 'identity_verification_tenantId_fkey',
+          columns: ['tenantId'],
+          references: { schema: 'public', table: 'tenant', columns: ['id'] },
+          onDelete: 'cascade',
+        },
+      }),
+      this.addForeignKey({
+        schema: 'public',
+        table: 'lease',
+        foreignKey: {
+          name: 'lease_tenantId_fkey',
+          columns: ['tenantId'],
+          references: { schema: 'public', table: 'tenant', columns: ['id'] },
+          onDelete: 'cascade',
+        },
+      }),
+      this.addForeignKey({
+        schema: 'public',
+        table: 'lease',
+        foreignKey: {
+          name: 'lease_unitId_fkey',
+          columns: ['unitId'],
+          references: { schema: 'public', table: 'unit', columns: ['id'] },
+          onDelete: 'cascade',
+        },
+      }),
+      this.addForeignKey({
+        schema: 'public',
+        table: 'lease_charge',
+        foreignKey: {
+          name: 'lease_charge_leaseId_fkey',
+          columns: ['leaseId'],
+          references: { schema: 'public', table: 'lease', columns: ['id'] },
+          onDelete: 'cascade',
+        },
+      }),
+      this.addForeignKey({
+        schema: 'public',
+        table: 'listing',
+        foreignKey: {
+          name: 'listing_sellerId_fkey',
+          columns: ['sellerId'],
+          references: { schema: 'public', table: 'tenant', columns: ['id'] },
+          onDelete: 'cascade',
+        },
+      }),
+      this.addForeignKey({
+        schema: 'public',
+        table: 'listing',
+        foreignKey: {
+          name: 'listing_unitId_fkey',
+          columns: ['unitId'],
+          references: { schema: 'public', table: 'unit', columns: ['id'] },
+          onDelete: 'cascade',
+        },
+      }),
+      this.addForeignKey({
+        schema: 'public',
+        table: 'listing_request',
+        foreignKey: {
+          name: 'listing_request_listingId_fkey',
+          columns: ['listingId'],
+          references: { schema: 'public', table: 'listing', columns: ['id'] },
+          onDelete: 'cascade',
+        },
+      }),
+      this.addForeignKey({
+        schema: 'public',
+        table: 'listing_request',
+        foreignKey: {
+          name: 'listing_request_requesterId_fkey',
+          columns: ['requesterId'],
+          references: { schema: 'public', table: 'tenant', columns: ['id'] },
+          onDelete: 'cascade',
+        },
+      }),
+      this.addForeignKey({
+        schema: 'public',
+        table: 'match_connection',
+        foreignKey: {
+          name: 'match_connection_fromId_fkey',
+          columns: ['fromId'],
+          references: { schema: 'public', table: 'tenant', columns: ['id'] },
+          onDelete: 'cascade',
+        },
+      }),
+      this.addForeignKey({
+        schema: 'public',
+        table: 'match_connection',
+        foreignKey: {
+          name: 'match_connection_toId_fkey',
+          columns: ['toId'],
+          references: { schema: 'public', table: 'tenant', columns: ['id'] },
+          onDelete: 'cascade',
+        },
+      }),
+      this.addForeignKey({
+        schema: 'public',
+        table: 'match_profile',
+        foreignKey: {
+          name: 'match_profile_tenantId_fkey',
+          columns: ['tenantId'],
+          references: { schema: 'public', table: 'tenant', columns: ['id'] },
+          onDelete: 'cascade',
+        },
+      }),
+      this.addForeignKey({
+        schema: 'public',
+        table: 'shared_bill',
+        foreignKey: {
+          name: 'shared_bill_unitId_fkey',
+          columns: ['unitId'],
+          references: { schema: 'public', table: 'unit', columns: ['id'] },
+          onDelete: 'cascade',
+        },
+      }),
+      this.addForeignKey({
+        schema: 'public',
+        table: 'shared_bill',
+        foreignKey: {
+          name: 'shared_bill_paidById_fkey',
+          columns: ['paidById'],
+          references: { schema: 'public', table: 'tenant', columns: ['id'] },
+          onDelete: 'cascade',
+        },
+      }),
+      this.addForeignKey({
+        schema: 'public',
+        table: 'sublease',
+        foreignKey: {
+          name: 'sublease_listingId_fkey',
+          columns: ['listingId'],
+          references: { schema: 'public', table: 'listing', columns: ['id'] },
+          onDelete: 'cascade',
+        },
+      }),
+      this.addForeignKey({
+        schema: 'public',
+        table: 'sublease',
+        foreignKey: {
+          name: 'sublease_subtenantId_fkey',
+          columns: ['subtenantId'],
+          references: { schema: 'public', table: 'tenant', columns: ['id'] },
+          onDelete: 'cascade',
+        },
+      }),
+      this.addForeignKey({
+        schema: 'public',
+        table: 'unit_media',
+        foreignKey: {
+          name: 'unit_media_unitId_fkey',
+          columns: ['unitId'],
+          references: { schema: 'public', table: 'unit', columns: ['id'] },
+          onDelete: 'cascade',
+        },
+      }),
+      this.addForeignKey({
+        schema: 'public',
+        table: 'wellbeing_case',
+        foreignKey: {
+          name: 'wellbeing_case_tenantId_fkey',
+          columns: ['tenantId'],
+          references: { schema: 'public', table: 'tenant', columns: ['id'] },
+          onDelete: 'cascade',
+        },
+      }),
+      this.addForeignKey({
+        schema: 'public',
+        table: 'wellbeing_event',
+        foreignKey: {
+          name: 'wellbeing_event_caseId_fkey',
+          columns: ['caseId'],
+          references: { schema: 'public', table: 'wellbeing_case', columns: ['id'] },
+          onDelete: 'cascade',
+        },
+      }),
+    ];
+  }
+}
+
+MigrationCLI.run(import.meta.url, M);

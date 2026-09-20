@@ -172,6 +172,11 @@ model Unit {
   floor       Int
   tenants     Tenant[]
   chatGroup   ChatGroup?
+  bills       SharedBill[]
+  chores      Chore[]
+  listings    Listing[]
+  leases      Lease[]
+  media       UnitMedia[]
 
   @@unique([stairwellId, code])
   @@map("unit")
@@ -224,6 +229,21 @@ model Tenant {
   communitiesCreated      Community[]
   communityMemberships    CommunityMember[]
   communityMessages       CommunityMessage[]
+  identityVerifications   IdentityVerification[]
+  emailVerificationCodes  EmailVerificationCode[]
+  matchProfile            MatchProfile?
+  matchesSent             MatchConnection[]    @relation("match_sent")
+  matchesReceived         MatchConnection[]    @relation("match_received")
+  billsPaid               SharedBill[]
+  billShares              BillShare[]
+  choreTasks              ChoreTask[]
+  chatMessageReports      ChatMessageReport[]
+  listings                Listing[]
+  listingRequests         ListingRequest[]
+  subleases               Sublease[]
+  leases                  Lease[]
+  guarantorRequests       GuarantorRequest[]
+  wellbeingCases          WellbeingCase[]
 
   @@map("tenant")
 }
@@ -282,6 +302,8 @@ model Message {
   senderId    Uuid
   chatGroup   ChatGroup         @relation(fields: [chatGroupId], references: [id], onDelete: Cascade)
   chatGroupId Uuid
+  removedAt   TimestamptzString?
+  reports     ChatMessageReport[]
 
   @@index([chatGroupId])
   @@map("message")
@@ -371,6 +393,8 @@ model Complaint {
   category       complaint_category
   description    String
   photoUrl       String?
+  videoUrl       String?
+  clusterId      Uuid?
   status         complaint_status   @default(new)
   assignedStaff  Staff?             @relation(fields: [assignedStaffId], references: [id], onDelete: SetNull)
   assignedStaffId Uuid?
@@ -523,4 +547,329 @@ model CommunityMessage {
 
   @@index([communityId])
   @@map("community_message")
+}
+
+model VerifiedDomain {
+  id          Uuid   @id @default(uuid())
+  domain      String @unique
+  institution String
+
+  @@map("verified_domain")
+}
+
+model IdentityVerification {
+  id           Uuid               @id @default(uuid())
+  tenant       Tenant             @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  tenantId     Uuid
+  method       String
+  status       String
+  institution  String?
+  detail       String?
+  docPath      String?
+  reviewNote   String?
+  reviewedById Uuid?
+  createdAt    TimestamptzString  @default(now())
+  decidedAt    TimestamptzString?
+
+  @@index([tenantId])
+  @@index([status])
+  @@map("identity_verification")
+}
+
+model EmailVerificationCode {
+  id        Uuid              @id @default(uuid())
+  tenant    Tenant            @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  tenantId  Uuid
+  email     String
+  codeHash  String
+  expiresAt TimestamptzString
+  attempts  Int               @default(0)
+  createdAt TimestamptzString @default(now())
+
+  @@index([tenantId])
+  @@map("email_verification_code")
+}
+
+model MatchProfile {
+  id             Uuid              @id @default(uuid())
+  tenant         Tenant            @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  tenantId       Uuid              @unique
+  active         Boolean           @default(true)
+  sleepSchedule  String
+  cleanliness    Int
+  noiseTolerance Int
+  studyHabit     String
+  guestPolicy    String
+  smoking        String
+  alcohol        String
+  cooking        String
+  bio            String
+  dealbreakers   String
+  updatedAt      TimestamptzString @default(now())
+
+  @@map("match_profile")
+}
+
+model MatchConnection {
+  id        Uuid              @id @default(uuid())
+  from      Tenant            @relation("match_sent", fields: [fromId], references: [id], onDelete: Cascade)
+  fromId    Uuid
+  to        Tenant            @relation("match_received", fields: [toId], references: [id], onDelete: Cascade)
+  toId      Uuid
+  status    String            @default("pending")
+  createdAt TimestamptzString @default(now())
+
+  @@unique([fromId, toId])
+  @@map("match_connection")
+}
+
+model SharedBill {
+  id         Uuid               @id @default(uuid())
+  unit       Unit               @relation(fields: [unitId], references: [id], onDelete: Cascade)
+  unitId     Uuid
+  title      String
+  category   String
+  totalCents Int
+  paidBy     Tenant             @relation(fields: [paidById], references: [id], onDelete: Cascade)
+  paidById   Uuid
+  dueDate    TimestamptzString?
+  note       String?
+  createdAt  TimestamptzString  @default(now())
+  shares     BillShare[]
+
+  @@index([unitId])
+  @@map("shared_bill")
+}
+
+model BillShare {
+  id          Uuid               @id @default(uuid())
+  bill        SharedBill         @relation(fields: [billId], references: [id], onDelete: Cascade)
+  billId      Uuid
+  tenant      Tenant             @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  tenantId    Uuid
+  amountCents Int
+  paidAt      TimestamptzString?
+
+  @@unique([billId, tenantId])
+  @@map("bill_share")
+}
+
+model Chore {
+  id        Uuid              @id @default(uuid())
+  unit      Unit              @relation(fields: [unitId], references: [id], onDelete: Cascade)
+  unitId    Uuid
+  title     String
+  everyDays Int
+  active    Boolean           @default(true)
+  createdAt TimestamptzString @default(now())
+  tasks     ChoreTask[]
+
+  @@index([unitId])
+  @@map("chore")
+}
+
+model ChoreTask {
+  id           Uuid               @id @default(uuid())
+  chore        Chore              @relation(fields: [choreId], references: [id], onDelete: Cascade)
+  choreId      Uuid
+  assignedTo   Tenant             @relation(fields: [assignedToId], references: [id], onDelete: Cascade)
+  assignedToId Uuid
+  dueDate      TimestamptzString
+  doneAt       TimestamptzString?
+  remindedAt   TimestamptzString?
+
+  @@index([choreId])
+  @@index([dueDate])
+  @@map("chore_task")
+}
+
+model ChatMessageReport {
+  id         Uuid              @id @default(uuid())
+  message    Message           @relation(fields: [messageId], references: [id], onDelete: Cascade)
+  messageId  Uuid
+  reporter   Tenant            @relation(fields: [reporterId], references: [id], onDelete: Cascade)
+  reporterId Uuid
+  reason     String?
+  status     report_status     @default(open)
+  createdAt  TimestamptzString @default(now())
+
+  @@index([messageId])
+  @@map("chat_message_report")
+}
+
+model Listing {
+  id                Uuid               @id @default(uuid())
+  kind              String
+  seller            Tenant             @relation(fields: [sellerId], references: [id], onDelete: Cascade)
+  sellerId          Uuid
+  unit              Unit               @relation(fields: [unitId], references: [id], onDelete: Cascade)
+  unitId            Uuid
+  title             String
+  description       String
+  priceCents        Int?
+  availableFrom     TimestamptzString?
+  availableTo       TimestamptzString?
+  wanted            String?
+  status            String             @default("open")
+  acceptedRequestId Uuid?
+  createdAt         TimestamptzString  @default(now())
+  requests          ListingRequest[]
+  subleases         Sublease[]
+
+  @@index([status])
+  @@map("listing")
+}
+
+model ListingRequest {
+  id          Uuid              @id @default(uuid())
+  listing     Listing           @relation(fields: [listingId], references: [id], onDelete: Cascade)
+  listingId   Uuid
+  requester   Tenant            @relation(fields: [requesterId], references: [id], onDelete: Cascade)
+  requesterId Uuid
+  message     String
+  status      String            @default("pending")
+  createdAt   TimestamptzString @default(now())
+
+  @@unique([listingId, requesterId])
+  @@map("listing_request")
+}
+
+model Sublease {
+  id           Uuid              @id @default(uuid())
+  listing      Listing           @relation(fields: [listingId], references: [id], onDelete: Cascade)
+  listingId    Uuid
+  subtenant    Tenant            @relation(fields: [subtenantId], references: [id], onDelete: Cascade)
+  subtenantId  Uuid
+  startDate    TimestamptzString
+  endDate      TimestamptzString
+  approvedById Uuid?
+  createdAt    TimestamptzString @default(now())
+
+  @@map("sublease")
+}
+
+model AcademicTerm {
+  id         Uuid              @id @default(uuid())
+  name       String
+  kind       String
+  startDate  TimestamptzString
+  endDate    TimestamptzString
+  moveInFrom TimestamptzString
+  moveInTo   TimestamptzString
+  createdAt  TimestamptzString @default(now())
+
+  @@map("academic_term")
+}
+
+model Lease {
+  id               Uuid              @id @default(uuid())
+  tenant           Tenant            @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  tenantId         Uuid
+  unit             Unit              @relation(fields: [unitId], references: [id], onDelete: Cascade)
+  unitId           Uuid
+  kind             String
+  startDate        TimestamptzString
+  endDate          TimestamptzString
+  monthlyRentCents Int
+  depositCents     Int               @default(0)
+  upfrontMonths    Int               @default(0)
+  status           String            @default("active")
+  termId           Uuid?
+  createdAt        TimestamptzString @default(now())
+  charges          LeaseCharge[]
+
+  @@index([tenantId])
+  @@index([unitId])
+  @@map("lease")
+}
+
+model LeaseCharge {
+  id          Uuid               @id @default(uuid())
+  lease       Lease              @relation(fields: [leaseId], references: [id], onDelete: Cascade)
+  leaseId     Uuid
+  periodStart TimestamptzString
+  periodEnd   TimestamptzString
+  amountCents Int
+  prorated    Boolean            @default(false)
+  dueDate     TimestamptzString
+  paidAt      TimestamptzString?
+
+  @@index([leaseId])
+  @@map("lease_charge")
+}
+
+model UnitMedia {
+  id        Uuid              @id @default(uuid())
+  unit      Unit              @relation(fields: [unitId], references: [id], onDelete: Cascade)
+  unitId    Uuid
+  url       String
+  kind      String
+  caption   String?
+  createdAt TimestamptzString @default(now())
+
+  @@index([unitId])
+  @@map("unit_media")
+}
+
+model GuarantorInstitution {
+  id          Uuid    @id @default(uuid())
+  name        String
+  description String
+  url         String?
+  active      Boolean @default(true)
+  requests    GuarantorRequest[]
+
+  @@map("guarantor_institution")
+}
+
+model GuarantorRequest {
+  id             Uuid                  @id @default(uuid())
+  tenant         Tenant                @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  tenantId       Uuid
+  institution    GuarantorInstitution? @relation(fields: [institutionId], references: [id], onDelete: SetNull)
+  institutionId  Uuid?
+  kind           String
+  guarantorName  String?
+  guarantorEmail String?
+  guarantorPhone String?
+  status         String                @default("pending")
+  staffNote      String?
+  createdAt      TimestamptzString     @default(now())
+  decidedAt      TimestamptzString?
+
+  @@index([tenantId])
+  @@map("guarantor_request")
+}
+
+model WellbeingCase {
+  id             Uuid               @id @default(uuid())
+  tenant         Tenant             @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  tenantId       Uuid
+  category       String
+  severity       String
+  description    String
+  consentToShare Boolean
+  status         String             @default("open")
+  origin         String             @default("self")
+  escalatedTo    String?
+  escalatedAt    TimestamptzString?
+  createdAt      TimestamptzString  @default(now())
+  events         WellbeingEvent[]
+
+  @@index([tenantId])
+  @@index([status])
+  @@map("wellbeing_case")
+}
+
+model WellbeingEvent {
+  id        Uuid              @id @default(uuid())
+  caseRef   WellbeingCase     @relation(fields: [caseId], references: [id], onDelete: Cascade)
+  caseId    Uuid
+  actor     String
+  action    String
+  detail    String?
+  createdAt TimestamptzString @default(now())
+
+  @@index([caseId])
+  @@map("wellbeing_event")
 }

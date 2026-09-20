@@ -8,6 +8,7 @@ import { getLocale } from '../../../lib/i18n';
 import { getDictionary } from '../../../lib/dictionary';
 import RoleSwitcher from '../../RoleSwitcher';
 import Sidebar from './Sidebar';
+import { getLiving } from '../../../lib/living';
 
 const mulish = Mulish({ subsets: ['latin'], weight: ['400', '500', '600', '700', '800'], variable: '--font-mulish' });
 
@@ -20,7 +21,7 @@ export default async function StaffPortalLayout({ children }: { children: React.
 
   return (
     <div className={`${styles.shell} ${mulish.variable}`}>
-      <Sidebar dict={dict.staff} />
+      <Sidebar dict={dict.staff} extra={getLiving(locale).staff.nav} />
       <div className={styles.mainCol}>
         <div className={styles.topBar}>
           <Image src="/Kuopas-logo.png" alt="Kuopas" width={92} height={38} className={styles.logo} priority />

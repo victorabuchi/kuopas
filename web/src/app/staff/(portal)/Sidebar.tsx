@@ -6,6 +6,49 @@ import styles from '../staff.module.css';
 import type { getDictionary } from '../../../lib/dictionary';
 
 type StaffDict = ReturnType<typeof getDictionary>['staff'];
+type Extra = { verifications: string; guarantors: string; leases: string; maintenance: string; market: string };
+
+function icon(children: React.ReactNode) {
+  return (
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      {children}
+    </svg>
+  );
+}
+
+const EXTRA_ITEMS: { href: string; key: keyof Extra; icon: React.ReactNode }[] = [
+  {
+    href: '/staff/verifications',
+    key: 'verifications',
+    icon: icon(
+      <>
+        <path d="M12 3 4 6v6c0 4.5 3.2 7.7 8 9 4.8-1.3 8-4.5 8-9V6l-8-3Z" />
+        <path d="m9 12 2 2 4-4" />
+      </>,
+    ),
+  },
+  {
+    href: '/staff/guarantors',
+    key: 'guarantors',
+    icon: icon(
+      <>
+        <circle cx="9" cy="8" r="3" />
+        <path d="M3 19a6 6 0 0 1 12 0" />
+        <path d="m16 11 2 2 4-4" />
+      </>,
+    ),
+  },
+  {
+    href: '/staff/leases',
+    key: 'leases',
+    icon: icon(
+      <>
+        <rect x="4" y="5" width="16" height="15" rx="2" />
+        <path d="M4 10h16M9 3v4M15 3v4" />
+      </>,
+    ),
+  },
+];
 
 const NAV_ITEMS = [
   {
@@ -50,7 +93,7 @@ const NAV_ITEMS = [
   },
 ];
 
-export default function Sidebar({ dict }: { dict: StaffDict }) {
+export default function Sidebar({ dict, extra }: { dict: StaffDict; extra: Extra }) {
   const pathname = usePathname();
 
   return (
@@ -67,6 +110,20 @@ export default function Sidebar({ dict }: { dict: StaffDict }) {
             >
               {item.icon}
               <span className={styles.railLabel}>{dict[item.key]}</span>
+            </Link>
+          );
+        })}
+        {EXTRA_ITEMS.map((item) => {
+          const active = pathname.startsWith(item.href);
+          return (
+            <Link
+              key={item.href}
+              href={item.href}
+              title={extra[item.key]}
+              className={`${styles.railLink} ${active ? styles.railLinkActive : ''}`}
+            >
+              {item.icon}
+              <span className={styles.railLabel}>{extra[item.key]}</span>
             </Link>
           );
         })}

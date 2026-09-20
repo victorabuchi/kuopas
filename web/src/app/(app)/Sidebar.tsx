@@ -67,6 +67,17 @@ const NAV_ITEMS = [
     ),
   },
   {
+    href: '/lease',
+    key: 'lease' as const,
+    icon: (
+      <Svg>
+        <path d="M6 3h9l4 4v14H6z" />
+        <path d="M14 3v5h5" />
+        <path d="M9 13h6M9 17h6" />
+      </Svg>
+    ),
+  },
+  {
     href: '/laundry',
     key: 'laundry' as const,
     icon: (

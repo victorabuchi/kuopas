@@ -6,6 +6,7 @@ import { db } from '../prisma/db';
 import { createTenantWithGroups } from './groups';
 import { createSession, destroySession } from './session';
 import { clearSignupCookie, readSignupCookie } from './google-oauth';
+import { autoVerifyIfUniversityEmail } from './verification';
 
 const BCRYPT_ROUNDS = 12;
 
@@ -56,6 +57,7 @@ export async function completeGoogleRegisterAction(formData: FormData) {
   }
 
   const { tenant } = await createTenantWithGroups({ name, email: signup.email, unitId });
+  await autoVerifyIfUniversityEmail(tenant.id, signup.email);
   await createSession(tenant.id);
   await clearSignupCookie();
   redirect('/home');

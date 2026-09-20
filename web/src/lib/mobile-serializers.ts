@@ -85,3 +85,23 @@ export function serializePost(post: PostRow) {
     reactions: post.reactions.map((r) => ({ tenantId: r.tenantId })),
   };
 }
+
+type ComplaintRow = {
+  id: string;
+  category: string;
+  description: string;
+  photoUrl: string | null;
+  status: string;
+  createdAt: string;
+};
+
+export function serializeComplaint(c: ComplaintRow) {
+  return {
+    id: c.id,
+    category: c.category,
+    description: c.description,
+    photoUrl: c.photoUrl,
+    status: c.status,
+    createdAt: c.createdAt,
+  };
+}

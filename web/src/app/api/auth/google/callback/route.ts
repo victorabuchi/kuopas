@@ -3,6 +3,7 @@ import { db } from '../../../../../prisma/db';
 import { createSession } from '../../../../../lib/session';
 import { createStaffSession } from '../../../../../lib/staff-session';
 import { createMobileToken } from '../../../../../lib/mobile-auth';
+import { autoVerifyIfUniversityEmail } from '../../../../../lib/verification';
 import {
   MOBILE_REDIRECT,
   exchangeCodeForProfile,
@@ -43,6 +44,7 @@ export async function GET(request: NextRequest) {
   if (intent === 'mobile') {
     // The phone app is for residents only, so there is no sign-up or staff path here.
     if (!tenant) return fail('No Kuopas account uses that Google email. Register in the app first.');
+    await autoVerifyIfUniversityEmail(tenant.id, profile.email);
     return NextResponse.redirect(`${MOBILE_REDIRECT}?token=${encodeURIComponent(createMobileToken(tenant.id))}`);
   }
 
@@ -60,6 +62,7 @@ export async function GET(request: NextRequest) {
 
   if (tenant) {
     await createSession(tenant.id);
+    await autoVerifyIfUniversityEmail(tenant.id, profile.email);
     return NextResponse.redirect(new URL('/home', origin));
   }
   if (staff) {

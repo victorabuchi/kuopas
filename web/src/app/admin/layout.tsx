@@ -8,6 +8,7 @@ import { getSession } from '../../lib/session';
 import { db } from '../../prisma/db';
 import { getLocale } from '../../lib/i18n';
 import { getDictionary } from '../../lib/dictionary';
+import { getLiving } from '../../lib/living';
 
 const mulish = Mulish({ subsets: ['latin'], weight: ['400', '500', '600', '700', '800'], variable: '--font-mulish' });
 
@@ -23,7 +24,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
 
   return (
     <div className={`${styles.shell} ${mulish.variable}`}>
-      <Sidebar dict={dict.staff} />
+      <Sidebar labels={{ roles: dict.staff.manageRoles, domains: getLiving(locale).staff.nav.domains, wellbeing: getLiving(locale).staff.nav.wellbeing }} />
       <div className={styles.mainCol}>
         <div className={styles.topBar}>
           <Image src="/Kuopas-logo.png" alt="Kuopas" width={92} height={38} className={styles.logo} priority />
