@@ -7,6 +7,7 @@ import { household } from './household';
 import { roommates } from './roommates';
 import { market } from './market';
 import { maintenance } from './maintenance';
+import { wellbeing } from './wellbeing';
 
 function pick<T>(section: { en: T; fi: T }, locale: Locale): T {
   return locale === 'fi' ? section.fi : section.en;
@@ -22,5 +23,6 @@ export function getLiving(locale: Locale) {
     roommates: pick(roommates, locale),
     market: pick(market, locale),
     maintenance: pick(maintenance, locale),
+    wellbeing: pick(wellbeing, locale),
   };
 }
