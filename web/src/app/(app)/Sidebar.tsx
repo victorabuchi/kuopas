@@ -67,6 +67,18 @@ const NAV_ITEMS = [
     ),
   },
   {
+    href: '/roommates',
+    key: 'roommates' as const,
+    icon: (
+      <Svg>
+        <circle cx="9" cy="8" r="3" />
+        <path d="M3 19a6 6 0 0 1 12 0" />
+        <circle cx="17" cy="9" r="2.4" />
+        <path d="M16 14.2a4.6 4.6 0 0 1 5 4.3" />
+      </Svg>
+    ),
+  },
+  {
     href: '/household',
     key: 'household' as const,
     icon: (
