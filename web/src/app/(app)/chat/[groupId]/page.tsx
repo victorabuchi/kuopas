@@ -7,6 +7,8 @@ import { getSession } from '../../../../lib/session';
 import { getLocale } from '../../../../lib/i18n';
 import { getDictionary } from '../../../../lib/dictionary';
 import { displayNameFor } from '../../../../lib/names';
+import { getLiving } from '../../../../lib/living';
+import { reportChatMessageAction } from '../../../../lib/household-actions';
 
 export default async function ChatGroupPage({ params }: { params: Promise<{ groupId: string }> }) {
   const { groupId } = await params;
@@ -25,9 +27,11 @@ export default async function ChatGroupPage({ params }: { params: Promise<{ grou
 
   const locale = await getLocale();
   const dict = getDictionary(locale);
+  const h = getLiving(locale).household;
 
   const messages = await db.orm.public.Message.where({ chatGroupId: groupId })
     .include('sender', (s) => s)
+    .include('reports', (r) => r)
     .orderBy((m) => m.sentAt.asc())
     .limit(200)
     .all();
@@ -60,11 +64,23 @@ export default async function ChatGroupPage({ params }: { params: Promise<{ grou
                 </span>
               )}
               <div className={`${styles.bubble} ${isOwn ? styles.bubbleOut : styles.bubbleIn}`}>
-                <span>{message.content}</span>
+                {message.removedAt ? <em>{h.removedMessage}</em> : <span>{message.content}</span>}
                 <span className={styles.time}>
                   {new Date(message.sentAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                 </span>
               </div>
+              {!isOwn && !message.removedAt && (
+                <form action={reportChatMessageAction}>
+                  <input type="hidden" name="messageId" value={message.id} />
+                  {message.reports.some((r) => r.reporterId === session.tenantId) ? (
+                    <span className={styles.reportBtn}>{h.reported}</span>
+                  ) : (
+                    <button type="submit" className={styles.reportBtn}>
+                      {h.report}
+                    </button>
+                  )}
+                </form>
+              )}
             </div>
           );
         })}

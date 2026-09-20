@@ -9,6 +9,8 @@ import {
   deleteReportedCommentAction,
   blockTenantFromNoticeboardAction,
 } from '../../../../lib/building-post-actions';
+import { resolveChatReportAction } from '../../../../lib/household-actions';
+import { getLiving } from '../../../../lib/living';
 
 export const metadata: Metadata = {
   title: 'Reports - Kuopas staff',
@@ -26,6 +28,14 @@ export default async function StaffReportsPage() {
     .orderBy((r) => r.createdAt.desc())
     .limit(100)
     .all();
+
+  const chatReports = await db.orm.public.ChatMessageReport.where({ status: 'open' })
+    .include('reporter', (r) => r)
+    .include('message', (m) => m.include('sender', (x) => x).include('chatGroup', (g) => g))
+    .orderBy((r) => r.createdAt.desc())
+    .limit(100)
+    .all();
+  const c = getLiving(locale).staff.chatReports;
 
   return (
     <>
@@ -105,6 +115,32 @@ export default async function StaffReportsPage() {
             </div>
           );
         })}
+      </div>
+
+      <h2 style={{ marginTop: 32 }}>{c.title}</h2>
+      <div className={styles.list}>
+        {chatReports.length === 0 && <div className={styles.empty}>{c.empty}</div>}
+        {chatReports.map((report) => (
+          <div key={report.id} className={styles.card}>
+            <div className={styles.rowText}>
+              <span className={styles.rowCategory}>{report.message?.chatGroup?.name}</span>
+              <span className={styles.rowMeta}>
+                {c.sender}: {report.message?.sender?.name} ({report.message?.sender?.email}) · {c.reportedBy}: {report.reporter?.name}
+              </span>
+              <p style={{ margin: '8px 0 0' }}>{report.message?.content}</p>
+              {report.reason && <span className={styles.rowMeta}>{report.reason}</span>}
+            </div>
+            <form action={resolveChatReportAction} className={styles.inlineForm} style={{ marginTop: 10 }}>
+              <input type="hidden" name="reportId" value={report.id} />
+              <button type="submit" name="decision" value="remove" className={styles.inlineSubmit} style={{ background: '#b3261e' }}>
+                {c.remove}
+              </button>
+              <button type="submit" name="decision" value="dismiss" className={styles.inlineSubmit}>
+                {c.dismiss}
+              </button>
+            </form>
+          </div>
+        ))}
       </div>
     </>
   );

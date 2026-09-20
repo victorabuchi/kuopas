@@ -11,6 +11,14 @@ export const staff = defineSection(
       wellbeing: 'Wellbeing',
       domains: 'Domains',
     },
+    chatReports: {
+      title: 'Reported chat messages',
+      empty: 'No reported chat messages.',
+      sender: 'Sender',
+      reportedBy: 'Reported by',
+      remove: 'Remove message',
+      dismiss: 'Dismiss',
+    },
     verifications: {
       title: 'Identity verifications',
       lede: 'Review uploaded IDs and proof of enrolment. The file is deleted as soon as you decide.',
@@ -116,6 +124,14 @@ export const staff = defineSection(
       market: 'Kauppa',
       wellbeing: 'Hyvinvointi',
       domains: 'Verkkotunnukset',
+    },
+    chatReports: {
+      title: 'Ilmiannetut chat-viestit',
+      empty: 'Ei ilmiannettuja chat-viestejä.',
+      sender: 'Lähettäjä',
+      reportedBy: 'Ilmiantaja',
+      remove: 'Poista viesti',
+      dismiss: 'Hylkää',
     },
     verifications: {
       title: 'Henkilöllisyyden vahvistukset',

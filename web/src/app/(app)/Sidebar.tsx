@@ -67,6 +67,16 @@ const NAV_ITEMS = [
     ),
   },
   {
+    href: '/household',
+    key: 'household' as const,
+    icon: (
+      <Svg>
+        <path d="M4 11.5 12 4l8 7.5" />
+        <path d="M6 10v9a1 1 0 0 0 1 1h4v-5h2v5h4a1 1 0 0 0 1-1v-9" />
+      </Svg>
+    ),
+  },
+  {
     href: '/lease',
     key: 'lease' as const,
     icon: (

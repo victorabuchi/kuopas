@@ -185,3 +185,16 @@
 .send:hover {
   background: var(--green-hover);
 }
+
+.reportBtn {
+  border: none;
+  background: none;
+  padding: 2px 4px;
+  font-family: inherit;
+  font-size: 11px;
+  color: var(--fg-muted);
+  cursor: pointer;
+}
+button.reportBtn:hover {
+  color: #b3261e;
+}
