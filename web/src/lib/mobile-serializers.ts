@@ -91,6 +91,7 @@ type ComplaintRow = {
   category: string;
   description: string;
   photoUrl: string | null;
+  videoUrl?: string | null;
   status: string;
   createdAt: string;
 };
@@ -101,6 +102,7 @@ export function serializeComplaint(c: ComplaintRow) {
     category: c.category,
     description: c.description,
     photoUrl: c.photoUrl,
+    videoUrl: c.videoUrl ?? null,
     status: c.status,
     createdAt: c.createdAt,
   };

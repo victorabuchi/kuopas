@@ -2,11 +2,13 @@ import { db } from '../../../../../prisma/db';
 import { getMobileSession } from '../../../../../lib/mobile-auth';
 import { serializePost } from '../../../../../lib/mobile-serializers';
 import { sendPushToBuilding } from '../../../../../lib/push';
+import { readFields } from '../../../../../lib/mobile-http';
+import { savePhotoUpload } from '../../../../../lib/uploads';
 
 const NOTICEBOARD_CATEGORIES = ['furniture', 'lost_found', 'borrow', 'giveaway', 'other'] as const;
 
 // Mirrors createNoticeboardPostAction in src/lib/building-post-actions.ts.
-// Photo upload isn't wired up yet (the mobile client doesn't send one).
+// Accepts JSON, or multipart when the client attaches a photo.
 export async function POST(request: Request) {
   const session = getMobileSession(request);
   if (!session) return new Response('Not signed in', { status: 401 });
@@ -17,14 +19,21 @@ export async function POST(request: Request) {
     return new Response('You are blocked from posting to the noticeboard', { status: 403 });
   }
 
-  const body = await request.json().catch(() => null);
-  const title = String(body?.title ?? '').trim();
-  const content = String(body?.content ?? '').trim();
-  const category = String(body?.category ?? '');
+  const { fields, photo } = await readFields(request);
+  const title = (fields['title'] ?? '').trim();
+  const content = (fields['content'] ?? '').trim();
+  const category = fields['category'] ?? '';
 
   if (!title || !content) return new Response('Title and description are required', { status: 400 });
   if (!NOTICEBOARD_CATEGORIES.includes(category as (typeof NOTICEBOARD_CATEGORIES)[number])) {
     return new Response('Invalid category', { status: 400 });
+  }
+
+  let photoUrl: string | null;
+  try {
+    photoUrl = await savePhotoUpload(photo, 'noticeboard');
+  } catch (error) {
+    return new Response(error instanceof Error ? error.message : 'Photo upload failed.', { status: 400 });
   }
 
   const unit = await db.orm.public.Unit.where({ id: tenant.unitId }).first();
@@ -39,6 +48,7 @@ export async function POST(request: Request) {
     authorTenantId: session.tenantId,
     title,
     content,
+    photoUrl,
   });
 
   await sendPushToBuilding(stairwell.buildingId, {

@@ -19,12 +19,18 @@ export async function GET(request: Request, { params }: { params: Promise<{ grou
 
   const messages = await db.orm.public.Message.where({ chatGroupId: groupId })
     .include('sender', (s) => s)
+    .include('reports', (r) => r)
     .orderBy((m) => m.sentAt.asc())
     .limit(200)
     .all();
 
   return Response.json({
     group: { ...serializeChatGroup(group), memberCount: group.members.length },
-    messages: messages.map((m) => serializeMessage({ ...m, sender: m.sender! })),
+    // Removed messages keep their row (like the web page) but never send their text.
+    messages: messages.map((m) => ({
+      ...serializeMessage({ ...m, content: m.removedAt ? '' : m.content, sender: m.sender! }),
+      removed: Boolean(m.removedAt),
+      reported: m.reports.some((r) => r.reporterId === session.tenantId),
+    })),
   });
 }
