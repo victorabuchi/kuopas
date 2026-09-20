@@ -42,7 +42,9 @@ export default async function AdminLayout({ children }: { children: React.ReactN
           </div>
           <div className={styles.accent} />
         </div>
-        <div className={styles.main}>{children}</div>
+        <div className={styles.scroll}>
+          <div className={styles.main}>{children}</div>
+        </div>
       </div>
     </div>
   );
