@@ -23,30 +23,33 @@ export default async function StaffPortalLayout({ children }: { children: React.
     <div className={`${styles.shell} ${mulish.variable}`}>
       <Sidebar dict={dict.staff} extra={getLiving(locale).staff.nav} />
       <div className={styles.mainCol}>
-        <div className={styles.topBar}>
-          <Image src="/Kuopas-logo.png" alt="Kuopas" width={92} height={38} className={styles.logo} priority />
-          <div style={{ flex: 1 }} />
-          {access.isAdmin && (
-            <RoleSwitcher
-              label={dict.staff.switcherStaff}
-              items={[
-                { path: '/home', label: dict.staff.switcherStudent },
-                { path: '/staff', label: dict.staff.switcherStaff },
-                { path: '/admin', label: dict.staff.switcherAdmin },
-              ]}
-            />
-          )}
-          {access.isAdmin ? (
-            <span className={styles.logOut}>{dict.staff.adminBadge}</span>
-          ) : (
-            <form action={staffLogoutAction}>
-              <button type="submit" className={styles.logOut}>
-                {dict.staff.logOut}
-              </button>
-            </form>
-          )}
+        <div className={styles.headWrap}>
+          <div className={styles.topBar}>
+            <Image src="/Kuopas-logo.png" alt="Kuopas" width={92} height={38} className={styles.logo} priority />
+            <span className={styles.title}>{dict.staff.switcherStaff}</span>
+            <div style={{ flex: 1 }} />
+            {access.isAdmin && (
+              <RoleSwitcher
+                label={dict.staff.switcherStaff}
+                items={[
+                  { path: '/home', label: dict.staff.switcherStudent },
+                  { path: '/staff', label: dict.staff.switcherStaff },
+                  { path: '/admin', label: dict.staff.switcherAdmin },
+                ]}
+              />
+            )}
+            {access.isAdmin ? (
+              <span className={styles.logOut}>{dict.staff.adminBadge}</span>
+            ) : (
+              <form action={staffLogoutAction}>
+                <button type="submit" className={styles.logOut}>
+                  {dict.staff.logOut}
+                </button>
+              </form>
+            )}
+          </div>
+          <div className={styles.accent} />
         </div>
-        <div className={styles.accent} />
         <div className={styles.main}>{children}</div>
       </div>
     </div>

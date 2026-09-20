@@ -78,13 +78,20 @@
   overflow-y: auto;
 }
 
+.headWrap {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  flex-shrink: 0;
+}
 .topBar {
   display: flex;
   align-items: center;
   gap: 14px;
   height: 60px;
-  padding: 0 24px;
-  border-bottom: 1px solid var(--border);
+  padding: 0 20px;
+  background: #ffffff;
+  border-bottom: 1px solid #e7e7e7;
   flex-shrink: 0;
 }
 .logo {

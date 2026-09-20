@@ -26,20 +26,22 @@ export default async function AdminLayout({ children }: { children: React.ReactN
     <div className={`${styles.shell} ${mulish.variable}`}>
       <Sidebar labels={{ roles: dict.staff.manageRoles, domains: getLiving(locale).staff.nav.domains, wellbeing: getLiving(locale).staff.nav.wellbeing }} />
       <div className={styles.mainCol}>
-        <div className={styles.topBar}>
-          <Image src="/Kuopas-logo.png" alt="Kuopas" width={92} height={38} className={styles.logo} priority />
-          <span className={styles.title}>{dict.staff.adminBadge}</span>
-          <div style={{ flex: 1 }} />
-          <RoleSwitcher
-            label={dict.staff.switcherAdmin}
-            items={[
-              { path: '/home', label: dict.staff.switcherStudent },
-              { path: '/staff', label: dict.staff.switcherStaff },
-              { path: '/admin', label: dict.staff.switcherAdmin },
-            ]}
-          />
+        <div className={styles.headWrap}>
+          <div className={styles.topBar}>
+            <Image src="/Kuopas-logo.png" alt="Kuopas" width={92} height={38} className={styles.logo} priority />
+            <span className={styles.title}>{dict.staff.adminBadge}</span>
+            <div style={{ flex: 1 }} />
+            <RoleSwitcher
+              label={dict.staff.switcherAdmin}
+              items={[
+                { path: '/home', label: dict.staff.switcherStudent },
+                { path: '/staff', label: dict.staff.switcherStaff },
+                { path: '/admin', label: dict.staff.switcherAdmin },
+              ]}
+            />
+          </div>
+          <div className={styles.accent} />
         </div>
-        <div className={styles.accent} />
         <div className={styles.main}>{children}</div>
       </div>
     </div>
