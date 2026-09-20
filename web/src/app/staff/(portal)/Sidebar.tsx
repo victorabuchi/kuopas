@@ -39,6 +39,16 @@ const EXTRA_ITEMS: { href: string; key: keyof Extra; icon: React.ReactNode }[] =
     ),
   },
   {
+    href: '/staff/market',
+    key: 'market',
+    icon: icon(
+      <>
+        <path d="M4 9h16l-1.4 10.2a1.5 1.5 0 0 1-1.5 1.3H6.9a1.5 1.5 0 0 1-1.5-1.3L4 9Z" />
+        <path d="M8 9V7a4 4 0 0 1 8 0v2" />
+      </>,
+    ),
+  },
+  {
     href: '/staff/leases',
     key: 'leases',
     icon: icon(

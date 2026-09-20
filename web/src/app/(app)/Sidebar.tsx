@@ -89,6 +89,16 @@ const NAV_ITEMS = [
     ),
   },
   {
+    href: '/marketplace',
+    key: 'market' as const,
+    icon: (
+      <Svg>
+        <path d="M4 9h16l-1.4 10.2a1.5 1.5 0 0 1-1.5 1.3H6.9a1.5 1.5 0 0 1-1.5-1.3L4 9Z" />
+        <path d="M8 9V7a4 4 0 0 1 8 0v2" />
+      </Svg>
+    ),
+  },
+  {
     href: '/lease',
     key: 'lease' as const,
     icon: (

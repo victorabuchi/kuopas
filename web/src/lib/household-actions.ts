@@ -168,7 +168,8 @@ export async function resolveChatReportAction(formData: FormData) {
   if (decision === 'remove') {
     const message = await db.orm.public.Message.where({ id: report.messageId }).first();
     await db.orm.public.Message.where({ id: report.messageId }).update({ removedAt: new Date().toISOString() });
-    await db.orm.public.ChatMessageReport.where({ messageId: report.messageId }).update({ status: 'actioned' });
+    const related = await db.orm.public.ChatMessageReport.where({ messageId: report.messageId }).all();
+    for (const r of related) await db.orm.public.ChatMessageReport.where({ id: r.id }).update({ status: 'actioned' });
     if (message) revalidatePath(`/chat/${message.chatGroupId}`);
   } else {
     await db.orm.public.ChatMessageReport.where({ id: report.id }).update({ status: 'dismissed' });
