@@ -16,6 +16,7 @@ import { flat } from './flat';
 import { account } from './account';
 import { safety } from './safety';
 import { signing } from './signing';
+import { bank } from './bank';
 
 function pick<T>(section: { en: T; fi: T }, locale: Locale): T {
   return locale === 'fi' ? section.fi : section.en;
@@ -40,5 +41,6 @@ export function getLiving(locale: Locale) {
     account: pick(account, locale),
     safety: pick(safety, locale),
     signing: pick(signing, locale),
+    bank: pick(bank, locale),
   };
 }

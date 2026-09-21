@@ -24,7 +24,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
 
   return (
     <div className={`${styles.shell} ${mulish.variable}`}>
-      <Sidebar labels={{ roles: dict.staff.manageRoles, domains: getLiving(locale).staff.nav.domains, wellbeing: getLiving(locale).staff.nav.wellbeing }} />
+      <Sidebar labels={{ roles: dict.staff.manageRoles, domains: getLiving(locale).staff.nav.domains, wellbeing: getLiving(locale).staff.nav.wellbeing, settings: getLiving(locale).staff.nav.settings }} />
       <div className={styles.mainCol}>
         <div className={styles.headWrap}>
           <div className={styles.topBar}>

@@ -46,7 +46,7 @@ export default function SplitForm({ members, meId, labels }: { members: Member[]
         </div>
         <div className={styles.field}>
           <label htmlFor="category">{labels.category}</label>
-          <select id="category" name="category" defaultValue="wifi">
+          <select id="category" name="category" defaultValue={Object.keys(labels.categories)[0]}>
             {Object.entries(labels.categories).map(([key, label]) => (
               <option key={key} value={key}>
                 {label}

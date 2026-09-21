@@ -7,6 +7,7 @@ import { getSession } from '../../../lib/session';
 import { getLocale } from '../../../lib/i18n';
 import { getLiving } from '../../../lib/living';
 import { nowMs } from '../../../lib/time';
+import { allowedCategories, getSplitterConfig } from '../../../lib/splitter';
 import {
   completeChoreTaskAction,
   createChoreAction,
@@ -17,16 +18,18 @@ import {
 import TopBar from '../TopBar';
 import SplitForm from './SplitForm';
 import { AgreementTab, CleaningTab, TransferTab } from './FlatTabs';
+import { LedgerTab } from './LedgerTab';
+import { bankMode } from '../../../lib/openbanking';
 import ChoreWheel from './ChoreWheel';
 
 export const metadata: Metadata = {
   title: 'Household - Kuopas',
 };
 
-const ALL_TABS = ['bills', 'chores', 'cleaning', 'agreement', 'transfer', 'chat'] as const;
+const ALL_TABS = ['bills', 'ledger', 'chores', 'cleaning', 'agreement', 'transfer', 'chat'] as const;
 type Tab = (typeof ALL_TABS)[number];
 
-export default async function HouseholdPage({ searchParams }: { searchParams: Promise<{ tab?: string; error?: string; sent?: string }> }) {
+export default async function HouseholdPage({ searchParams }: { searchParams: Promise<{ tab?: string; error?: string; sent?: string; err?: string; synced?: string; connected?: string; disconnected?: string }> }) {
   const session = await getSession();
   if (!session) redirect('/login');
 
@@ -41,10 +44,12 @@ export default async function HouseholdPage({ searchParams }: { searchParams: Pr
   const nameOf = new Map(members.map((m) => [m.id, m.id === me.id ? t.you : m.name]));
   // The agreement and cleaning list only make sense when people share a flat.
   const shared = members.length >= 2;
-  const TABS = ALL_TABS.filter((key) => shared || (key !== 'cleaning' && key !== 'agreement'));
+  const bankOn = bankMode() !== 'off' || Boolean(await db.orm.public.BankConnection.where({ tenantId: me.id }).first());
+  const TABS = ALL_TABS.filter((key) => (shared || (key !== 'cleaning' && key !== 'agreement')) && (bankOn || key !== 'ledger'));
   const tab: Tab = (TABS as readonly string[]).includes(q.tab ?? '') ? (q.tab as Tab) : 'bills';
   const tabLabels: Record<Tab, string> = {
     bills: t.tabBills,
+    ledger: L.bank.tab,
     chores: t.tabChores,
     cleaning: L.flat.tabs.cleaning,
     agreement: L.flat.tabs.agreement,
@@ -64,6 +69,7 @@ export default async function HouseholdPage({ searchParams }: { searchParams: Pr
       </div>
       <div className={styles.content}>
         {tab === 'bills' && <BillsTab unitId={me.unitId!} meId={me.id} members={members} nameOf={nameOf} t={t} locale={locale} />}
+        {tab === 'ledger' && <LedgerTab meId={me.id} members={members} locale={locale === 'fi' ? 'fi' : 'en'} q={q} />}
         {tab === 'chores' && <ChoresTab unitId={me.unitId!} members={members} nameOf={nameOf} t={t} locale={locale} />}
         {tab === 'cleaning' && <CleaningTab unitId={me.unitId!} meId={me.id} members={members} f={L.flat.cleaning} />}
         {tab === 'agreement' && <AgreementTab unitId={me.unitId!} meId={me.id} members={members} f={L.flat.agreement} error={q.error} />}
@@ -99,6 +105,9 @@ async function BillsTab({
     .all();
   const money = (cents: number) =>
     new Intl.NumberFormat(locale === 'fi' ? 'fi-FI' : 'en-FI', { style: 'currency', currency: 'EUR' }).format(cents / 100);
+  const splitter = await getSplitterConfig();
+  const allowed = allowedCategories(splitter);
+  const formCategories = Object.fromEntries(allowed.map((k) => [k, (t.categories as Record<string, string>)[k] ?? k]));
 
   // Net balances: what each other person owes the payer of each unpaid share.
   const owed = new Map<string, number>();
@@ -185,6 +194,7 @@ async function BillsTab({
       <div className={styles.card}>
         <h2 className={styles.cardTitle}>{t.billsHeading}</h2>
         <p className={styles.lede}>{t.billsLede}</p>
+        {splitter.mode === 'micro' && <p className={styles.lede}>{t.microNote.replace('{limit}', money(splitter.microLimitCents))}</p>}
       </div>
       <SplitForm
         members={members.map((m) => ({ id: m.id, name: nameOf.get(m.id) ?? m.name }))}
@@ -193,7 +203,7 @@ async function BillsTab({
           title: t.title_,
           titlePlaceholder: t.titlePlaceholder,
           category: t.category,
-          categories: t.categories,
+          categories: formCategories,
           total: t.total,
           paidBy: t.paidBy,
           dueDate: t.dueDate,

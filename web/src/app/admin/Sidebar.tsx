@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import styles from './admin.module.css';
 
-type Labels = { roles: string; domains: string; wellbeing: string };
+type Labels = { roles: string; domains: string; wellbeing: string; settings: string };
 
 function Svg({ children }: { children: React.ReactNode }) {
   return (
@@ -48,6 +48,18 @@ export default function Sidebar({ labels }: { labels: Labels }) {
       icon: (
         <Svg>
           <path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10Z" />
+        </Svg>
+      ),
+    },
+    {
+      href: '/admin/settings',
+      label: labels.settings,
+      exact: false,
+      icon: (
+        <Svg>
+          <path d="M4 7h10M18 7h2M4 17h2M10 17h10" />
+          <circle cx="16" cy="7" r="2" />
+          <circle cx="8" cy="17" r="2" />
         </Svg>
       ),
     },

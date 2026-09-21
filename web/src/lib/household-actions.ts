@@ -5,6 +5,7 @@ import { db } from '../prisma/db';
 import { getSession } from './session';
 import { requireStaffAccess } from './portal-access';
 import { splitCents } from './split';
+import { checkBill, getSplitterConfig } from './splitter';
 
 const DAY_MS = 24 * 60 * 60 * 1000;
 
@@ -27,6 +28,10 @@ export async function createBillAction(formData: FormData) {
   const totalCents = Math.round(Number(String(formData.get('total') ?? '0').replace(',', '.')) * 100);
   if (!title || !Number.isFinite(totalCents) || totalCents <= 0) throw new Error('A title and a positive amount are required');
 
+  const config = await getSplitterConfig();
+  const check = checkBill(config, category, totalCents);
+  if (!check.ok) throw new Error(check.reason === 'limit' ? 'That is more than a communal purchase may cost' : 'That type of bill is not allowed here');
+
   const memberIds = new Set(members.map((m) => m.id));
   const chosen = formData.getAll('participant').map(String).filter((id) => memberIds.has(id));
   if (chosen.length === 0) throw new Error('Choose at least one person to split with');
@@ -48,6 +53,7 @@ export async function createBillAction(formData: FormData) {
     paidById,
     dueDate: due ? new Date(due).toISOString() : null,
     note: String(formData.get('note') ?? '').trim() || null,
+    kind: check.kind,
   });
 
   const now = new Date().toISOString();

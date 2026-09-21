@@ -1,3 +1,4 @@
+import { checkBill, getSplitterConfig } from '../../../../../lib/splitter';
 import { db } from '../../../../../prisma/db';
 import { getMobileSession } from '../../../../../lib/mobile-auth';
 import { splitCents } from '../../../../../lib/split';
@@ -20,6 +21,9 @@ export async function POST(request: Request) {
     return new Response('A title and a positive amount are required', { status: 400 });
   }
 
+  const check = checkBill(await getSplitterConfig(), category, totalCents);
+  if (!check.ok) return new Response(check.reason === 'limit' ? 'That is more than a communal purchase may cost' : 'That type of bill is not allowed here', { status: 400 });
+
   const participants: { id: string; weight: number }[] = (Array.isArray(body?.participants) ? body.participants : [])
     .map((p: { id?: unknown; weight?: unknown }) => ({ id: String(p?.id ?? ''), weight: Number(p?.weight) }))
     .filter((p: { id: string }) => memberIds.has(p.id));
@@ -40,6 +44,7 @@ export async function POST(request: Request) {
     paidById,
     dueDate: due ? new Date(due).toISOString() : null,
     note: String(body?.note ?? '').trim() || null,
+    kind: check.kind,
   });
 
   const now = new Date().toISOString();
