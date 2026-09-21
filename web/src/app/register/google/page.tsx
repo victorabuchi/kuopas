@@ -41,7 +41,7 @@ export default async function GoogleRegisterPage({
       </Link>
 
       <div className={styles.card}>
-        <p style={{ margin: 0, textAlign: 'center', color: 'var(--fg-muted)', fontSize: '14px' }}>{t.googleLede}</p>
+        <p style={{ margin: 0, color: 'var(--fg-muted)', fontSize: '14px' }}>{t.googleLede}</p>
 
         {error && <div className={styles.error}>{error}</div>}
 

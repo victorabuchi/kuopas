@@ -213,7 +213,7 @@
 
 .empty {
   padding: 30px 0;
-  text-align: center;
+  text-align: left;
   color: var(--fg-muted);
 }
 

@@ -27,8 +27,8 @@ export default async function StaffLoginPage({
     <div className={`${styles.page} ${mulish.variable}`}>
       <div className={styles.card}>
         <div className={styles.topRow}>
-          <Link href="/">
-            <Image src="/Kuopas-logo.png" alt="Kuopas" width={160} height={66} style={{ height: 44, width: 'auto' }} priority />
+          <Link href="/" style={{ display: 'flex', justifyContent: 'center', width: '100%' }}>
+            <Image src="/Kuopas-logo.png" alt="Kuopas" width={160} height={66} style={{ height: 60, width: 'auto' }} priority />
           </Link>
         </div>
 

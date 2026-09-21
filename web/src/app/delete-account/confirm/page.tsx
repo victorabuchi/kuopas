@@ -35,7 +35,7 @@ export default async function ConfirmDeletionPage({ searchParams }: { searchPara
         <button type="submit" className={styles.submit} style={{ background: '#b3261e' }}>
           {t.confirmButton}
         </button>
-        <Link href="/" style={{ textAlign: 'center', fontSize: 14 }}>
+        <Link href="/" style={{ fontSize: 14 }}>
           {t.cancel}
         </Link>
       </form>

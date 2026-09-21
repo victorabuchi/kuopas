@@ -38,7 +38,7 @@ export default async function RegisterPage({
       </Link>
 
       <div className={styles.card}>
-        <p style={{ margin: 0, textAlign: 'center', color: 'var(--fg-muted)', fontSize: '14px' }}>{t.lede}</p>
+        <p style={{ margin: 0, color: 'var(--fg-muted)', fontSize: '14px' }}>{t.lede}</p>
 
         {error && <div className={styles.error}>{error}</div>}
 

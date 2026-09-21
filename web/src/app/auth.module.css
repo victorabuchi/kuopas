@@ -30,7 +30,7 @@
   margin-bottom: 28px;
 }
 .logoImg {
-  height: 44px;
+  height: 60px;
   width: auto;
   margin-bottom: 14px;
 }
@@ -59,7 +59,7 @@
   border: 1px solid var(--border);
   border-radius: 6px;
   padding: 14px 20px;
-  text-align: center;
+  text-align: left;
 }
 
 .topRow {
@@ -85,7 +85,7 @@
 }
 
 .heading {
-  text-align: center;
+  text-align: left;
 }
 .heading h1 {
   margin: 0;
@@ -104,7 +104,7 @@
   border-radius: 10px;
   padding: 12px 14px;
   font-size: 14px;
-  text-align: center;
+  text-align: left;
 }
 
 .suomiFi {
@@ -267,7 +267,7 @@
 }
 
 .footerNote {
-  text-align: center;
+  text-align: left;
   font-size: 14px;
   color: var(--fg-muted);
 }
