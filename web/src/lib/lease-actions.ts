@@ -4,7 +4,8 @@ import { revalidatePath } from 'next/cache';
 import { db } from '../prisma/db';
 import { requireStaffAccess } from './portal-access';
 import { saveMediaUpload } from './uploads';
-import { LEASE_KINDS, buildCharges, parseDay, presetDates, type LeaseKind } from './lease';
+import { LEASE_KINDS, parseDay, presetDates, type LeaseKind } from './lease';
+import { createLeaseWithCharges } from './lease-create';
 
 function euroToCents(value: string): number {
   const cents = Math.round(Number(value.replace(',', '.')) * 100);
@@ -40,28 +41,16 @@ export async function createLeaseAction(formData: FormData) {
   const depositCents = euroToCents(String(formData.get('deposit') || '0'));
   const upfrontMonths = Math.max(0, Math.min(12, Number(formData.get('upfrontMonths')) || 0));
 
-  const lease = await db.orm.public.Lease.create({
+  await createLeaseWithCharges({
     tenantId,
     unitId: tenant.unitId,
     kind,
-    startDate: start.toISOString(),
-    endDate: end.toISOString(),
+    start,
+    end,
     monthlyRentCents,
     depositCents,
     upfrontMonths,
-    status: 'active',
   });
-
-  for (const charge of buildCharges(start, end, monthlyRentCents)) {
-    await db.orm.public.LeaseCharge.create({
-      leaseId: lease.id,
-      periodStart: charge.periodStart.toISOString(),
-      periodEnd: charge.periodEnd.toISOString(),
-      amountCents: charge.amountCents,
-      prorated: charge.prorated,
-      dueDate: charge.dueDate.toISOString(),
-    });
-  }
 
   revalidatePath('/staff/leases');
   revalidatePath('/lease');
