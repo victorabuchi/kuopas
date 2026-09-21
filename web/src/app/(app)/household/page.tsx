@@ -16,30 +16,41 @@ import {
 } from '../../../lib/household-actions';
 import TopBar from '../TopBar';
 import SplitForm from './SplitForm';
+import { AgreementTab, CleaningTab, TransferTab } from './FlatTabs';
 import ChoreWheel from './ChoreWheel';
 
 export const metadata: Metadata = {
   title: 'Household - Kuopas',
 };
 
-const TABS = ['bills', 'chores', 'chat'] as const;
-type Tab = (typeof TABS)[number];
+const ALL_TABS = ['bills', 'chores', 'cleaning', 'agreement', 'transfer', 'chat'] as const;
+type Tab = (typeof ALL_TABS)[number];
 
-export default async function HouseholdPage({ searchParams }: { searchParams: Promise<{ tab?: string }> }) {
+export default async function HouseholdPage({ searchParams }: { searchParams: Promise<{ tab?: string; error?: string; sent?: string }> }) {
   const session = await getSession();
   if (!session) redirect('/login');
 
   const q = await searchParams;
-  const tab: Tab = (TABS as readonly string[]).includes(q.tab ?? '') ? (q.tab as Tab) : 'bills';
-
   const locale = await getLocale();
-  const t = getLiving(locale).household;
+  const L = getLiving(locale);
+  const t = L.household;
 
   const me = await db.orm.public.Tenant.where({ id: session.tenantId }).first();
   if (!me) redirect('/login');
   const members = (await db.orm.public.Tenant.where({ unitId: me.unitId }).all()).sort((a, b) => a.name.localeCompare(b.name));
   const nameOf = new Map(members.map((m) => [m.id, m.id === me.id ? t.you : m.name]));
-  const tabLabels: Record<Tab, string> = { bills: t.tabBills, chores: t.tabChores, chat: t.tabChat };
+  // The agreement and cleaning list only make sense when people share a flat.
+  const shared = members.length >= 2;
+  const TABS = ALL_TABS.filter((key) => shared || (key !== 'cleaning' && key !== 'agreement'));
+  const tab: Tab = (TABS as readonly string[]).includes(q.tab ?? '') ? (q.tab as Tab) : 'bills';
+  const tabLabels: Record<Tab, string> = {
+    bills: t.tabBills,
+    chores: t.tabChores,
+    cleaning: L.flat.tabs.cleaning,
+    agreement: L.flat.tabs.agreement,
+    transfer: L.flat.tabs.transfer,
+    chat: t.tabChat,
+  };
 
   return (
     <div className={styles.page}>
@@ -54,6 +65,9 @@ export default async function HouseholdPage({ searchParams }: { searchParams: Pr
       <div className={styles.content}>
         {tab === 'bills' && <BillsTab unitId={me.unitId!} meId={me.id} members={members} nameOf={nameOf} t={t} locale={locale} />}
         {tab === 'chores' && <ChoresTab unitId={me.unitId!} members={members} nameOf={nameOf} t={t} locale={locale} />}
+        {tab === 'cleaning' && <CleaningTab unitId={me.unitId!} meId={me.id} members={members} f={L.flat.cleaning} />}
+        {tab === 'agreement' && <AgreementTab unitId={me.unitId!} meId={me.id} members={members} f={L.flat.agreement} error={q.error} />}
+        {tab === 'transfer' && <TransferTab unitId={me.unitId!} meId={me.id} f={L.flat.transfer} sent={q.sent === '1'} error={q.error} />}
         {tab === 'chat' && <ChatTab unitId={me.unitId!} members={members} t={t} />}
       </div>
     </div>
