@@ -1,3 +1,4 @@
+import { blockedByMe } from '../../../../../lib/blocks';
 import { db } from '../../../../../prisma/db';
 import { getMobileSession } from '../../../../../lib/mobile-auth';
 import { serializeTenant } from '../../../../../lib/mobile-serializers';
@@ -25,6 +26,8 @@ export async function GET(request: Request, { params }: { params: Promise<{ comm
         .all()
     : [];
 
+  const blocked = await blockedByMe(session.tenantId);
+
   return Response.json({
     community: {
       id: community.id,
@@ -33,9 +36,10 @@ export async function GET(request: Request, { params }: { params: Promise<{ comm
       memberCount: community.members.length,
       isMember,
     },
-    messages: messages.map((m) => ({
+    messages: messages.filter((m) => !blocked.has(m.senderId)).map((m) => ({
       id: m.id,
-      content: m.content,
+      content: m.removedAt ? '' : m.content,
+      removed: Boolean(m.removedAt),
       sentAt: m.sentAt,
       isOwn: m.senderId === session.tenantId,
       sender: serializeTenant(m.sender!),

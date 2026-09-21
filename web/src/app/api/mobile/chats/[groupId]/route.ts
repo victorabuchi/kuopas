@@ -1,3 +1,4 @@
+import { blockedByMe } from '../../../../../lib/blocks';
 import { db } from '../../../../../prisma/db';
 import { getMobileSession } from '../../../../../lib/mobile-auth';
 import { serializeChatGroup, serializeMessage } from '../../../../../lib/mobile-serializers';
@@ -24,10 +25,12 @@ export async function GET(request: Request, { params }: { params: Promise<{ grou
     .limit(200)
     .all();
 
+  const blocked = await blockedByMe(session.tenantId);
+
   return Response.json({
     group: { ...serializeChatGroup(group), memberCount: group.members.length },
     // Removed messages keep their row (like the web page) but never send their text.
-    messages: messages.map((m) => ({
+    messages: messages.filter((m) => !blocked.has(m.sender!.id)).map((m) => ({
       ...serializeMessage({ ...m, content: m.removedAt ? '' : m.content, sender: m.sender! }),
       removed: Boolean(m.removedAt),
       reported: m.reports.some((r) => r.reporterId === session.tenantId),

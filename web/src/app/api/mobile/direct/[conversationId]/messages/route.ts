@@ -1,3 +1,4 @@
+import { blockedEitherWay } from '../../../../../../lib/blocks';
 import { db } from '../../../../../../prisma/db';
 import { getMobileSession } from '../../../../../../lib/mobile-auth';
 
@@ -16,6 +17,9 @@ export async function POST(request: Request, { params }: { params: Promise<{ con
   if (conversation.memberAId !== session.tenantId && conversation.memberBId !== session.tenantId) {
     return new Response('Not a participant in this conversation', { status: 403 });
   }
+
+  const otherId = conversation.memberAId === session.tenantId ? conversation.memberBId : conversation.memberAId;
+  if (await blockedEitherWay(session.tenantId, otherId)) return new Response('You cannot message this person', { status: 403 });
 
   const message = await db.orm.public.DirectMessage.create({ conversationId, senderId: session.tenantId, content });
 

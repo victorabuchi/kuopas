@@ -12,9 +12,19 @@ import {
   leaveCommunityAction,
   sendCommunityMessageAction,
 } from '../../../../lib/community-actions';
+import { blockUserAction, reportContentAction } from '../../../../lib/safety-actions';
+import { blockedByMe } from '../../../../lib/blocks';
+import { getLiving } from '../../../../lib/living';
 
-export default async function CommunityPage({ params }: { params: Promise<{ communityId: string }> }) {
+export default async function CommunityPage({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ communityId: string }>;
+  searchParams: Promise<{ reported?: string }>;
+}) {
   const { communityId } = await params;
+  const { reported } = await searchParams;
 
   const session = await getSession();
   if (!session) redirect('/login');
@@ -29,14 +39,17 @@ export default async function CommunityPage({ params }: { params: Promise<{ comm
   const t = dict.communities;
 
   const isMember = community.members.some((m) => m.tenantId === session.tenantId);
+  const s = getLiving(locale).safety;
+  const blocked = await blockedByMe(session.tenantId);
 
-  const messages = isMember
+  const allMessages = isMember
     ? await db.orm.public.CommunityMessage.where({ communityId })
         .include('sender', (s) => s)
         .orderBy((m) => m.sentAt.asc())
         .limit(200)
         .all()
     : [];
+  const messages = allMessages.filter((m) => !blocked.has(m.senderId));
 
   return (
     <div className={chatStyles.page}>
@@ -77,6 +90,7 @@ export default async function CommunityPage({ params }: { params: Promise<{ comm
       ) : (
         <>
           <div className={chatStyles.messages}>
+            {reported === '1' && <p className={chatStyles.empty}>{s.reportedNote}</p>}
             {community.description && <p className={chatStyles.empty}>{community.description}</p>}
             {messages.length === 0 && <p className={chatStyles.empty}>{t.noMessages}</p>}
             {messages.map((message) => {
@@ -87,11 +101,32 @@ export default async function CommunityPage({ params }: { params: Promise<{ comm
                     <span className={chatStyles.senderName}>{displayNameFor(message.sender!, 'building')}</span>
                   )}
                   <div className={`${chatStyles.bubble} ${isOwn ? chatStyles.bubbleOut : chatStyles.bubbleIn}`}>
-                    <span>{message.content}</span>
+                    {message.removedAt ? <em>{s.removed}</em> : <span>{message.content}</span>}
                     <span className={chatStyles.time}>
                       {new Date(message.sentAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                     </span>
                   </div>
+                  {!isOwn && (
+                    <div style={{ display: 'flex', gap: 8 }}>
+                      <form action={blockUserAction}>
+                        <input type="hidden" name="blockedId" value={message.senderId} />
+                        <input type="hidden" name="returnTo" value={`/communities/${community.id}`} />
+                        <button type="submit" className={chatStyles.reportBtn}>
+                          {s.block}
+                        </button>
+                      </form>
+                      {!message.removedAt && (
+                        <form action={reportContentAction}>
+                          <input type="hidden" name="kind" value="community" />
+                          <input type="hidden" name="messageId" value={message.id} />
+                          <input type="hidden" name="returnTo" value={`/communities/${community.id}`} />
+                          <button type="submit" className={chatStyles.reportBtn}>
+                            {s.report}
+                          </button>
+                        </form>
+                      )}
+                    </div>
+                  )}
                 </div>
               );
             })}

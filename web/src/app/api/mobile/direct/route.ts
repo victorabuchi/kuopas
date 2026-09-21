@@ -1,3 +1,4 @@
+import { blockedByMe, blockedEitherWay } from '../../../../lib/blocks';
 import { db } from '../../../../prisma/db';
 import { getMobileSession } from '../../../../lib/mobile-auth';
 import { getOrCreateConversation, otherMemberId } from '../../../../lib/direct-messages';
@@ -35,16 +36,17 @@ export async function GET(request: Request) {
     return bt - at;
   });
 
+  const blockedIds = await blockedByMe(tenantId);
   const allTenants = await db.orm.public.Tenant.include('unit', (unit) => unit.include('stairwell', (s) => s)).all();
   const alreadyMessaging = new Set(otherIds);
   const contacts = allTenants.filter(
-    (t) => t.id !== tenantId && t.unit!.stairwell!.buildingId === building.id && !alreadyMessaging.has(t.id),
+    (t) => t.id !== tenantId && t.unit?.stairwell?.buildingId === building.id && !alreadyMessaging.has(t.id) && !blockedIds.has(t.id),
   );
 
   return Response.json({
     buildingName: building.name,
     conversations: rows.flatMap(({ conversation, other, lastMessage }) =>
-      other
+      other && !blockedIds.has(other.id)
         ? [
             {
               id: conversation.id,
@@ -67,6 +69,7 @@ export async function POST(request: Request) {
   const otherTenantId = String(body?.otherTenantId ?? '');
   if (!otherTenantId || otherTenantId === session.tenantId) return new Response('Invalid recipient', { status: 400 });
 
+  if (await blockedEitherWay(session.tenantId, otherTenantId)) return new Response('You cannot message this person', { status: 403 });
   const conversation = await getOrCreateConversation(session.tenantId, otherTenantId);
   return Response.json({ id: conversation.id });
 }

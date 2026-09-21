@@ -1,3 +1,4 @@
+import { blockedByMe, blockedEitherWay } from '../../../../../lib/blocks';
 import { db } from '../../../../../prisma/db';
 import { getMobileSession } from '../../../../../lib/mobile-auth';
 import { otherMemberId } from '../../../../../lib/direct-messages';
@@ -23,11 +24,16 @@ export async function GET(request: Request, { params }: { params: Promise<{ conv
     .limit(200)
     .all();
 
+  const iBlocked = (await blockedByMe(session.tenantId)).has(other.id);
+  const blockedAny = await blockedEitherWay(session.tenantId, other.id);
+
   return Response.json({
     other: { id: other.id, name: other.name },
-    messages: messages.map((m) => ({
+    blocked: { byMe: iBlocked, either: blockedAny },
+    messages: (iBlocked ? [] : messages).map((m) => ({
       id: m.id,
-      content: m.content,
+      content: m.removedAt ? '' : m.content,
+      removed: Boolean(m.removedAt),
       sentAt: m.sentAt,
       isOwn: m.senderId === session.tenantId,
     })),

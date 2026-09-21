@@ -108,6 +108,10 @@
       "model": "ComplaintMessage",
       "namespace": "public"
     },
+    "content_report": {
+      "model": "ContentReport",
+      "namespace": "public"
+    },
     "direct_conversation": {
       "model": "DirectConversation",
       "namespace": "public"
@@ -282,6 +286,10 @@
     },
     "unit_media": {
       "model": "UnitMedia",
+      "namespace": "public"
+    },
+    "user_block": {
+      "model": "UserBlock",
       "namespace": "public"
     },
     "verified_domain": {
@@ -3066,6 +3074,13 @@
                   "kind": "scalar"
                 }
               },
+              "removedAt": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              },
               "senderId": {
                 "nullable": false,
                 "type": {
@@ -3125,6 +3140,9 @@
                 },
                 "id": {
                   "column": "id"
+                },
+                "removedAt": {
+                  "column": "removedAt"
                 },
                 "senderId": {
                   "column": "senderId"
@@ -3438,6 +3456,124 @@
               "table": "complaint_message"
             }
           },
+          "ContentReport": {
+            "fields": {
+              "createdAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              },
+              "id": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/uuid@1",
+                  "kind": "scalar"
+                }
+              },
+              "kind": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "reason": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "reportedUserId": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/uuid@1",
+                  "kind": "scalar"
+                }
+              },
+              "reporterId": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/uuid@1",
+                  "kind": "scalar"
+                }
+              },
+              "snapshot": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "status": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "targetId": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/uuid@1",
+                  "kind": "scalar"
+                }
+              }
+            },
+            "relations": {
+              "reporter": {
+                "cardinality": "N:1",
+                "nullable": false,
+                "on": {
+                  "localFields": [
+                    "reporterId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "Tenant",
+                  "namespace": "public"
+                }
+              }
+            },
+            "storage": {
+              "fields": {
+                "createdAt": {
+                  "column": "createdAt"
+                },
+                "id": {
+                  "column": "id"
+                },
+                "kind": {
+                  "column": "kind"
+                },
+                "reason": {
+                  "column": "reason"
+                },
+                "reportedUserId": {
+                  "column": "reportedUserId"
+                },
+                "reporterId": {
+                  "column": "reporterId"
+                },
+                "snapshot": {
+                  "column": "snapshot"
+                },
+                "status": {
+                  "column": "status"
+                },
+                "targetId": {
+                  "column": "targetId"
+                }
+              },
+              "namespaceId": "public",
+              "table": "content_report"
+            }
+          },
           "DirectConversation": {
             "fields": {
               "id": {
@@ -3550,6 +3686,13 @@
                   "kind": "scalar"
                 }
               },
+              "removedAt": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              },
               "senderId": {
                 "nullable": false,
                 "type": {
@@ -3609,6 +3752,9 @@
                 },
                 "id": {
                   "column": "id"
+                },
+                "removedAt": {
+                  "column": "removedAt"
                 },
                 "senderId": {
                   "column": "senderId"
@@ -8209,6 +8355,36 @@
                   "namespace": "public"
                 }
               },
+              "blocksMade": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "blockerId"
+                  ]
+                },
+                "to": {
+                  "model": "UserBlock",
+                  "namespace": "public"
+                }
+              },
+              "blocksReceived": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "blockedId"
+                  ]
+                },
+                "to": {
+                  "model": "UserBlock",
+                  "namespace": "public"
+                }
+              },
               "bookingParticipations": {
                 "cardinality": "1:N",
                 "on": {
@@ -8356,6 +8532,21 @@
                 },
                 "to": {
                   "model": "Complaint",
+                  "namespace": "public"
+                }
+              },
+              "contentReports": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "reporterId"
+                  ]
+                },
+                "to": {
+                  "model": "ContentReport",
                   "namespace": "public"
                 }
               },
@@ -9582,6 +9773,90 @@
               },
               "namespaceId": "public",
               "table": "unit_media"
+            }
+          },
+          "UserBlock": {
+            "fields": {
+              "blockedId": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/uuid@1",
+                  "kind": "scalar"
+                }
+              },
+              "blockerId": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/uuid@1",
+                  "kind": "scalar"
+                }
+              },
+              "createdAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              },
+              "id": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/uuid@1",
+                  "kind": "scalar"
+                }
+              }
+            },
+            "relations": {
+              "blocked": {
+                "cardinality": "N:1",
+                "nullable": false,
+                "on": {
+                  "localFields": [
+                    "blockedId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "Tenant",
+                  "namespace": "public"
+                }
+              },
+              "blocker": {
+                "cardinality": "N:1",
+                "nullable": false,
+                "on": {
+                  "localFields": [
+                    "blockerId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "Tenant",
+                  "namespace": "public"
+                }
+              }
+            },
+            "storage": {
+              "fields": {
+                "blockedId": {
+                  "column": "blockedId"
+                },
+                "blockerId": {
+                  "column": "blockerId"
+                },
+                "createdAt": {
+                  "column": "createdAt"
+                },
+                "id": {
+                  "column": "id"
+                }
+              },
+              "namespaceId": "public",
+              "table": "user_block"
             }
           },
           "VerifiedDomain": {
@@ -12080,6 +12355,11 @@
                   "nativeType": "uuid",
                   "nullable": false
                 },
+                "removedAt": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "nativeType": "timestamptz",
+                  "nullable": true
+                },
                 "senderId": {
                   "codecId": "pg/uuid@1",
                   "nativeType": "uuid",
@@ -12442,6 +12722,106 @@
               },
               "uniques": []
             },
+            "content_report": {
+              "columns": {
+                "createdAt": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "default": {
+                    "expression": "now()",
+                    "kind": "function"
+                  },
+                  "nativeType": "timestamptz",
+                  "nullable": false
+                },
+                "id": {
+                  "codecId": "pg/uuid@1",
+                  "nativeType": "uuid",
+                  "nullable": false
+                },
+                "kind": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "reason": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true
+                },
+                "reportedUserId": {
+                  "codecId": "pg/uuid@1",
+                  "nativeType": "uuid",
+                  "nullable": true
+                },
+                "reporterId": {
+                  "codecId": "pg/uuid@1",
+                  "nativeType": "uuid",
+                  "nullable": false
+                },
+                "snapshot": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "status": {
+                  "codecId": "pg/text@1",
+                  "default": {
+                    "kind": "literal",
+                    "value": "open"
+                  },
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "targetId": {
+                  "codecId": "pg/uuid@1",
+                  "nativeType": "uuid",
+                  "nullable": false
+                }
+              },
+              "foreignKeys": [
+                {
+                  "onDelete": "cascade",
+                  "source": {
+                    "columns": [
+                      "reporterId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "content_report"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "tenant"
+                  }
+                }
+              ],
+              "indexes": [
+                {
+                  "columns": [
+                    "reporterId"
+                  ],
+                  "name": "content_report_reporterId_idx_aa245831",
+                  "prefix": "content_report_reporterId_idx",
+                  "unique": false
+                },
+                {
+                  "columns": [
+                    "status"
+                  ],
+                  "name": "content_report_status_idx_e98638ab",
+                  "prefix": "content_report_status_idx",
+                  "unique": false
+                }
+              ],
+              "primaryKey": {
+                "columns": [
+                  "id"
+                ]
+              },
+              "uniques": []
+            },
             "direct_conversation": {
               "columns": {
                 "id": {
@@ -12544,6 +12924,11 @@
                   "codecId": "pg/uuid@1",
                   "nativeType": "uuid",
                   "nullable": false
+                },
+                "removedAt": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "nativeType": "timestamptz",
+                  "nullable": true
                 },
                 "senderId": {
                   "codecId": "pg/uuid@1",
@@ -16747,6 +17132,101 @@
               },
               "uniques": []
             },
+            "user_block": {
+              "columns": {
+                "blockedId": {
+                  "codecId": "pg/uuid@1",
+                  "nativeType": "uuid",
+                  "nullable": false
+                },
+                "blockerId": {
+                  "codecId": "pg/uuid@1",
+                  "nativeType": "uuid",
+                  "nullable": false
+                },
+                "createdAt": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "default": {
+                    "expression": "now()",
+                    "kind": "function"
+                  },
+                  "nativeType": "timestamptz",
+                  "nullable": false
+                },
+                "id": {
+                  "codecId": "pg/uuid@1",
+                  "nativeType": "uuid",
+                  "nullable": false
+                }
+              },
+              "foreignKeys": [
+                {
+                  "onDelete": "cascade",
+                  "source": {
+                    "columns": [
+                      "blockerId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "user_block"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "tenant"
+                  }
+                },
+                {
+                  "onDelete": "cascade",
+                  "source": {
+                    "columns": [
+                      "blockedId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "user_block"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "tenant"
+                  }
+                }
+              ],
+              "indexes": [
+                {
+                  "columns": [
+                    "blockedId"
+                  ],
+                  "name": "user_block_blockedId_idx_e3047657",
+                  "prefix": "user_block_blockedId_idx",
+                  "unique": false
+                },
+                {
+                  "columns": [
+                    "blockerId"
+                  ],
+                  "name": "user_block_blockerId_idx_a25bd35c",
+                  "prefix": "user_block_blockerId_idx",
+                  "unique": false
+                }
+              ],
+              "primaryKey": {
+                "columns": [
+                  "id"
+                ]
+              },
+              "uniques": [
+                {
+                  "columns": [
+                    "blockerId",
+                    "blockedId"
+                  ]
+                }
+              ]
+            },
             "verified_domain": {
               "columns": {
                 "domain": {
@@ -17047,10 +17527,10 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "e37ffa2aa4cee6404522e8bbbf757db30198a2e44d6e27e38022aa9252a93363"
+    "storageHash": "0823d9bb702aff1fc1342e189b31b00057368ce2c200df80183f3317ce972a19"
   },
   "execution": {
-    "executionHash": "5ef479f8ab5cb9f5b8fd568c6616a235d06872a0473267de4111fa000edb982a",
+    "executionHash": "8b387efc40847a40423eb7fe8485ba0475def4fa7e9ec19f858c831fa3bf673b",
     "mutations": {
       "defaults": [
         {
@@ -17326,6 +17806,17 @@
             "column": "id",
             "namespace": "public",
             "table": "complaint_message"
+          }
+        },
+        {
+          "onCreate": {
+            "id": "uuidv4",
+            "kind": "generator"
+          },
+          "ref": {
+            "column": "id",
+            "namespace": "public",
+            "table": "content_report"
           }
         },
         {
@@ -17810,6 +18301,17 @@
             "column": "id",
             "namespace": "public",
             "table": "unit_media"
+          }
+        },
+        {
+          "onCreate": {
+            "id": "uuidv4",
+            "kind": "generator"
+          },
+          "ref": {
+            "column": "id",
+            "namespace": "public",
+            "table": "user_block"
           }
         },
         {

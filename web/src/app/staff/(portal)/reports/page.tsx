@@ -11,6 +11,7 @@ import {
 } from '../../../../lib/building-post-actions';
 import { resolveChatReportAction } from '../../../../lib/household-actions';
 import { getLiving } from '../../../../lib/living';
+import { resolveContentReportAction } from '../../../../lib/safety-actions';
 
 export const metadata: Metadata = {
   title: 'Reports - Kuopas staff',
@@ -36,6 +37,15 @@ export default async function StaffReportsPage() {
     .limit(100)
     .all();
   const c = getLiving(locale).staff.chatReports;
+  const sf = getLiving(locale).safety;
+  const contentReports = await db.orm.public.ContentReport.where({ status: 'open' })
+    .include('reporter', (r) => r)
+    .orderBy((r) => r.createdAt.desc())
+    .limit(100)
+    .all();
+  const senderIds = [...new Set(contentReports.map((r) => r.reportedUserId).filter((x): x is string => Boolean(x)))];
+  const senders = senderIds.length ? await db.orm.public.Tenant.where((tn) => tn.id.in(senderIds)).all() : [];
+  const senderName = new Map(senders.map((tn) => [tn.id, `${tn.name} (${tn.email})`]));
 
   return (
     <>
@@ -137,6 +147,32 @@ export default async function StaffReportsPage() {
               </button>
               <button type="submit" name="decision" value="dismiss" className={styles.inlineSubmit}>
                 {c.dismiss}
+              </button>
+            </form>
+          </div>
+        ))}
+      </div>
+    
+      <h2 style={{ marginTop: 32 }}>{sf.staffHeading}</h2>
+      <div className={styles.list}>
+        {contentReports.length === 0 && <div className={styles.empty}>{sf.staffEmpty}</div>}
+        {contentReports.map((report) => (
+          <div key={report.id} className={styles.card}>
+            <div className={styles.rowText}>
+              <span className={styles.rowCategory}>{sf.kinds[report.kind as keyof typeof sf.kinds] ?? report.kind}</span>
+              <span className={styles.rowMeta}>
+                {sf.sender}: {report.reportedUserId ? senderName.get(report.reportedUserId) ?? '' : ''} &middot; {sf.reportedBy}: {report.reporter?.name}
+              </span>
+              <p style={{ margin: '8px 0 0' }}>{report.snapshot}</p>
+              {report.reason && <span className={styles.rowMeta}>{report.reason}</span>}
+            </div>
+            <form action={resolveContentReportAction} className={styles.inlineForm} style={{ marginTop: 10 }}>
+              <input type="hidden" name="id" value={report.id} />
+              <button type="submit" name="decision" value="remove" className={styles.inlineSubmit} style={{ background: '#b3261e' }}>
+                {sf.remove}
+              </button>
+              <button type="submit" name="decision" value="dismiss" className={styles.inlineSubmit}>
+                {sf.dismiss}
               </button>
             </form>
           </div>

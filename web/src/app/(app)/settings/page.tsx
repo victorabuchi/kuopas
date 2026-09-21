@@ -9,6 +9,7 @@ import { getLocale } from '../../../lib/i18n';
 import { getDictionary } from '../../../lib/dictionary';
 import { logoutAction } from '../../../lib/auth-actions';
 import { getLiving } from '../../../lib/living';
+import { unblockUserAction } from '../../../lib/safety-actions';
 
 export const metadata: Metadata = {
   title: 'Settings - Kuopas',
@@ -30,6 +31,8 @@ export default async function SettingsPage({ searchParams }: { searchParams: Pro
   const locale = await getLocale();
   const dict = getDictionary(locale);
 
+  const blocks = await db.orm.public.UserBlock.where({ blockerId: tenant.id }).include('blocked', (b) => b).all();
+  const safetyText = getLiving(locale).safety;
   const { category: rawCategory } = await searchParams;
   const category = rawCategory === 'language' ? 'language' : 'general';
 
@@ -68,6 +71,23 @@ export default async function SettingsPage({ searchParams }: { searchParams: Pro
               </div>
             </div>
           ) : null}
+          {category === 'general' && (
+            <div className={styles.card}>
+              <h2>{safetyText.blockedUsers}</h2>
+              <p style={{ margin: '0 0 8px', fontSize: 13.5, color: '#767676' }}>{safetyText.blockedLede}</p>
+              {blocks.length === 0 && <p style={{ margin: 0, fontSize: 14 }}>{safetyText.noBlocked}</p>}
+              {blocks.map((b) => (
+                <form key={b.id} action={unblockUserAction} className={styles.row}>
+                  <span className={styles.rowLabel}>{b.blocked?.name}</span>
+                  <input type="hidden" name="blockedId" value={b.blockedId} />
+                  <input type="hidden" name="returnTo" value="/settings" />
+                  <button type="submit" className={styles.signOut}>
+                    {safetyText.unblock}
+                  </button>
+                </form>
+              ))}
+            </div>
+          )}
           {category === 'general' && (
             <div className={styles.card}>
               <form action={logoutAction}>

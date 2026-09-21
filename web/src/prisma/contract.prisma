@@ -275,6 +275,9 @@ model Tenant {
   transferRequests        TransferRequest[]
   leaseSignatures         LeaseSignature[]
   bankConnections         BankConnection[]
+  blocksMade              UserBlock[]          @relation("blocks_made")
+  blocksReceived          UserBlock[]          @relation("blocks_received")
+  contentReports          ContentReport[]
 
   @@map("tenant")
 }
@@ -360,6 +363,7 @@ model DirectMessage {
   senderId       Uuid
   content        String
   sentAt         TimestamptzString  @default(now())
+  removedAt      TimestamptzString?
 
   @@index([conversationId])
   @@map("direct_message")
@@ -575,6 +579,7 @@ model CommunityMessage {
   communityId Uuid
   sender      Tenant            @relation(fields: [senderId], references: [id], onDelete: Cascade)
   senderId    Uuid
+  removedAt   TimestamptzString?
 
   @@index([communityId])
   @@map("community_message")
@@ -1226,4 +1231,33 @@ model AppSetting {
   value String
 
   @@map("app_setting")
+}
+
+model UserBlock {
+  id        Uuid              @id @default(uuid())
+  blocker   Tenant            @relation("blocks_made", fields: [blockerId], references: [id], onDelete: Cascade)
+  blockerId Uuid
+  blocked   Tenant            @relation("blocks_received", fields: [blockedId], references: [id], onDelete: Cascade)
+  blockedId Uuid
+  createdAt TimestamptzString @default(now())
+
+  @@unique([blockerId, blockedId])
+  @@index([blockedId])
+  @@map("user_block")
+}
+
+model ContentReport {
+  id             Uuid              @id @default(uuid())
+  kind           String
+  targetId       Uuid
+  reportedUserId Uuid?
+  reporter       Tenant            @relation(fields: [reporterId], references: [id], onDelete: Cascade)
+  reporterId     Uuid
+  snapshot       String
+  reason         String?
+  status         String            @default("open")
+  createdAt      TimestamptzString @default(now())
+
+  @@index([status])
+  @@map("content_report")
 }

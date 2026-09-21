@@ -1,0 +1,488 @@
+[
+  {
+    "id": "table.content_report",
+    "label": "Create table \"content_report\"",
+    "summary": "Creates table \"content_report\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "content_report"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"content_report\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"content_report\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"content_report\"",
+        "sql": "CREATE TABLE \"public\".\"content_report\" (\n  \"createdAt\" timestamptz DEFAULT (now()) NOT NULL,\n  \"id\" uuid NOT NULL,\n  \"kind\" text NOT NULL,\n  \"reason\" text,\n  \"reportedUserId\" uuid,\n  \"reporterId\" uuid NOT NULL,\n  \"snapshot\" text NOT NULL,\n  \"status\" text DEFAULT 'open' NOT NULL,\n  \"targetId\" uuid NOT NULL,\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"content_report\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"content_report\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "table.user_block",
+    "label": "Create table \"user_block\"",
+    "summary": "Creates table \"user_block\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "user_block"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"user_block\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"user_block\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"user_block\"",
+        "sql": "CREATE TABLE \"public\".\"user_block\" (\n  \"blockedId\" uuid NOT NULL,\n  \"blockerId\" uuid NOT NULL,\n  \"createdAt\" timestamptz DEFAULT (now()) NOT NULL,\n  \"id\" uuid NOT NULL,\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"user_block\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"user_block\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "column.public.community_message.removedAt",
+    "label": "Add column \"removedAt\" to \"community_message\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "removedAt",
+        "table": "community_message"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"removedAt\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "community_message",
+          "removedAt"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"removedAt\"",
+        "sql": "ALTER TABLE \"public\".\"community_message\" ADD COLUMN \"removedAt\" timestamptz"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"removedAt\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "community_message",
+          "removedAt"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "column.public.direct_message.removedAt",
+    "label": "Add column \"removedAt\" to \"direct_message\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "removedAt",
+        "table": "direct_message"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"removedAt\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "direct_message",
+          "removedAt"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"removedAt\"",
+        "sql": "ALTER TABLE \"public\".\"direct_message\" ADD COLUMN \"removedAt\" timestamptz"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"removedAt\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "direct_message",
+          "removedAt"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "unique.user_block.user_block_blockerId_blockedId_key",
+    "label": "Add unique constraint on \"user_block\" (blockerId, blockedId)",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "unique",
+        "name": "user_block_blockerId_blockedId_key",
+        "table": "user_block"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"user_block_blockerId_blockedId_key\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "user_block_blockerId_blockedId_key",
+          "public",
+          "\"public\".\"user_block\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add unique constraint \"user_block_blockerId_blockedId_key\"",
+        "sql": "ALTER TABLE \"public\".\"user_block\" ADD CONSTRAINT \"user_block_blockerId_blockedId_key\" UNIQUE (\"blockerId\", \"blockedId\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"user_block_blockerId_blockedId_key\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "user_block_blockerId_blockedId_key",
+          "public",
+          "\"public\".\"user_block\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.content_report.content_report_reporterId_idx_aa245831",
+    "label": "Create index \"content_report_reporterId_idx_aa245831\" on \"content_report\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "content_report_reporterId_idx_aa245831",
+        "table": "content_report"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"content_report_reporterId_idx_aa245831\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"content_report_reporterId_idx_aa245831\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"content_report_reporterId_idx_aa245831\"",
+        "sql": "CREATE INDEX \"content_report_reporterId_idx_aa245831\" ON \"public\".\"content_report\" (\"reporterId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"content_report_reporterId_idx_aa245831\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"content_report_reporterId_idx_aa245831\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.content_report.content_report_status_idx_e98638ab",
+    "label": "Create index \"content_report_status_idx_e98638ab\" on \"content_report\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "content_report_status_idx_e98638ab",
+        "table": "content_report"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"content_report_status_idx_e98638ab\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"content_report_status_idx_e98638ab\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"content_report_status_idx_e98638ab\"",
+        "sql": "CREATE INDEX \"content_report_status_idx_e98638ab\" ON \"public\".\"content_report\" (\"status\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"content_report_status_idx_e98638ab\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"content_report_status_idx_e98638ab\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.user_block.user_block_blockedId_idx_e3047657",
+    "label": "Create index \"user_block_blockedId_idx_e3047657\" on \"user_block\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "user_block_blockedId_idx_e3047657",
+        "table": "user_block"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"user_block_blockedId_idx_e3047657\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"user_block_blockedId_idx_e3047657\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"user_block_blockedId_idx_e3047657\"",
+        "sql": "CREATE INDEX \"user_block_blockedId_idx_e3047657\" ON \"public\".\"user_block\" (\"blockedId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"user_block_blockedId_idx_e3047657\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"user_block_blockedId_idx_e3047657\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.user_block.user_block_blockerId_idx_a25bd35c",
+    "label": "Create index \"user_block_blockerId_idx_a25bd35c\" on \"user_block\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "user_block_blockerId_idx_a25bd35c",
+        "table": "user_block"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"user_block_blockerId_idx_a25bd35c\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"user_block_blockerId_idx_a25bd35c\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"user_block_blockerId_idx_a25bd35c\"",
+        "sql": "CREATE INDEX \"user_block_blockerId_idx_a25bd35c\" ON \"public\".\"user_block\" (\"blockerId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"user_block_blockerId_idx_a25bd35c\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"user_block_blockerId_idx_a25bd35c\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.content_report.content_report_reporterId_fkey",
+    "label": "Add foreign key \"content_report_reporterId_fkey\" on \"content_report\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "content_report_reporterId_fkey",
+        "table": "content_report"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"content_report_reporterId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "content_report_reporterId_fkey",
+          "public",
+          "\"public\".\"content_report\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"content_report_reporterId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"content_report\"\nADD CONSTRAINT \"content_report_reporterId_fkey\"\nFOREIGN KEY (\"reporterId\")\nREFERENCES \"public\".\"tenant\" (\"id\")\nON DELETE CASCADE"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"content_report_reporterId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "content_report_reporterId_fkey",
+          "public",
+          "\"public\".\"content_report\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.user_block.user_block_blockerId_fkey",
+    "label": "Add foreign key \"user_block_blockerId_fkey\" on \"user_block\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "user_block_blockerId_fkey",
+        "table": "user_block"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"user_block_blockerId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "user_block_blockerId_fkey",
+          "public",
+          "\"public\".\"user_block\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"user_block_blockerId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"user_block\"\nADD CONSTRAINT \"user_block_blockerId_fkey\"\nFOREIGN KEY (\"blockerId\")\nREFERENCES \"public\".\"tenant\" (\"id\")\nON DELETE CASCADE"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"user_block_blockerId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "user_block_blockerId_fkey",
+          "public",
+          "\"public\".\"user_block\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.user_block.user_block_blockedId_fkey",
+    "label": "Add foreign key \"user_block_blockedId_fkey\" on \"user_block\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "user_block_blockedId_fkey",
+        "table": "user_block"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"user_block_blockedId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "user_block_blockedId_fkey",
+          "public",
+          "\"public\".\"user_block\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"user_block_blockedId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"user_block\"\nADD CONSTRAINT \"user_block_blockedId_fkey\"\nFOREIGN KEY (\"blockedId\")\nREFERENCES \"public\".\"tenant\" (\"id\")\nON DELETE CASCADE"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"user_block_blockedId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "user_block_blockedId_fkey",
+          "public",
+          "\"public\".\"user_block\""
+        ]
+      }
+    ]
+  }
+]

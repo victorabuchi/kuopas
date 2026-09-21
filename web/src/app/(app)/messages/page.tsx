@@ -23,6 +23,8 @@ import {
   reportPostAction,
 } from '../../../lib/building-post-actions';
 import MarkPostsRead from '../feed/MarkPostsRead';
+import { blockUserAction } from '../../../lib/safety-actions';
+import { blockedByMe } from '../../../lib/blocks';
 
 export const metadata: Metadata = {
   title: 'Messages - Kuopas',
@@ -197,7 +199,9 @@ async function FeedTab({
   if (!stairwell) redirect('/login');
 
   const postType = tab === 'announcements' ? 'announcement' : 'noticeboard';
-  const posts = await db.orm.public.BuildingPost.where({ buildingId: stairwell.buildingId, type: postType })
+  const blocked = await blockedByMe(tenantId);
+  const blockLabel = getLiving(locale).safety.block;
+  const allPosts = await db.orm.public.BuildingPost.where({ buildingId: stairwell.buildingId, type: postType })
     .include('authorTenant', (a) => a)
     .include('authorStaff', (a) => a)
     .include('comments', (c) => c.include('author', (a) => a).orderBy((cm) => cm.createdAt.asc()))
@@ -205,6 +209,10 @@ async function FeedTab({
     .orderBy((p) => p.createdAt.desc())
     .limit(50)
     .all();
+  // Posts and comments from people you blocked are hidden.
+  const posts = allPosts
+    .filter((p) => !p.authorTenantId || !blocked.has(p.authorTenantId))
+    .map((p) => ({ ...p, comments: p.comments.filter((c) => !blocked.has(c.authorId)) }));
 
   const categoryLabel: Record<string, string> = {
     furniture: t.categoryFurniture,
@@ -279,6 +287,15 @@ async function FeedTab({
                   <span className={feedStyles.reactionsOnlyNote}>{t.reactionsOnly}</span>
                 )}
                 {post.authorTenant && post.authorTenant.id !== tenantId && (
+                  <form action={blockUserAction}>
+                    <input type="hidden" name="blockedId" value={post.authorTenant.id} />
+                    <input type="hidden" name="returnTo" value="/messages?tab=noticeboard" />
+                    <button type="submit" className={feedStyles.postAction}>
+                      {blockLabel}
+                    </button>
+                  </form>
+                )}
+                {post.authorTenant && post.authorTenant.id !== tenantId && (
                   <form action={reportPostAction}>
                     <input type="hidden" name="postId" value={post.id} />
                     <button type="submit" className={feedStyles.postAction}>
@@ -298,6 +315,15 @@ async function FeedTab({
                             {displayNameFor(comment.author!, 'building')}
                           </span>
                           {comment.content}
+                          {comment.authorId !== tenantId && (
+                            <form action={blockUserAction} style={{ display: 'inline' }}>
+                              <input type="hidden" name="blockedId" value={comment.authorId} />
+                              <input type="hidden" name="returnTo" value="/messages?tab=noticeboard" />
+                              <button type="submit" className={feedStyles.commentReport}>
+                                {blockLabel}
+                              </button>
+                            </form>
+                          )}
                           {comment.authorId !== tenantId && (
                             <form action={reportPostAction} style={{ display: 'inline' }}>
                               <input type="hidden" name="commentId" value={comment.id} />

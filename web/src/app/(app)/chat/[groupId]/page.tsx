@@ -9,6 +9,8 @@ import { getDictionary } from '../../../../lib/dictionary';
 import { displayNameFor } from '../../../../lib/names';
 import { getLiving } from '../../../../lib/living';
 import { reportChatMessageAction } from '../../../../lib/household-actions';
+import { blockUserAction } from '../../../../lib/safety-actions';
+import { blockedByMe } from '../../../../lib/blocks';
 
 export default async function ChatGroupPage({ params }: { params: Promise<{ groupId: string }> }) {
   const { groupId } = await params;
@@ -29,12 +31,16 @@ export default async function ChatGroupPage({ params }: { params: Promise<{ grou
   const dict = getDictionary(locale);
   const h = getLiving(locale).household;
 
-  const messages = await db.orm.public.Message.where({ chatGroupId: groupId })
+  const blocked = await blockedByMe(session.tenantId);
+  const s = getLiving(locale).safety;
+
+  const allMessages = await db.orm.public.Message.where({ chatGroupId: groupId })
     .include('sender', (s) => s)
     .include('reports', (r) => r)
     .orderBy((m) => m.sentAt.asc())
     .limit(200)
     .all();
+  const messages = allMessages.filter((m) => !blocked.has(m.sender!.id));
 
   return (
     <div className={styles.page}>
@@ -69,6 +75,15 @@ export default async function ChatGroupPage({ params }: { params: Promise<{ grou
                   {new Date(message.sentAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                 </span>
               </div>
+              {!isOwn && (
+                <form action={blockUserAction}>
+                  <input type="hidden" name="blockedId" value={message.sender!.id} />
+                  <input type="hidden" name="returnTo" value={`/chat/${groupId}`} />
+                  <button type="submit" className={styles.reportBtn}>
+                    {s.block}
+                  </button>
+                </form>
+              )}
               {!isOwn && !message.removedAt && (
                 <form action={reportChatMessageAction}>
                   <input type="hidden" name="messageId" value={message.id} />
