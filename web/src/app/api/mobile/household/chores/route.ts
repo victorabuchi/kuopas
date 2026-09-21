@@ -16,7 +16,7 @@ export async function POST(request: Request) {
   const everyDays = Math.max(1, Math.min(60, Number(body?.everyDays) || 7));
   if (!title) return new Response('A chore name is required', { status: 400 });
 
-  const chore = await db.orm.public.Chore.create({ unitId: tenant.unitId, title, everyDays });
+  const chore = await db.orm.public.Chore.create({ unitId: tenant.unitId!, title, everyDays });
   await db.orm.public.ChoreTask.create({
     choreId: chore.id,
     assignedToId: tenant.id,

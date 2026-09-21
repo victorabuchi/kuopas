@@ -33,7 +33,7 @@ export async function POST(request: Request) {
   const due = String(body?.dueDate ?? '').trim();
 
   const bill = await db.orm.public.SharedBill.create({
-    unitId: tenant.unitId,
+    unitId: tenant.unitId!,
     title,
     category,
     totalCents,

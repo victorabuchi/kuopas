@@ -33,7 +33,7 @@ export async function POST(request: Request) {
   const listing = await db.orm.public.Listing.create({
     kind,
     sellerId: tenant.id,
-    unitId: tenant.unitId,
+    unitId: tenant.unitId!,
     title,
     description,
     priceCents: kind === 'sublet' ? euroToCents(String(body?.price ?? '')) : null,
