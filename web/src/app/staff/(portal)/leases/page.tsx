@@ -8,6 +8,7 @@ import { LEASE_KINDS, formatDay, formatMoney, parseDay } from '../../../../lib/l
 import {
   addUnitMediaAction,
   createLeaseAction,
+  countersignLeaseAction,
   createTermAction,
   deleteTermAction,
   markChargePaidAction,
@@ -66,12 +67,14 @@ async function LeasesTab({ t, kindLabel, locale }: { t: T; kindLabel: (k: string
   const leases = await db.orm.public.Lease.include('tenant', (x) => x)
     .include('unit', (u) => u)
     .include('charges', (c) => c.orderBy((x) => x.periodStart.asc()))
+    .include('signatures', (s) => s)
     .orderBy((l) => l.startDate.desc())
     .limit(100)
     .all();
   const money = (cents: number) => formatMoney(cents, locale === 'fi' ? 'fi-FI' : 'en-FI');
   const day = (iso: string) => formatDay(new Date(iso));
   const year = new Date().getUTCFullYear();
+  const sg = getLiving(locale === 'fi' ? 'fi' : 'en').signing;
 
   return (
     <>
@@ -124,6 +127,9 @@ async function LeasesTab({ t, kindLabel, locale }: { t: T; kindLabel: (k: string
             <label htmlFor="upfrontMonths">{t.upfront}</label>
             <input id="upfrontMonths" name="upfrontMonths" type="number" min={0} max={12} defaultValue={0} />
           </div>
+          <label style={{ display: 'flex', gap: 8, alignItems: 'center', fontSize: 14 }}>
+            <input type="checkbox" name="requireSignature" /> {sg.staff.require}
+          </label>
           <button type="submit" className={styles.submit}>
             {t.create}
           </button>
@@ -143,6 +149,11 @@ async function LeasesTab({ t, kindLabel, locale }: { t: T; kindLabel: (k: string
                 <span className={styles.rowMeta}>
                   {day(l.startDate)} to {day(l.endDate)} · {money(l.monthlyRentCents)} · {l.status}
                 </span>
+                {(l.status === 'pending_signature' || l.signatures.length > 0 || l.staffSignedAt) && (
+                  <span className={styles.rowMeta}>
+                    {sg.staff.signatures}: {l.signatures.length > 0 ? sg.staff.residentSigned : sg.staff.notSigned} · {l.staffSignedAt ? sg.staff.countersigned : sg.staff.pending}
+                  </span>
+                )}
               </div>
               <details>
                 <summary style={{ cursor: 'pointer', fontWeight: 700, fontSize: 13 }}>{t.charges}</summary>
@@ -160,6 +171,14 @@ async function LeasesTab({ t, kindLabel, locale }: { t: T; kindLabel: (k: string
                   </form>
                 ))}
               </details>
+              {!l.staffSignedAt && l.status !== 'cancelled' && (
+                <form action={countersignLeaseAction} style={{ marginTop: 8 }}>
+                  <input type="hidden" name="id" value={l.id} />
+                  <button type="submit" className={styles.inlineSubmit}>
+                    {sg.staff.countersign}
+                  </button>
+                </form>
+              )}
               <form action={setLeaseStatusAction} className={styles.inlineForm} style={{ marginTop: 8 }}>
                 <input type="hidden" name="id" value={l.id} />
                 <button type="submit" name="status" value="ended" className={styles.inlineSubmit}>

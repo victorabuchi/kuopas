@@ -86,8 +86,10 @@ async function LeaseTab({
   const leases = await db.orm.public.Lease.where({ tenantId })
     .include('charges', (c) => c.orderBy((x) => x.periodStart.asc()))
     .include('unit', (u) => u)
+    .include('signatures', (s) => s)
     .orderBy((l) => l.startDate.desc())
     .all();
+  const sg = getLiving(locale === 'fi' ? 'fi' : 'en').signing;
 
   if (leases.length === 0) return <div className={`${styles.notice}`}>{t.noLease}</div>;
 
@@ -103,7 +105,7 @@ async function LeaseTab({
         const days = Math.ceil(((upcoming ? start : end) - now) / 86_400_000);
         const total = lease.charges.reduce((sum, c) => sum + c.amountCents, 0);
         const statusLabel =
-          lease.status === 'cancelled' ? t.cancelled : lease.status === 'ended' || end < now ? t.ended : upcoming ? t.upcoming : t.active;
+          lease.status === 'pending_signature' ? sg.pendingBadge : lease.status === 'cancelled' ? t.cancelled : lease.status === 'ended' || end < now ? t.ended : upcoming ? t.upcoming : t.active;
         const kindLabel = (t.kinds as Record<string, string>)[lease.kind] ?? lease.kind;
 
         return (
@@ -117,6 +119,19 @@ async function LeaseTab({
               </div>
               <span className={`${styles.badge} ${statusLabel === t.active ? styles.badgeOk : ''}`}>{statusLabel}</span>
             </div>
+            {lease.status === 'pending_signature' && !lease.signatures.some((s) => s.tenantId === tenantId) && (
+              <div className={`${styles.notice} ${styles.noticeWarn}`}>
+                <strong>{sg.pendingBadge}</strong>{' '}
+                <Link href={`/lease/sign/${lease.id}`} className={styles.btn} style={{ marginLeft: 8 }}>
+                  {sg.signNow}
+                </Link>
+              </div>
+            )}
+            {lease.signatures.some((s) => s.tenantId === tenantId) && (
+              <Link href={`/lease/sign/${lease.id}`} className={styles.itemMeta}>
+                {sg.signed} &rsaquo;
+              </Link>
+            )}
 
             <div>
               <div className={styles.kv}>

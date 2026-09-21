@@ -50,6 +50,7 @@ export async function createLeaseAction(formData: FormData) {
     monthlyRentCents,
     depositCents,
     upfrontMonths,
+    status: formData.get('requireSignature') === 'on' ? 'pending_signature' : 'active',
   });
 
   revalidatePath('/staff/leases');
@@ -59,7 +60,7 @@ export async function createLeaseAction(formData: FormData) {
 export async function setLeaseStatusAction(formData: FormData) {
   await requireStaffAccess();
   const status = String(formData.get('status') ?? '');
-  if (!['active', 'ended', 'cancelled'].includes(status)) throw new Error('Invalid status');
+  if (!['active', 'ended', 'cancelled', 'pending_signature'].includes(status)) throw new Error('Invalid status');
   await db.orm.public.Lease.where({ id: String(formData.get('id') ?? '') }).update({ status });
   revalidatePath('/staff/leases');
   revalidatePath('/lease');
@@ -113,3 +114,19 @@ export async function deleteTermAction(formData: FormData) {
   revalidatePath('/staff/leases');
 }
 
+
+// Kuopas' signature on a lease. The lease becomes active once both sides have signed.
+export async function countersignLeaseAction(formData: FormData) {
+  const access = await requireStaffAccess();
+  const id = String(formData.get('id') ?? '');
+  const lease = await db.orm.public.Lease.where({ id }).include('signatures', (s) => s).first();
+  if (!lease || lease.staffSignedAt) return;
+  const residentSigned = lease.signatures.some((s) => s.tenantId === lease.tenantId);
+  await db.orm.public.Lease.where({ id }).update({
+    staffSignedAt: new Date().toISOString(),
+    staffSignedById: access.staffId,
+    status: lease.status === 'pending_signature' && residentSigned ? 'active' : lease.status,
+  });
+  revalidatePath('/staff/leases');
+  revalidatePath('/lease');
+}

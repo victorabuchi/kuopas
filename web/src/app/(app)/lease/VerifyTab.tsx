@@ -6,7 +6,9 @@ import {
   requestEmailCodeAction,
   submitDocumentVerificationAction,
 } from '../../../lib/verification-actions';
-import type { getLiving } from '../../../lib/living';
+import { getLiving } from '../../../lib/living';
+import { getLocale } from '../../../lib/i18n';
+import { suomiFiMode } from '../../../lib/suomifi';
 
 type V = ReturnType<typeof getLiving>['verify'];
 
@@ -25,7 +27,9 @@ export default async function VerifyTab({ tenantId, v, q }: { tenantId: string; 
   const verified = await isVerified(tenantId);
   const approved = records.find((r) => r.status === 'approved');
   const pending = records.find((r) => r.status === 'pending');
-  const methodLabel = (m: string) => (v.methods as Record<string, string>)[m] ?? m;
+  const s = getLiving(await getLocale()).signing;
+  const suomiOn = suomiFiMode() !== 'off';
+  const methodLabel = (m: string) => (s.methods as Record<string, string>)[m] ?? (v.methods as Record<string, string>)[m] ?? m;
 
   const errors: Record<string, string> = {
     code: v.codeWrong,
@@ -33,6 +37,7 @@ export default async function VerifyTab({ tenantId, v, q }: { tenantId: string; 
     cooldown: v.cooldown,
     email_unavailable: v.emailUnavailable,
     file: v.docMissing,
+    ...s.errors,
   };
 
   return (
@@ -59,6 +64,18 @@ export default async function VerifyTab({ tenantId, v, q }: { tenantId: string; 
         {q.docsent === '1' && <div className={`${styles.notice} ${styles.noticeOk}`}>{v.docSubmitted}</div>}
         {q.err && errors[q.err] && <div className={`${styles.notice} ${styles.noticeErr}`}>{errors[q.err]}</div>}
       </div>
+
+      {!verified && suomiOn && (
+        <div className={styles.card}>
+          <h3 className={styles.cardTitle}>{s.suomiHeading}</h3>
+          <p className={styles.lede}>{s.suomiLede}</p>
+          <div>
+            <a href="/api/auth/suomifi/start?intent=verify" className={styles.btn}>
+              {s.suomiButton}
+            </a>
+          </div>
+        </div>
+      )}
 
       {!verified && (
         <>
