@@ -9,6 +9,8 @@ import { market } from './market';
 import { maintenance } from './maintenance';
 import { wellbeing } from './wellbeing';
 import { booking } from './booking';
+import { apply } from './apply';
+import { intake } from './intake';
 
 function pick<T>(section: { en: T; fi: T }, locale: Locale): T {
   return locale === 'fi' ? section.fi : section.en;
@@ -26,5 +28,7 @@ export function getLiving(locale: Locale) {
     maintenance: pick(maintenance, locale),
     wellbeing: pick(wellbeing, locale),
     booking: pick(booking, locale),
+    apply: pick(apply, locale),
+    intake: pick(intake, locale),
   };
 }

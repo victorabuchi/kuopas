@@ -5,8 +5,8 @@ import { redirect } from 'next/navigation';
 import { db } from '../prisma/db';
 import { getSession } from './session';
 import { requireStaffAccess } from './portal-access';
+import { moveTenantToUnit } from './relocate';
 import { isVerified } from './verification';
-import { assignTenantToChatGroups } from './groups';
 
 async function requireVerifiedTenant() {
   const session = await getSession();
@@ -39,7 +39,7 @@ export async function createListingAction(formData: FormData) {
   await db.orm.public.Listing.create({
     kind,
     sellerId: tenant.id,
-    unitId: tenant.unitId,
+    unitId: tenant.unitId!,
     title,
     description,
     priceCents: kind === 'sublet' ? euroToCents(String(formData.get('price') ?? '')) : null,
@@ -101,20 +101,6 @@ export async function withdrawRequestAction(formData: FormData) {
   revalidatePath('/marketplace');
 }
 
-// Moves a tenant to another apartment: their old apartment, floor, stairwell
-// and building chats are left and the new ones joined, and any active lease
-// follows them to the new unit.
-async function moveTenantToUnit(tenantId: string, unitId: string) {
-  const memberships = await db.orm.public.ChatGroupMember.where({ tenantId }).include('chatGroup', (g) => g).all();
-  for (const m of memberships) {
-    if (m.chatGroup) await db.orm.public.ChatGroupMember.where({ id: m.id }).delete();
-  }
-  await db.orm.public.Tenant.where({ id: tenantId }).update({ unitId });
-  await assignTenantToChatGroups(tenantId);
-  const leases = await db.orm.public.Lease.where({ tenantId, status: 'active' }).all();
-  for (const lease of leases) await db.orm.public.Lease.where({ id: lease.id }).update({ unitId });
-}
-
 export async function decideDealAction(formData: FormData) {
   const access = await requireStaffAccess();
   const listing = await db.orm.public.Listing.where({ id: String(formData.get('listingId') ?? '') }).first();
@@ -137,7 +123,7 @@ export async function decideDealAction(formData: FormData) {
   } else {
     const seller = await db.orm.public.Tenant.where({ id: listing.sellerId }).first();
     const other = await db.orm.public.Tenant.where({ id: request.requesterId }).first();
-    if (!seller || !other || seller.unitId === other.unitId) return;
+    if (!seller?.unitId || !other?.unitId || seller.unitId === other.unitId) return;
     const sellerUnit = seller.unitId;
     const otherUnit = other.unitId;
     await moveTenantToUnit(seller.id, otherUnit);

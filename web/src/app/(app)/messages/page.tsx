@@ -493,7 +493,7 @@ async function DirectTab({ tenantId, dict }: { tenantId: string; dict: ReturnTyp
   const allBuildingTenants = await db.orm.public.Tenant.include('unit', (unit) => unit.include('stairwell', (s) => s))
     .all();
   const sameBuildingTenants = allBuildingTenants.filter(
-    (t) => t.id !== tenantId && t.unit!.stairwell!.buildingId === building.id,
+    (t) => t.id !== tenantId && t.unit?.stairwell?.buildingId === building.id,
   );
   const alreadyMessaging = new Set(otherIds);
   const newContacts = sameBuildingTenants.filter((t) => !alreadyMessaging.has(t.id));

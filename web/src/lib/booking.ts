@@ -106,7 +106,7 @@ export async function loadResidents(ctx: BookingContext): Promise<{ roommates: R
   const others: Resident[] = [];
   for (const t of tenants) {
     if (t.id === ctx.tenantId) continue;
-    const entry = { id: t.id, name: t.name, unitCode: unitById.get(t.unitId)?.code ?? '' };
+    const entry = { id: t.id, name: t.name, unitCode: unitById.get(t.unitId!)?.code ?? '' };
     if (t.unitId === ctx.unitId) roommates.push(entry);
     else others.push(entry);
   }

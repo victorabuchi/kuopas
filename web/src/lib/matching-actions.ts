@@ -10,7 +10,10 @@ import { DIMENSIONS, parseDealbreakers } from './matching';
 async function requireVerifiedTenant(): Promise<string> {
   const session = await getSession();
   if (!session) redirect('/login');
-  if (!(await isVerified(session.tenantId))) redirect('/lease?tab=verify');
+  if (!(await isVerified(session.tenantId))) {
+    const tenant = await db.orm.public.Tenant.where({ id: session.tenantId }).first();
+    redirect(tenant?.unitId ? '/lease?tab=verify' : '/apply/verify');
+  }
   return session.tenantId;
 }
 
@@ -47,7 +50,9 @@ export async function saveMatchProfileAction(formData: FormData) {
   else await db.orm.public.MatchProfile.create({ tenantId, ...data });
 
   revalidatePath('/roommates');
-  redirect('/roommates?tab=find&saved=1');
+  revalidatePath('/apply');
+  const tenant = await db.orm.public.Tenant.where({ id: tenantId }).first();
+  redirect(tenant?.unitId ? '/roommates?tab=find&saved=1' : '/apply/pods?saved=1');
 }
 
 export async function connectAction(formData: FormData) {

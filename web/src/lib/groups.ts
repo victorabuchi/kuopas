@@ -79,6 +79,7 @@ export async function assignTenantToChatGroups(tenantId: string, tx: DbOrTx = db
   const tenant = await tx.orm.public.Tenant.where({ id: tenantId }).first();
   if (!tenant) throw new Error(`Tenant ${tenantId} not found`);
 
+  if (!tenant.unitId) throw new Error(`Tenant ${tenantId} has no apartment`);
   const unit = await tx.orm.public.Unit.where({ id: tenant.unitId }).first();
   if (!unit) throw new Error(`Unit ${tenant.unitId} not found`);
 
@@ -136,6 +137,15 @@ export async function createTenantWithGroups(input: {
     const tenant = await tx.orm.public.Tenant.create({ ...input, pseudonym });
     const groups = await assignTenantToChatGroups(tenant.id, tx);
     return { tenant, ...groups };
+  });
+}
+
+// An applicant has an account (so they can verify, match and apply) but no
+// apartment yet, and therefore no chat groups.
+export async function createApplicant(input: { name: string; email: string; passwordHash?: string }) {
+  return db.transaction(async (tx) => {
+    const pseudonym = await generatePseudonym(tx);
+    return tx.orm.public.Tenant.create({ ...input, pseudonym });
   });
 }
 

@@ -6,7 +6,7 @@ import styles from '../staff.module.css';
 import type { getDictionary } from '../../../lib/dictionary';
 
 type StaffDict = ReturnType<typeof getDictionary>['staff'];
-type Extra = { verifications: string; guarantors: string; leases: string; maintenance: string; market: string; facilities: string };
+type Extra = { verifications: string; guarantors: string; leases: string; maintenance: string; market: string; facilities: string; homes: string; applications: string; exchange: string };
 
 function icon(children: React.ReactNode) {
   return (
@@ -54,6 +54,37 @@ const EXTRA_ITEMS: { href: string; key: keyof Extra; icon: React.ReactNode }[] =
       <>
         <path d="M4 9h16l-1.4 10.2a1.5 1.5 0 0 1-1.5 1.3H6.9a1.5 1.5 0 0 1-1.5-1.3L4 9Z" />
         <path d="M8 9V7a4 4 0 0 1 8 0v2" />
+      </>,
+    ),
+  },
+  {
+    href: '/staff/homes',
+    key: 'homes',
+    icon: icon(
+      <>
+        <path d="M4 11.5 12 4l8 7.5" />
+        <path d="M6 10v9a1 1 0 0 0 1 1h4v-5h2v5h4a1 1 0 0 0 1-1v-9" />
+      </>,
+    ),
+  },
+  {
+    href: '/staff/applications',
+    key: 'applications',
+    icon: icon(
+      <>
+        <rect x="5" y="4" width="14" height="17" rx="2" />
+        <path d="M9 4h6v3H9zM9 12h6M9 16h4" />
+      </>,
+    ),
+  },
+  {
+    href: '/staff/exchange',
+    key: 'exchange',
+    icon: icon(
+      <>
+        <circle cx="12" cy="12" r="8.5" />
+        <path d="M3.5 12h17" />
+        <path d="M12 3.5a13 13 0 0 1 3.5 8.5A13 13 0 0 1 12 20.5 13 13 0 0 1 8.5 12 13 13 0 0 1 12 3.5Z" />
       </>,
     ),
   },

@@ -11,6 +11,9 @@ export const staff = defineSection(
       wellbeing: 'Wellbeing',
       domains: 'Domains',
       facilities: 'Facilities',
+      homes: 'Homes',
+      applications: 'Applications',
+      exchange: 'Exchange',
     },
     maintenance: {
       title: 'Maintenance insights',
@@ -169,6 +172,9 @@ export const staff = defineSection(
       wellbeing: 'Hyvinvointi',
       domains: 'Verkkotunnukset',
       facilities: 'Tilat',
+      homes: 'Kodit',
+      applications: 'Hakemukset',
+      exchange: 'Vaihto',
     },
     maintenance: {
       title: 'Kunnossapidon analyysi',

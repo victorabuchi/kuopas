@@ -6,12 +6,12 @@ import { db } from '../../../prisma/db';
 import { getSession } from '../../../lib/session';
 import { getLocale } from '../../../lib/i18n';
 import { getLiving } from '../../../lib/living';
-import { DIMENSIONS, compare, parseDealbreakers, type Answers } from '../../../lib/matching';
+import { compare, parseDealbreakers, type Answers } from '../../../lib/matching';
 import { isVerified } from '../../../lib/verification';
 import { connectAction, respondConnectionAction } from '../../../lib/matching-actions';
 import { startConversationAction } from '../../../lib/direct-message-actions';
 import TopBar from '../TopBar';
-import MatchWizard from './MatchWizard';
+import { ProfileTab } from './ProfileTab';
 
 export const metadata: Metadata = {
   title: 'Roommates - Kuopas',
@@ -78,44 +78,6 @@ export default async function RoommatesPage({ searchParams }: { searchParams: Pr
 type T = ReturnType<typeof getLiving>['roommates'];
 type Mine = Awaited<ReturnType<typeof db.orm.public.MatchProfile.first>>;
 
-function ProfileTab({ mine, t }: { mine: Mine | null; t: T }) {
-  const questions = DIMENSIONS.map((dim) => {
-    const q = (t.questions as Record<string, { title: string; options: Record<string, string> }>)[dim.key]!;
-    return {
-      key: dim.key as string,
-      title: q.title,
-      options: dim.options.map((value) => ({ value, label: q.options[value] ?? value })),
-    };
-  });
-  const initial: Record<string, string> = mine
-    ? Object.fromEntries(DIMENSIONS.map((d) => [d.key, String((mine as unknown as Record<string, string | number>)[d.key])]))
-    : {};
-
-  return (
-    <MatchWizard
-      questions={questions}
-      initial={initial}
-      initialDealbreakers={mine ? parseDealbreakers(mine.dealbreakers) : []}
-      initialBio={mine?.bio ?? ''}
-      initialActive={mine?.active ?? true}
-      labels={{
-        wizardTitle: t.wizardTitle,
-        wizardLede: t.wizardLede,
-        step: t.step,
-        of: t.of,
-        next: t.next,
-        back: t.back,
-        finish: t.finish,
-        nonNegotiable: t.nonNegotiable,
-        bioLabel: t.bioLabel,
-        bioPlaceholder: t.bioPlaceholder,
-        visibleLabel: t.visibleLabel,
-        finalStep: t.finalStep,
-      }}
-    />
-  );
-}
-
 async function FindTab({ tenantId, mine, t, saved }: { tenantId: string; mine: Mine | null; t: T; saved: boolean }) {
   if (!mine) {
     return (
@@ -137,7 +99,7 @@ async function FindTab({ tenantId, mine, t, saved }: { tenantId: string; mine: M
   const myBreakers = parseDealbreakers(mine.dealbreakers);
 
   const ranked = others
-    .filter((o) => o.tenantId !== tenantId && institutionOf.has(o.tenantId))
+    .filter((o) => o.tenantId !== tenantId && institutionOf.has(o.tenantId) && o.tenant?.unitId)
     .map((o) => ({ o, r: compare(myAnswers, myBreakers, answersOf(o), parseDealbreakers(o.dealbreakers)) }))
     .filter(({ r }) => !r.blocked)
     .sort((a, b) => b.r.score - a.r.score);

@@ -63,7 +63,7 @@ export async function GET(request: NextRequest) {
   if (tenant) {
     await createSession(tenant.id);
     await autoVerifyIfUniversityEmail(tenant.id, profile.email);
-    return NextResponse.redirect(new URL('/home', origin));
+    return NextResponse.redirect(new URL(tenant.unitId ? '/home' : '/apply', origin));
   }
   if (staff) {
     await createStaffSession(staff.id);

@@ -118,8 +118,7 @@ export default async function StaffDashboardPage() {
               </option>
               {tenants.map((tn) => (
                 <option key={tn.id} value={tn.id}>
-                  {tn.name} &middot; {tn.unit!.stairwell!.building!.name} {tn.unit!.stairwell!.label}
-                  {tn.unit!.code}
+                  {tn.name} &middot; {tn.unit ? `${tn.unit.stairwell!.building!.name} ${tn.unit.stairwell!.label}${tn.unit.code}` : 'Applicant'}
                 </option>
               ))}
             </select>

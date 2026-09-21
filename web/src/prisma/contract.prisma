@@ -111,6 +111,8 @@ model SaunaBooking {
   tenantId  Uuid
   startsAt  TimestamptzString
   endsAt    TimestamptzString
+  reminderSentAt TimestamptzString?
+  seriesId       Uuid?
 
   @@unique([slotId, startsAt])
   @@index([tenantId])
@@ -148,6 +150,8 @@ model LaundryBooking {
   tenantId  Uuid
   startsAt  TimestamptzString
   endsAt    TimestamptzString
+  reminderSentAt TimestamptzString?
+  seriesId       Uuid?
 
   @@unique([machineId, startsAt])
   @@index([tenantId])
@@ -181,6 +185,17 @@ model Unit {
   leases      Lease[]
   media       UnitMedia[]
   amenities   UnitAmenity[]
+  kind                String             @default("unspecified")
+  roomCount           Int                @default(1)
+  furnished           Boolean            @default(false)
+  temporary           Boolean            @default(false)
+  openForApplications Boolean            @default(false)
+  availableFrom       TimestamptzString?
+  podApplications     PodApplication[]
+  exchangeAllocations ExchangeApplication[]
+  inspections         Inspection[]
+  agreements          RoommateAgreement[]
+  cleaningItems       CleaningItem[]
 
   @@unique([stairwellId, code])
   @@map("unit")
@@ -209,8 +224,8 @@ model Tenant {
   staffId                 Uuid?             @unique
   blockedFromNoticeboard  Boolean           @default(false)
   hasSeenMoveInGuide      Boolean           @default(false)
-  unit                    Unit              @relation(fields: [unitId], references: [id], onDelete: Cascade)
-  unitId                  Uuid
+  unit                    Unit?             @relation(fields: [unitId], references: [id], onDelete: Cascade)
+  unitId                  Uuid?
   memberships             ChatGroupMember[]
   messages                Message[]
   laundryBookings         LaundryBooking[]
@@ -250,6 +265,16 @@ model Tenant {
   wellbeingCases          WellbeingCase[]
   spaceBookings           SpaceBooking[]
   bookingParticipations   BookingParticipant[]
+  podsCreated             Pod[]
+  podMemberships          PodMember[]
+  exchangeApplication     ExchangeApplication?
+  inspections             Inspection[]
+  agreementsCreated       RoommateAgreement[]
+  agreementSignatures     AgreementSignature[]
+  cleaningLogs            CleaningLog[]
+  transferRequests        TransferRequest[]
+  leaseSignatures         LeaseSignature[]
+  bankConnections         BankConnection[]
 
   @@map("tenant")
 }
@@ -642,6 +667,8 @@ model SharedBill {
   note       String?
   createdAt  TimestamptzString  @default(now())
   shares     BillShare[]
+  kind       String             @default("bill")
+  ledgerEntryId Uuid?
 
   @@index([unitId])
   @@map("shared_bill")
@@ -783,6 +810,9 @@ model Lease {
   termId           Uuid?
   createdAt        TimestamptzString @default(now())
   charges          LeaseCharge[]
+  staffSignedAt    TimestamptzString?
+  staffSignedById  Uuid?
+  signatures       LeaseSignature[]
 
   @@index([tenantId])
   @@index([unitId])
@@ -932,6 +962,8 @@ model SpaceBooking {
   endsAt    TimestamptzString
   note      String?
   createdAt TimestamptzString @default(now())
+  reminderSentAt TimestamptzString?
+  seriesId       Uuid?
 
   @@index([spaceId, startsAt])
   @@index([tenantId])
@@ -950,4 +982,248 @@ model BookingParticipant {
   @@unique([kind, bookingId, tenantId])
   @@index([tenantId])
   @@map("booking_participant")
+}
+
+model Pod {
+  id         Uuid              @id @default(uuid())
+  name       String
+  creator    Tenant            @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+  creatorId  Uuid
+  status     String            @default("forming")
+  minScore   Int               @default(60)
+  note       String?
+  createdAt  TimestamptzString @default(now())
+  members    PodMember[]
+  applications PodApplication[]
+
+  @@index([creatorId])
+  @@map("pod")
+}
+
+model PodMember {
+  id          Uuid              @id @default(uuid())
+  pod         Pod               @relation(fields: [podId], references: [id], onDelete: Cascade)
+  podId       Uuid
+  tenant      Tenant            @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  tenantId    Uuid
+  status      String            @default("invited")
+  invitedById Uuid?
+  createdAt   TimestamptzString @default(now())
+
+  @@unique([podId, tenantId])
+  @@index([tenantId])
+  @@map("pod_member")
+}
+
+model PodApplication {
+  id          Uuid               @id @default(uuid())
+  pod         Pod                @relation(fields: [podId], references: [id], onDelete: Cascade)
+  podId       Uuid
+  unit        Unit               @relation(fields: [unitId], references: [id], onDelete: Cascade)
+  unitId      Uuid
+  status      String             @default("submitted")
+  message     String?
+  staffNote   String?
+  decidedById Uuid?
+  createdAt   TimestamptzString  @default(now())
+  decidedAt   TimestamptzString?
+
+  @@unique([podId, unitId])
+  @@index([unitId])
+  @@map("pod_application")
+}
+
+model ExchangeApplication {
+  id             Uuid               @id @default(uuid())
+  tenant         Tenant             @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  tenantId       Uuid               @unique
+  homeUniversity String
+  homeCountry    String?
+  arrival        TimestamptzString
+  departure      TimestamptzString
+  prefer         String             @default("any")
+  message        String?
+  docPath        String?
+  status         String             @default("submitted")
+  staffNote      String?
+  allocatedUnit  Unit?              @relation(fields: [allocatedUnitId], references: [id], onDelete: SetNull)
+  allocatedUnitId Uuid?
+  leaseId        Uuid?
+  createdAt      TimestamptzString  @default(now())
+  decidedAt      TimestamptzString?
+
+  @@index([status])
+  @@map("exchange_application")
+}
+
+model Inspection {
+  id               Uuid               @id @default(uuid())
+  unit             Unit               @relation(fields: [unitId], references: [id], onDelete: Cascade)
+  unitId           Uuid
+  tenant           Tenant             @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  tenantId         Uuid
+  kind             String
+  status           String             @default("draft")
+  dueAt            TimestamptzString?
+  submittedAt      TimestamptzString?
+  contentHash      String?
+  acknowledgedById Uuid?
+  acknowledgedAt   TimestamptzString?
+  staffNote        String?
+  createdAt        TimestamptzString  @default(now())
+  items            InspectionItem[]
+
+  @@index([tenantId])
+  @@index([unitId])
+  @@map("inspection")
+}
+
+model InspectionItem {
+  id           Uuid              @id @default(uuid())
+  inspection   Inspection        @relation(fields: [inspectionId], references: [id], onDelete: Cascade)
+  inspectionId Uuid
+  area         String
+  item         String
+  condition    String            @default("unset")
+  note         String?
+  photoUrl     String?
+  createdAt    TimestamptzString @default(now())
+
+  @@index([inspectionId])
+  @@map("inspection_item")
+}
+
+model RoommateAgreement {
+  id          Uuid                 @id @default(uuid())
+  unit        Unit                 @relation(fields: [unitId], references: [id], onDelete: Cascade)
+  unitId      Uuid
+  version     Int
+  status      String               @default("draft")
+  clauses     String
+  createdBy   Tenant               @relation(fields: [createdById], references: [id], onDelete: Cascade)
+  createdById Uuid
+  createdAt   TimestamptzString    @default(now())
+  activatedAt TimestamptzString?
+  signatures  AgreementSignature[]
+
+  @@index([unitId])
+  @@map("roommate_agreement")
+}
+
+model AgreementSignature {
+  id          Uuid              @id @default(uuid())
+  agreement   RoommateAgreement @relation(fields: [agreementId], references: [id], onDelete: Cascade)
+  agreementId Uuid
+  tenant      Tenant            @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  tenantId    Uuid
+  signedAt    TimestamptzString @default(now())
+
+  @@unique([agreementId, tenantId])
+  @@map("agreement_signature")
+}
+
+model CleaningItem {
+  id        Uuid              @id @default(uuid())
+  unit      Unit              @relation(fields: [unitId], references: [id], onDelete: Cascade)
+  unitId    Uuid
+  area      String
+  label     String
+  active    Boolean           @default(true)
+  createdAt TimestamptzString @default(now())
+  logs      CleaningLog[]
+
+  @@index([unitId])
+  @@map("cleaning_item")
+}
+
+model CleaningLog {
+  id        Uuid              @id @default(uuid())
+  item      CleaningItem      @relation(fields: [itemId], references: [id], onDelete: Cascade)
+  itemId    Uuid
+  tenant    Tenant            @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  tenantId  Uuid
+  weekStart TimestamptzString
+  doneAt    TimestamptzString @default(now())
+
+  @@unique([itemId, weekStart])
+  @@map("cleaning_log")
+}
+
+model TransferRequest {
+  id             Uuid               @id @default(uuid())
+  tenant         Tenant             @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  tenantId       Uuid
+  fromUnitId     Uuid?
+  wants          String
+  reason         String
+  description    String
+  triedAgreement Boolean            @default(false)
+  checklistRate  Int                @default(0)
+  status         String             @default("open")
+  staffNote      String?
+  decidedById    Uuid?
+  createdAt      TimestamptzString  @default(now())
+  decidedAt      TimestamptzString?
+
+  @@index([tenantId])
+  @@index([status])
+  @@map("transfer_request")
+}
+
+model LeaseSignature {
+  id           Uuid              @id @default(uuid())
+  lease        Lease             @relation(fields: [leaseId], references: [id], onDelete: Cascade)
+  leaseId      Uuid
+  tenant       Tenant            @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  tenantId     Uuid
+  method       String
+  personHash   String
+  documentHash String
+  signedAt     TimestamptzString @default(now())
+
+  @@unique([leaseId, tenantId])
+  @@map("lease_signature")
+}
+
+model BankConnection {
+  id              Uuid               @id @default(uuid())
+  tenant          Tenant             @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  tenantId        Uuid
+  provider        String
+  status          String             @default("active")
+  sessionRef      String
+  accountRef      String
+  accountLabel    String
+  consentExpiresAt TimestamptzString?
+  lastSyncAt      TimestamptzString?
+  createdAt       TimestamptzString  @default(now())
+  entries         LedgerEntry[]
+
+  @@index([tenantId])
+  @@map("bank_connection")
+}
+
+model LedgerEntry {
+  id           Uuid              @id @default(uuid())
+  connection   BankConnection    @relation(fields: [connectionId], references: [id], onDelete: Cascade)
+  connectionId Uuid
+  externalId   String
+  bookedAt     TimestamptzString
+  amountCents  Int
+  currency     String            @default("EUR")
+  counterparty String
+  description  String?
+  status       String            @default("new")
+  billId       Uuid?
+  createdAt    TimestamptzString @default(now())
+
+  @@unique([connectionId, externalId])
+  @@map("ledger_entry")
+}
+
+model AppSetting {
+  key   String @id
+  value String
+
+  @@map("app_setting")
 }

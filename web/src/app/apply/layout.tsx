@@ -1,30 +1,26 @@
 import { redirect } from 'next/navigation';
 import { Mulish } from 'next/font/google';
-import styles from './app-shell.module.css';
-import Sidebar from './Sidebar';
-import PushSubscribe from './PushSubscribe';
+import styles from '../(app)/app-shell.module.css';
+import ApplySidebar from './ApplySidebar';
 import { getSession } from '../../lib/session';
 import { db } from '../../prisma/db';
 import { getLocale } from '../../lib/i18n';
-import { getDictionary } from '../../lib/dictionary';
+import { getLiving } from '../../lib/living';
 
 const mulish = Mulish({ subsets: ['latin'], weight: ['400', '500', '600', '700', '800'], variable: '--font-mulish' });
 
-export default async function AppLayout({ children }: { children: React.ReactNode }) {
+export default async function ApplyLayout({ children }: { children: React.ReactNode }) {
   const session = await getSession();
   if (!session) redirect('/login');
-
   const tenant = await db.orm.public.Tenant.where({ id: session.tenantId }).first();
   if (!tenant) redirect('/login');
-  if (!tenant.unitId) redirect('/apply');
+  // Once a home is allocated the person is a resident and uses the resident app.
+  if (tenant.unitId) redirect('/home');
 
   const locale = await getLocale();
-  const dict = getDictionary(locale);
-
   return (
     <div className={`${styles.shell} ${mulish.variable}`}>
-      <PushSubscribe />
-      <Sidebar nav={dict.nav} back={dict.common.back} settings={dict.settings} />
+      <ApplySidebar labels={getLiving(locale).apply.nav} />
       <main className={styles.main}>{children}</main>
     </div>
   );

@@ -3,7 +3,7 @@
 import { compare, hash } from 'bcryptjs';
 import { redirect } from 'next/navigation';
 import { db } from '../prisma/db';
-import { createTenantWithGroups } from './groups';
+import { createApplicant, createTenantWithGroups } from './groups';
 import { createSession, destroySession } from './session';
 import { clearSignupCookie, readSignupCookie } from './google-oauth';
 import { autoVerifyIfUniversityEmail } from './verification';
@@ -31,6 +31,12 @@ export async function registerAction(formData: FormData) {
   }
 
   const passwordHash = await hash(password, BCRYPT_ROUNDS);
+  if (unitId === 'applicant') {
+    const applicant = await createApplicant({ name, email, passwordHash });
+    await autoVerifyIfUniversityEmail(applicant.id, email);
+    await createSession(applicant.id);
+    redirect('/apply');
+  }
   const { tenant } = await createTenantWithGroups({ name, email, unitId, passwordHash });
 
   await createSession(tenant.id);
@@ -56,6 +62,13 @@ export async function completeGoogleRegisterAction(formData: FormData) {
     redirect('/home');
   }
 
+  if (unitId === 'applicant') {
+    const applicant = await createApplicant({ name, email: signup.email });
+    await autoVerifyIfUniversityEmail(applicant.id, signup.email);
+    await createSession(applicant.id);
+    await clearSignupCookie();
+    redirect('/apply');
+  }
   const { tenant } = await createTenantWithGroups({ name, email: signup.email, unitId });
   await autoVerifyIfUniversityEmail(tenant.id, signup.email);
   await createSession(tenant.id);
@@ -80,7 +93,7 @@ export async function loginAction(formData: FormData) {
   if (!valid) redirect(genericError);
 
   await createSession(tenant.id);
-  redirect('/home');
+  redirect(tenant.unitId ? '/home' : '/apply');
 }
 
 export async function logoutAction() {

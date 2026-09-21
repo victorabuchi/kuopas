@@ -21,6 +21,7 @@ export async function createLeaseAction(formData: FormData) {
 
   const tenant = await db.orm.public.Tenant.where({ id: tenantId }).first();
   if (!tenant) throw new Error('Tenant not found');
+  if (!tenant.unitId) throw new Error('This person has no apartment yet');
 
   let start: Date;
   let end: Date;

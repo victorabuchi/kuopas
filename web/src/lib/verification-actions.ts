@@ -8,7 +8,10 @@ import { requireStaffAccess } from './portal-access';
 import { savePrivateDocument, deletePrivateDocument } from './uploads';
 import { confirmEmailCode, sendEmailCode } from './verification';
 
-const BACK = '/lease?tab=verify';
+async function backPath(tenantId: string): Promise<string> {
+  const tenant = await db.orm.public.Tenant.where({ id: tenantId }).first();
+  return tenant?.unitId ? '/lease?tab=verify' : '/apply/verify?x=1';
+}
 
 async function requireTenant(): Promise<string> {
   const session = await getSession();
@@ -18,6 +21,7 @@ async function requireTenant(): Promise<string> {
 
 export async function requestEmailCodeAction(formData: FormData) {
   const tenantId = await requireTenant();
+  const BACK = await backPath(tenantId);
   const email = String(formData.get('email') ?? '').trim();
   const result = await sendEmailCode(tenantId, email);
   if (!result.ok) redirect(`${BACK}&err=${result.error}`);
@@ -26,14 +30,17 @@ export async function requestEmailCodeAction(formData: FormData) {
 
 export async function confirmEmailCodeAction(formData: FormData) {
   const tenantId = await requireTenant();
+  const BACK = await backPath(tenantId);
   const code = String(formData.get('code') ?? '').trim();
   const ok = await confirmEmailCode(tenantId, code);
   revalidatePath('/lease');
+  revalidatePath('/apply');
   redirect(ok ? `${BACK}&done=1` : `${BACK}&err=code`);
 }
 
 export async function submitDocumentVerificationAction(formData: FormData) {
   const tenantId = await requireTenant();
+  const BACK = await backPath(tenantId);
   const method = String(formData.get('method') ?? '');
   if (method !== 'government_id' && method !== 'enrollment_document') throw new Error('Invalid document type');
 

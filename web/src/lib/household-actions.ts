@@ -41,7 +41,7 @@ export async function createBillAction(formData: FormData) {
   const due = String(formData.get('dueDate') ?? '').trim();
 
   const bill = await db.orm.public.SharedBill.create({
-    unitId: tenant.unitId,
+    unitId: tenant.unitId!,
     title,
     category,
     totalCents,
@@ -94,7 +94,7 @@ export async function createChoreAction(formData: FormData) {
   const everyDays = Math.max(1, Math.min(60, Number(formData.get('everyDays')) || 7));
   if (!title) throw new Error('A chore name is required');
 
-  const chore = await db.orm.public.Chore.create({ unitId: tenant.unitId, title, everyDays });
+  const chore = await db.orm.public.Chore.create({ unitId: tenant.unitId!, title, everyDays });
   const firstAssignee = members.find((m) => m.id === tenant.id) ?? members[0]!;
   await db.orm.public.ChoreTask.create({
     choreId: chore.id,

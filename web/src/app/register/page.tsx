@@ -65,6 +65,7 @@ export default async function RegisterPage({
               <option value="" disabled>
                 {t.selectUnit}
               </option>
+              <option value="applicant">{t.applicantOption}</option>
               {buildings.map((building) =>
                 building.stairwells.map((stairwell) =>
                   stairwell.units.map((unit) => (

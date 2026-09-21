@@ -52,9 +52,9 @@ export default async function HouseholdPage({ searchParams }: { searchParams: Pr
         ))}
       </div>
       <div className={styles.content}>
-        {tab === 'bills' && <BillsTab unitId={me.unitId} meId={me.id} members={members} nameOf={nameOf} t={t} locale={locale} />}
-        {tab === 'chores' && <ChoresTab unitId={me.unitId} members={members} nameOf={nameOf} t={t} locale={locale} />}
-        {tab === 'chat' && <ChatTab unitId={me.unitId} members={members} t={t} />}
+        {tab === 'bills' && <BillsTab unitId={me.unitId!} meId={me.id} members={members} nameOf={nameOf} t={t} locale={locale} />}
+        {tab === 'chores' && <ChoresTab unitId={me.unitId!} members={members} nameOf={nameOf} t={t} locale={locale} />}
+        {tab === 'chat' && <ChatTab unitId={me.unitId!} members={members} t={t} />}
       </div>
     </div>
   );
