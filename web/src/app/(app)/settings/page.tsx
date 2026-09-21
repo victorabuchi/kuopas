@@ -8,6 +8,7 @@ import LanguageSwitcher from '../LanguageSwitcher';
 import { getLocale } from '../../../lib/i18n';
 import { getDictionary } from '../../../lib/dictionary';
 import { logoutAction } from '../../../lib/auth-actions';
+import { getLiving } from '../../../lib/living';
 
 export const metadata: Metadata = {
   title: 'Settings - Kuopas',
@@ -74,6 +75,9 @@ export default async function SettingsPage({ searchParams }: { searchParams: Pro
                   {dict.profile.logOut}
                 </button>
               </form>
+              <a href="/delete-account" style={{ fontSize: 13.5, color: '#b3261e', fontWeight: 700 }}>
+                {getLiving(locale).account.settingsLink}
+              </a>
             </div>
           )}
           {category === 'language' && (

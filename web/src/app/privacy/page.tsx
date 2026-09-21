@@ -53,7 +53,8 @@ export default function PrivacyPage() {
         <h2>4. How long we keep it</h2>
         <p>
           We keep account and tenancy data for as long as your account is active, and for a reasonable period
-          after you move out for record-keeping. You can ask us to delete your account and associated content.
+          after you move out for record-keeping. You can ask us to delete your account and associated content at any time, without logging in,
+          at <a href="/delete-account">kuopas.com/delete-account</a>.
         </p>
 
         <h2>5. Your rights</h2>

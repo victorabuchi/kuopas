@@ -276,6 +276,7 @@ export default async function Home() {
                   [t.footerContactUs, '#support'],
                   [t.footerTerms, '/terms'],
                   [t.footerPrivacy, '/privacy'],
+                  [locale === 'fi' ? 'Poista tili' : 'Delete account', '/delete-account'],
                   [t.footerCookiePolicy, '#'],
                 ],
               },
