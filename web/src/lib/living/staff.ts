@@ -14,6 +14,7 @@ export const staff = defineSection(
       homes: 'Homes',
       applications: 'Applications',
       exchange: 'Exchange',
+      inspections: 'Inspections',
     },
     maintenance: {
       title: 'Maintenance insights',
@@ -175,6 +176,7 @@ export const staff = defineSection(
       homes: 'Kodit',
       applications: 'Hakemukset',
       exchange: 'Vaihto',
+      inspections: 'Tarkastukset',
     },
     maintenance: {
       title: 'Kunnossapidon analyysi',

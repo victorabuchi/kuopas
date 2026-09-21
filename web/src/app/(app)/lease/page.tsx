@@ -55,6 +55,9 @@ export default async function LeasePage({ searchParams }: { searchParams: Promis
             {tabLabels[key]}
           </Link>
         ))}
+        <Link href="/inspection" className={styles.tab}>
+          {L.inspection.tab}
+        </Link>
       </div>
 
       <div className={styles.content}>

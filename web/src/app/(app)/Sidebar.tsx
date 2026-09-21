@@ -103,6 +103,7 @@ const NAV_ITEMS: { href: string; key: keyof NavDict; match?: string[]; icon: Rea
   {
     href: '/lease',
     key: 'lease' as const,
+    match: ['/lease', '/inspection'],
     icon: (
       <Svg>
         <path d="M6 3h9l4 4v14H6z" />

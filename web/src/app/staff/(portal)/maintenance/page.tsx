@@ -5,6 +5,8 @@ import { getLocale } from '../../../../lib/i18n';
 import { getDictionary } from '../../../../lib/dictionary';
 import { getLiving } from '../../../../lib/living';
 import { findHotspots, loadLocatedComplaints } from '../../../../lib/maintenance';
+import { db } from '../../../../prisma/db';
+import { conditionRank } from '../../../../lib/inspection';
 
 export const metadata: Metadata = {
   title: 'Maintenance insights - Kuopas staff',
@@ -24,6 +26,17 @@ export default async function StaffMaintenancePage() {
     structural: dict.complaints.categoryStructural,
     other: dict.complaints.categoryOther,
   };
+
+  const insp = getLiving(locale).inspection;
+  const moveIns = await db.orm.public.Inspection.where({ kind: 'move_in' })
+    .include('items', (i) => i)
+    .include('unit', (u) => u.include('stairwell', (st) => st.include('building', (b) => b)))
+    .all();
+  const recorded = moveIns
+    .filter((i) => ['submitted', 'acknowledged'].includes(i.status))
+    .flatMap((i) => (i.items ?? []).filter((x) => conditionRank(x.condition) > 0).map((x) => ({ i, x })))
+    .sort((a, b) => conditionRank(b.x.condition) - conditionRank(a.x.condition))
+    .slice(0, 40);
 
   const recent = await loadLocatedComplaints(90);
   const hotspots = findHotspots(recent);
@@ -98,6 +111,26 @@ export default async function StaffMaintenancePage() {
               </Link>
             ))}
           </div>
+        ))}
+      </div>
+    
+      <div className={styles.card}>
+        <h2>{insp.staff.recorded}</h2>
+        <p style={{ color: '#767676', marginTop: 0, fontSize: 13.5 }}>{insp.staff.recordedLede}</p>
+        {recorded.length === 0 && <div className={styles.empty}>{insp.staff.noRecorded}</div>}
+        {recorded.map(({ i, x }) => (
+          <Link key={x.id} href={`/staff/inspections/${i.id}`} className={styles.row}>
+            <div className={styles.rowText}>
+              <span className={styles.rowCategory}>
+                {(insp.areas as Record<string, string>)[x.area]} &middot; {(insp.items as Record<string, string>)[`${x.area}.${x.item}`] ?? x.item}
+              </span>
+              <span className={styles.rowMeta}>
+                {i.unit?.stairwell?.building?.name} {i.unit?.stairwell?.label}
+                {i.unit?.code} &middot; {insp.conditions[x.condition as keyof typeof insp.conditions] ?? x.condition}
+                {x.note ? ` · ${x.note}` : ''}
+              </span>
+            </div>
+          </Link>
         ))}
       </div>
     </>

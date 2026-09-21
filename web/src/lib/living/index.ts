@@ -11,6 +11,7 @@ import { wellbeing } from './wellbeing';
 import { booking } from './booking';
 import { apply } from './apply';
 import { intake } from './intake';
+import { inspection } from './inspection';
 
 function pick<T>(section: { en: T; fi: T }, locale: Locale): T {
   return locale === 'fi' ? section.fi : section.en;
@@ -30,5 +31,6 @@ export function getLiving(locale: Locale) {
     booking: pick(booking, locale),
     apply: pick(apply, locale),
     intake: pick(intake, locale),
+    inspection: pick(inspection, locale),
   };
 }

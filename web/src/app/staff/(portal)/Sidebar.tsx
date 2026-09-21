@@ -6,7 +6,7 @@ import styles from '../staff.module.css';
 import type { getDictionary } from '../../../lib/dictionary';
 
 type StaffDict = ReturnType<typeof getDictionary>['staff'];
-type Extra = { verifications: string; guarantors: string; leases: string; maintenance: string; market: string; facilities: string; homes: string; applications: string; exchange: string };
+type Extra = { verifications: string; guarantors: string; leases: string; maintenance: string; market: string; facilities: string; homes: string; applications: string; exchange: string; inspections: string };
 
 function icon(children: React.ReactNode) {
   return (
@@ -85,6 +85,17 @@ const EXTRA_ITEMS: { href: string; key: keyof Extra; icon: React.ReactNode }[] =
         <circle cx="12" cy="12" r="8.5" />
         <path d="M3.5 12h17" />
         <path d="M12 3.5a13 13 0 0 1 3.5 8.5A13 13 0 0 1 12 20.5 13 13 0 0 1 8.5 12 13 13 0 0 1 12 3.5Z" />
+      </>,
+    ),
+  },
+  {
+    href: '/staff/inspections',
+    key: 'inspections',
+    icon: icon(
+      <>
+        <rect x="5" y="4" width="14" height="17" rx="2" />
+        <path d="m9 13 2 2 4-4" />
+        <path d="M9 4h6v3H9z" />
       </>,
     ),
   },
