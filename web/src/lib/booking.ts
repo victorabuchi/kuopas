@@ -146,9 +146,11 @@ export async function inviteParticipants(args: {
   title: string;
   when: string;
   pushTitle: string;
+  notify?: boolean;
 }) {
   for (const tenantId of args.ids) {
     await db.orm.public.BookingParticipant.create({ kind: args.kind, bookingId: args.bookingId, tenantId, status: 'invited' });
+    if (args.notify === false) continue;
     await sendPushToTenant(tenantId, {
       title: args.pushTitle,
       body: `${args.organiserName}: ${args.title}, ${args.when}`,
@@ -164,4 +166,21 @@ export async function removeParticipants(kind: 'sauna' | 'space', bookingId: str
 
 export function overlaps(aStart: number, aEnd: number, bStart: number, bEnd: number) {
   return aStart < bEnd && bStart < aEnd;
+}
+
+export const MAX_REPEAT_WEEKS = 12;
+
+export function readRepeatWeeks(formData: FormData): number {
+  const n = Number.parseInt(String(formData.get('repeatWeeks') ?? '1'), 10);
+  return Number.isFinite(n) ? Math.max(1, Math.min(MAX_REPEAT_WEEKS, n)) : 1;
+}
+
+// The same local time on the following weeks, so a 18:00 turn stays at 18:00
+// across a daylight saving change.
+export function weeklyStarts(first: Date, weeks: number): Date[] {
+  return Array.from({ length: weeks }, (_, i) => {
+    const d = new Date(first);
+    d.setDate(d.getDate() + 7 * i);
+    return d;
+  });
 }

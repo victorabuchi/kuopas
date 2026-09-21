@@ -1,5 +1,6 @@
 'use server';
 
+import { randomUUID } from 'node:crypto';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { db } from '../prisma/db';
@@ -10,15 +11,18 @@ import {
   inviteParticipants,
   isAmenityAvailable,
   readParticipantInput,
+  readRepeatWeeks,
   removeParticipants,
   resolveParticipants,
+  weeklyStarts,
 } from './booking';
 import { getLocale } from './i18n';
 import { getLiving } from './living';
 
-function backTo(slotId: string, week: string, error?: string): never {
+function backTo(slotId: string, week: string, error?: string, skipped = 0): never {
   const params = new URLSearchParams({ slot: slotId, week });
   if (error) params.set('error', error);
+  if (skipped > 0) params.set('skipped', String(skipped));
   redirect(`/sauna?${params.toString()}`);
 }
 
@@ -55,44 +59,63 @@ export async function bookSaunaAction(formData: FormData) {
     backTo(slotId, week, people.reason === 'capacity' ? bk.errors.capacity.replace('{n}', String(slot.capacity)) : bk.errors.outsider);
   }
 
-  const existing = await db.orm.public.SaunaBooking.where({ slotId, startsAt: startsAt.toISOString() }).first();
-  if (existing) backTo(slotId, week, 'That turn was just booked by someone else.');
+  // A standing weekly turn: the first week follows the normal rules, later
+  // weeks may be booked ahead but still respect clashes and the weekly limit.
+  const repeat = readRepeatWeeks(formData);
+  const seriesId = repeat > 1 ? randomUUID() : null;
+  const mine = await db.orm.public.SaunaBooking.where({ tenantId: session.tenantId }).all();
+  const taken = await db.orm.public.SaunaBooking.where({ slotId }).all();
+  const takenStarts = new Set(taken.map((b) => new Date(b.startsAt).getTime()));
 
-  const weekStart = getWeekStart(startsAt);
-  const weekEnd = new Date(weekStart);
-  weekEnd.setDate(weekEnd.getDate() + 7);
+  let created = 0;
+  let skipped = 0;
+  let firstError: string | null = null;
+  for (const [index, start] of weeklyStarts(startsAt, repeat).entries()) {
+    const weekStart = getWeekStart(start);
+    const weekEnd = new Date(weekStart);
+    weekEnd.setDate(weekEnd.getDate() + 7);
+    const bookedThatWeek = mine.filter((b) => {
+      const t = new Date(b.startsAt).getTime();
+      return t >= weekStart.getTime() && t < weekEnd.getTime();
+    }).length;
 
-  const tenantBookingsThisWeek = await db.orm.public.SaunaBooking.where({ tenantId: session.tenantId }).all();
-  const bookingsThisWeekCount = tenantBookingsThisWeek.filter((b) => {
-    const t = new Date(b.startsAt).getTime();
-    return t >= weekStart.getTime() && t < weekEnd.getTime();
-  }).length;
-  const totalHoursThisWeek = bookingsThisWeekCount * SLOT_LENGTH_HOURS;
-  if (totalHoursThisWeek + SLOT_LENGTH_HOURS > MAX_HOURS_PER_WEEK) {
-    backTo(slotId, week, `You've already booked your ${MAX_HOURS_PER_WEEK} hours for this week.`);
+    let problem: string | null = null;
+    if (takenStarts.has(start.getTime())) problem = 'That turn was just booked by someone else.';
+    else if ((bookedThatWeek + 1) * SLOT_LENGTH_HOURS > MAX_HOURS_PER_WEEK) problem = `You've already booked your ${MAX_HOURS_PER_WEEK} hours for this week.`;
+    if (problem) {
+      if (index === 0) firstError = problem;
+      skipped += 1;
+      continue;
+    }
+
+    const endsAt = new Date(start);
+    endsAt.setHours(endsAt.getHours() + SLOT_LENGTH_HOURS);
+    const row = await db.orm.public.SaunaBooking.create({
+      slotId,
+      tenantId: session.tenantId,
+      startsAt: start.toISOString(),
+      endsAt: endsAt.toISOString(),
+      seriesId,
+    });
+    mine.push(row);
+    takenStarts.add(start.getTime());
+    created += 1;
+    await inviteParticipants({
+      kind: 'sauna',
+      bookingId: row.id,
+      organiserName: ctx.tenantName,
+      ids: people.ids,
+      title: slot.label,
+      when: `${start.toLocaleDateString()} ${String(start.getHours()).padStart(2, '0')}:00`,
+      pushTitle: bk.pushInvite,
+      notify: created === 1,
+    });
   }
-
-  const endsAt = new Date(startsAt);
-  endsAt.setHours(endsAt.getHours() + SLOT_LENGTH_HOURS);
-
-  const created = await db.orm.public.SaunaBooking.create({
-    slotId,
-    tenantId: session.tenantId,
-    startsAt: startsAt.toISOString(),
-    endsAt: endsAt.toISOString(),
-  });
-  await inviteParticipants({
-    kind: 'sauna',
-    bookingId: created.id,
-    organiserName: ctx.tenantName,
-    ids: people.ids,
-    title: slot.label,
-    when: `${startsAt.toLocaleDateString()} ${String(startsAt.getHours()).padStart(2, '0')}:00`,
-    pushTitle: bk.pushInvite,
-  });
+  if (created === 0 && firstError) backTo(slotId, week, firstError);
 
   revalidatePath('/sauna');
-  backTo(slotId, week);
+  revalidatePath('/booking');
+  backTo(slotId, week, undefined, skipped);
 }
 
 export async function cancelSaunaBookingAction(formData: FormData) {

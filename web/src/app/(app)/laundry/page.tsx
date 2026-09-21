@@ -9,7 +9,8 @@ import { bookSlotAction, cancelBookingAction } from '../../../lib/laundry-action
 import { getLocale } from '../../../lib/i18n';
 import { getDictionary } from '../../../lib/dictionary';
 import { getLiving } from '../../../lib/living';
-import { getBookingContext, isAmenityAvailable } from '../../../lib/booking';
+import { getBookingContext, isAmenityAvailable, MAX_REPEAT_WEEKS } from '../../../lib/booking';
+import BookingPanel from '../booking/BookingPanel';
 import {
   SLOT_START_HOURS,
   MAX_HOURS_PER_WEEK,
@@ -28,9 +29,9 @@ export const metadata: Metadata = {
 export default async function LaundryPage({
   searchParams,
 }: {
-  searchParams: Promise<{ machine?: string; week?: string; error?: string }>;
+  searchParams: Promise<{ machine?: string; week?: string; error?: string; pick?: string; skipped?: string }>;
 }) {
-  const { machine: machineParam, week: weekParam, error } = await searchParams;
+  const { machine: machineParam, week: weekParam, error, pick, skipped } = await searchParams;
 
   const session = await getSession();
   if (!session) redirect('/login');
@@ -56,7 +57,8 @@ export default async function LaundryPage({
 
   const bctx = await getBookingContext(session.tenantId);
   if (!bctx || !(await isAmenityAvailable('laundry', bctx))) redirect('/booking');
-  const backLabel = getLiving(locale).booking.backToBooking;
+  const bt = getLiving(locale).booking;
+  const backLabel = bt.backToBooking;
 
   const machines = await db.orm.public.LaundryMachine.where({ buildingId: building.id })
     .orderBy((m) => m.label.asc())
@@ -89,6 +91,16 @@ export default async function LaundryPage({
 
   const now = new Date();
   const maxAdvance = addDays(now, MAX_DAYS_IN_ADVANCE);
+
+  const picked = pick ? new Date(pick) : null;
+  const pickedValid =
+    picked !== null &&
+    !Number.isNaN(picked.getTime()) &&
+    SLOT_START_HOURS.includes(picked.getHours()) &&
+    picked.getTime() > now.getTime() &&
+    picked.getTime() <= maxAdvance.getTime() &&
+    !bookingByStart.has(picked.toISOString());
+  const pickLink = (iso: string) => `/laundry?machine=${activeMachine.id}&week=${weekParamValue}&pick=${encodeURIComponent(iso)}`;
 
   return (
     <div className={styles.page}>
@@ -128,8 +140,30 @@ export default async function LaundryPage({
       </div>
 
       {error && <div className={styles.error}>{error}</div>}
+      {skipped && <div className={styles.error}>{bt.skipped.replace('{n}', skipped)}</div>}
 
       <p className={styles.rules}>{dict.laundry.rules(MAX_HOURS_PER_WEEK, MAX_DAYS_IN_ADVANCE)}</p>
+
+      {pickedValid && picked ? (
+        <BookingPanel
+          action={bookSlotAction}
+          hidden={{ machineId: activeMachine.id, week: weekParamValue, startsAt: picked.toISOString() }}
+          whenLabel={`${picked.toLocaleDateString(locale === 'fi' ? 'fi-FI' : 'en-GB', { weekday: 'long', day: 'numeric', month: 'long' })} ${String(picked.getHours()).padStart(2, '0')}:00`}
+          hoursOptions={[1]}
+          capacity={1}
+          roommates={[]}
+          others={[]}
+          cancelHref={`/laundry?machine=${activeMachine.id}&week=${weekParamValue}`}
+          withNote={false}
+          withGroup={false}
+          repeatMax={MAX_REPEAT_WEEKS}
+          t={bt}
+        />
+      ) : (
+        <p className={styles.rules} style={{ marginTop: 0 }}>
+          {bt.pickHint}
+        </p>
+      )}
 
       <div className={styles.gridWrap}>
         <table className={styles.grid}>
@@ -179,14 +213,10 @@ export default async function LaundryPage({
                     return <td key={dayOffset} className={`${styles.cell} ${styles.cellDisabled}`} />;
                   }
 
+                  const isPicked = pickedValid && picked?.getTime() === date.getTime();
                   return (
-                    <td key={dayOffset} className={`${styles.cell} ${styles.cellFree}`}>
-                      <form action={bookSlotAction}>
-                        <input type="hidden" name="machineId" value={activeMachine.id} />
-                        <input type="hidden" name="week" value={weekParamValue} />
-                        <input type="hidden" name="startsAt" value={iso} />
-                        <button type="submit" className={styles.cellButton} aria-label={`Book ${iso}`} />
-                      </form>
+                    <td key={dayOffset} className={`${styles.cell} ${styles.cellFree} ${isPicked ? styles.cellPicked : ''}`}>
+                      <Link href={pickLink(iso)} className={styles.cellLink} aria-label={`Book ${iso}`} />
                     </td>
                   );
                 })}

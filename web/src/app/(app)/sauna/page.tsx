@@ -9,7 +9,7 @@ import { bookSaunaAction, cancelSaunaBookingAction } from '../../../lib/sauna-ac
 import { getLocale } from '../../../lib/i18n';
 import { getDictionary } from '../../../lib/dictionary';
 import { getLiving } from '../../../lib/living';
-import { getBookingContext, isAmenityAvailable, loadResidents } from '../../../lib/booking';
+import { getBookingContext, isAmenityAvailable, loadResidents, MAX_REPEAT_WEEKS } from '../../../lib/booking';
 import BookingPanel from '../booking/BookingPanel';
 import {
   SLOT_START_HOURS,
@@ -30,9 +30,9 @@ export const metadata: Metadata = {
 export default async function SaunaPage({
   searchParams,
 }: {
-  searchParams: Promise<{ slot?: string; week?: string; error?: string; pick?: string }>;
+  searchParams: Promise<{ slot?: string; week?: string; error?: string; pick?: string; skipped?: string }>;
 }) {
-  const { slot: slotParam, week: weekParam, error, pick } = await searchParams;
+  const { slot: slotParam, week: weekParam, error, pick, skipped } = await searchParams;
 
   const session = await getSession();
   if (!session) redirect('/login');
@@ -142,6 +142,7 @@ export default async function SaunaPage({
       </div>
 
       {error && <div className={styles.error}>{error}</div>}
+      {skipped && <div className={styles.error}>{bt.skipped.replace('{n}', skipped)}</div>}
 
       <p className={styles.rules}>{dict.sauna.rules(SLOT_LENGTH_HOURS, MAX_HOURS_PER_WEEK, MAX_DAYS_IN_ADVANCE)}</p>
 
@@ -156,6 +157,7 @@ export default async function SaunaPage({
           others={residents.others}
           cancelHref={`/sauna?slot=${activeSlot.id}&week=${weekParamValue}`}
           withNote={false}
+          repeatMax={MAX_REPEAT_WEEKS}
           t={bt}
         />
       ) : (

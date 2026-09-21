@@ -70,6 +70,13 @@ export const booking = defineSection(
       notFound: 'Booking not found.',
     },
     pushInvite: 'You have been invited to a booking',
+    repeat: 'Repeat every week',
+    once: 'Just this once',
+    weeksN: '{n} weeks in a row',
+    repeatHint: 'A standing weekly turn. Weeks where the time is already taken are skipped.',
+    weekly: 'Weekly',
+    cancelSeries: 'Cancel all future weeks',
+    skipped: '{n} week(s) were skipped because the time was taken or your weekly limit was reached.',
     // Staff
     staff: {
       title: 'Facilities and booking',
@@ -181,6 +188,13 @@ export const booking = defineSection(
       notFound: 'Varausta ei löytynyt.',
     },
     pushInvite: 'Sinut on kutsuttu varaukseen',
+    repeat: 'Toista joka viikko',
+    once: 'Vain kerran',
+    weeksN: '{n} viikkoa peräkkäin',
+    repeatHint: 'Vakiovuoro joka viikko. Viikot, joina aika on jo varattu, ohitetaan.',
+    weekly: 'Viikoittain',
+    cancelSeries: 'Peru kaikki tulevat viikot',
+    skipped: '{n} viikkoa ohitettiin, koska aika oli varattu tai viikkoraja täyttyi.',
     staff: {
       title: 'Tilat ja varaukset',
       lede: 'Valitse, mitä kukin talo ja asunto voi varata. Mitään ei keksitä: tila näkyy asukkaille vasta, kun olet lisännyt sen tänne.',

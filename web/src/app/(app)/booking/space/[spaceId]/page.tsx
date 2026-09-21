@@ -12,7 +12,7 @@ import { getDictionary } from '../../../../../lib/dictionary';
 import { getLiving } from '../../../../../lib/living';
 import { nowMs } from '../../../../../lib/time';
 import { addDays, formatWeekParam, getWeekStart, parseWeekParam, slotDate } from '../../../../../lib/booking-grid';
-import { getBookingContext, isAmenityAvailable, isSpaceKind, loadResidents } from '../../../../../lib/booking';
+import { getBookingContext, isAmenityAvailable, isSpaceKind, loadResidents, MAX_REPEAT_WEEKS } from '../../../../../lib/booking';
 import { bookSpaceAction, cancelSpaceBookingAction } from '../../../../../lib/booking-actions';
 
 export const metadata: Metadata = {
@@ -24,10 +24,10 @@ export default async function SpaceBookingPage({
   searchParams,
 }: {
   params: Promise<{ spaceId: string }>;
-  searchParams: Promise<{ week?: string; pick?: string; error?: string }>;
+  searchParams: Promise<{ week?: string; pick?: string; error?: string; skipped?: string }>;
 }) {
   const { spaceId } = await params;
-  const { week: weekParam, pick, error } = await searchParams;
+  const { week: weekParam, pick, error, skipped } = await searchParams;
 
   const session = await getSession();
   if (!session) redirect('/login');
@@ -114,6 +114,7 @@ export default async function SpaceBookingPage({
       </div>
 
       {error && <div className={laundry.error}>{error}</div>}
+      {skipped && <div className={laundry.error}>{t.skipped.replace('{n}', skipped)}</div>}
 
       <p className={laundry.rules}>
         {t.rulesSpace
@@ -136,6 +137,7 @@ export default async function SpaceBookingPage({
           others={residents.others}
           cancelHref={link(weekValue)}
           withNote
+          repeatMax={MAX_REPEAT_WEEKS}
           t={t}
         />
       ) : (

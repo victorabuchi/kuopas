@@ -15,6 +15,8 @@ export default function BookingPanel({
   others,
   cancelHref,
   withNote,
+  withGroup = true,
+  repeatMax = 0,
   t,
 }: {
   action: (formData: FormData) => Promise<void>;
@@ -26,6 +28,8 @@ export default function BookingPanel({
   others: Resident[];
   cancelHref: string;
   withNote: boolean;
+  withGroup?: boolean;
+  repeatMax?: number;
   t: T;
 }) {
   return (
@@ -57,6 +61,22 @@ export default function BookingPanel({
         </label>
       )}
 
+      {repeatMax > 1 && (
+        <label className={styles.field}>
+          {t.repeat}
+          <select name="repeatWeeks" className={styles.select} defaultValue="1">
+            <option value="1">{t.once}</option>
+            {Array.from({ length: repeatMax - 1 }, (_, i) => i + 2).map((n) => (
+              <option key={n} value={n}>
+                {t.weeksN.replace('{n}', String(n))}
+              </option>
+            ))}
+          </select>
+          <span className={styles.hint}>{t.repeatHint}</span>
+        </label>
+      )}
+
+      {withGroup && (
       <div className={styles.group}>
         <span className={styles.groupTitle}>{t.groupHeading}</span>
         <span className={styles.hint}>
@@ -93,6 +113,7 @@ export default function BookingPanel({
           </details>
         )}
       </div>
+      )}
 
       <div className={styles.panelActions}>
         <button type="submit" className={styles.btn}>

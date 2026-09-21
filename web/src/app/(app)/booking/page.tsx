@@ -10,7 +10,7 @@ import { getLocale } from '../../../lib/i18n';
 import { getLiving } from '../../../lib/living';
 import { nowMs } from '../../../lib/time';
 import { getBookingContext, loadAmenities, isSpaceKind, type AmenityKind } from '../../../lib/booking';
-import { respondToInviteAction, cancelSpaceBookingAction } from '../../../lib/booking-actions';
+import { respondToInviteAction, cancelSpaceBookingAction, cancelSeriesAction } from '../../../lib/booking-actions';
 
 export const metadata: Metadata = {
   title: 'Booking - Kuopas',
@@ -24,6 +24,7 @@ type Item = {
   meta: string;
   href: string;
   action?: { kind: 'leave'; bookingKind: 'sauna' | 'space'; bookingId: string } | { kind: 'cancel'; bookingId: string; spaceId: string };
+  series?: { kind: 'laundry' | 'sauna' | 'space'; bookingId: string };
 };
 
 export default async function BookingHubPage() {
@@ -111,13 +112,13 @@ export default async function BookingHubPage() {
   const myLaundry = await db.orm.public.LaundryBooking.where({ tenantId: ctx.tenantId }).include('machine', (m) => m).all();
   for (const b of myLaundry) {
     if (new Date(b.endsAt).getTime() < now) continue;
-    items.push({ key: `laundry-${b.id}`, at: new Date(b.startsAt).getTime(), title: `${t.kinds.laundry.name}: ${b.machine!.label}`, when: fmt(b.startsAt), meta: t.you, href: '/laundry' });
+    items.push({ key: `laundry-${b.id}`, at: new Date(b.startsAt).getTime(), title: `${t.kinds.laundry.name}: ${b.machine!.label}`, when: fmt(b.startsAt), meta: b.seriesId ? `${t.you} · ${t.weekly}` : t.you, href: '/laundry', series: b.seriesId ? { kind: 'laundry', bookingId: b.id } : undefined });
   }
   const mySauna = await db.orm.public.SaunaBooking.where({ tenantId: ctx.tenantId }).include('slot', (s) => s).all();
   for (const b of mySauna) {
     if (new Date(b.endsAt).getTime() < now) continue;
     const n = groupSize('sauna', b.id);
-    items.push({ key: `sauna-${b.id}`, at: new Date(b.startsAt).getTime(), title: b.slot!.label, when: fmt(b.startsAt), meta: n > 0 ? t.withCount.replace('{n}', String(n)) : t.you, href: '/sauna' });
+    items.push({ key: `sauna-${b.id}`, at: new Date(b.startsAt).getTime(), title: b.slot!.label, when: fmt(b.startsAt), meta: `${n > 0 ? t.withCount.replace('{n}', String(n)) : t.you}${b.seriesId ? ` · ${t.weekly}` : ''}`, href: '/sauna', series: b.seriesId ? { kind: 'sauna', bookingId: b.id } : undefined });
   }
   const mySpaces = await db.orm.public.SpaceBooking.where({ tenantId: ctx.tenantId }).include('space', (s) => s).all();
   for (const b of mySpaces) {
@@ -128,9 +129,10 @@ export default async function BookingHubPage() {
       at: new Date(b.startsAt).getTime(),
       title: b.space!.name,
       when: fmt(b.startsAt),
-      meta: n > 0 ? t.withCount.replace('{n}', String(n)) : t.you,
+      meta: `${n > 0 ? t.withCount.replace('{n}', String(n)) : t.you}${b.seriesId ? ` · ${t.weekly}` : ''}`,
       href: `/booking/space/${b.spaceId}`,
       action: { kind: 'cancel', bookingId: b.id, spaceId: b.spaceId },
+      series: b.seriesId ? { kind: 'space', bookingId: b.id } : undefined,
     });
   }
   const spot = await db.orm.public.ParkingSpot.where({ tenantId: ctx.tenantId }).first();
@@ -227,6 +229,15 @@ export default async function BookingHubPage() {
                         <input type="hidden" name="bookingId" value={item.action.bookingId} />
                         <button type="submit" name="decision" value="decline" className={`${styles.btn} ${styles.btnGhost}`}>
                           {t.leave}
+                        </button>
+                      </form>
+                    )}
+                    {item.series && (
+                      <form action={cancelSeriesAction}>
+                        <input type="hidden" name="kind" value={item.series.kind} />
+                        <input type="hidden" name="bookingId" value={item.series.bookingId} />
+                        <button type="submit" className={`${styles.btn} ${styles.btnGhost}`}>
+                          {t.cancelSeries}
                         </button>
                       </form>
                     )}
