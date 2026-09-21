@@ -51,15 +51,16 @@ export default function Sidebar({ labels }: { labels: Labels }) {
         </Svg>
       ),
     },
+  ];
+  const bottom = [
     {
       href: '/admin/settings',
       label: labels.settings,
       exact: false,
       icon: (
         <Svg>
-          <path d="M4 7h10M18 7h2M4 17h2M10 17h10" />
-          <circle cx="16" cy="7" r="2" />
-          <circle cx="8" cy="17" r="2" />
+          <circle cx="12" cy="12" r="3" />
+    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.6 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.6a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1Z" />
         </Svg>
       ),
     },
@@ -70,6 +71,17 @@ export default function Sidebar({ labels }: { labels: Labels }) {
       <div className={styles.railTop}>
         {items.map((item) => {
           const active = item.exact ? pathname === item.href : pathname.startsWith(item.href);
+          return (
+            <Link key={item.href} href={item.href} title={item.label} className={`${styles.railLink} ${active ? styles.railLinkActive : ''}`}>
+              {item.icon}
+              <span className={styles.railLabel}>{item.label}</span>
+            </Link>
+          );
+        })}
+      </div>
+      <div className={styles.railBottom}>
+        {bottom.map((item) => {
+          const active = pathname.startsWith(item.href);
           return (
             <Link key={item.href} href={item.href} title={item.label} className={`${styles.railLink} ${active ? styles.railLinkActive : ''}`}>
               {item.icon}

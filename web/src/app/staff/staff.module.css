@@ -28,9 +28,20 @@
   flex-direction: column;
   align-items: center;
   padding: 16px 0;
-  overflow-y: auto;
+  overflow: hidden;
+}
+.railBottom {
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
 }
 .railTop {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  width: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;

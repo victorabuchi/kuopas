@@ -1,4 +1,6 @@
 import type { Metadata } from 'next';
+import Link from 'next/link';
+import Image from 'next/image';
 import { Mulish } from 'next/font/google';
 import styles from '../../auth.module.css';
 import { staffLoginAction } from '../../../lib/staff-auth-actions';
@@ -25,10 +27,9 @@ export default async function StaffLoginPage({
     <div className={`${styles.page} ${mulish.variable}`}>
       <div className={styles.card}>
         <div className={styles.topRow}>
-          <div className={styles.logo}>
-            <span className={styles.logoDot} />
-            Kuopas
-          </div>
+          <Link href="/">
+            <Image src="/Kuopas-logo.png" alt="Kuopas" width={160} height={66} style={{ height: 44, width: 'auto' }} priority />
+          </Link>
         </div>
 
         <div className={styles.heading}>

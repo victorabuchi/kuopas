@@ -29,6 +29,13 @@
   padding: 16px 0;
   overflow-y: auto;
 }
+.railBottom {
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
 .railTop {
   display: flex;
   flex-direction: column;

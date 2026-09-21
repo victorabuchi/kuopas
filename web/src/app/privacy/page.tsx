@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Image from 'next/image';
 import type { Metadata } from 'next';
 import { Mulish } from 'next/font/google';
 import styles from '../legal.module.css';
@@ -14,6 +15,9 @@ export default function PrivacyPage() {
     <div className={`${styles.page} ${mulish.variable}`}>
       <div className={styles.topBar}>
         <div className={styles.topBarInner}>
+          <Link href="/" className={styles.logoLink}>
+            <Image src="/Kuopas-logo.png" alt="Kuopas" width={160} height={66} className={styles.logo} priority />
+          </Link>
           <Link href="/" className={styles.back}>
             &larr; Back to Kuopas
           </Link>
