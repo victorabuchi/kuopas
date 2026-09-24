@@ -39,12 +39,20 @@ export default async function Home() {
       <header className={styles.hero}>
         <div className={`${styles.wrap} ${styles.heroInner}`}>
           <h1 className={styles.fadeUp}>
-            {t.heroLine1.split(' ').map((word, i) => (
-              <span key={i} className={word.includes('-') ? styles.noBreak : undefined}>
-                {i > 0 ? ' ' : ''}
-                {word}
-              </span>
-            ))}
+            {(() => {
+              // Keep the hyphenated word and whatever follows it together, so the
+              // company name breaks as "Kuopion / Opiskelija-asunnot Oy" and never
+              // leaves "Oy" alone on a line.
+              const words = t.heroLine1.split(' ');
+              const at = words.findIndex((w) => w.includes('-'));
+              if (at < 0) return t.heroLine1;
+              return (
+                <>
+                  {words.slice(0, at).join(' ')}{' '}
+                  <span className={styles.noBreak}>{words.slice(at).join(' ')}</span>
+                </>
+              );
+            })()}
           </h1>
           <p className={`${styles.lede} ${styles.fadeUp}`}>{t.heroLede}</p>
           <div className={`${styles.heroCta} ${styles.fadeUp}`}>
