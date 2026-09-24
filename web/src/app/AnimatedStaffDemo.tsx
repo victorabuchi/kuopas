@@ -303,19 +303,22 @@ const CHAPTERS = [
 function FixedDemoFrame({ children }: { children: React.ReactNode }) {
   const outerRef = useRef<HTMLDivElement>(null);
   const innerRef = useRef<HTMLDivElement>(null);
-  const [scale, setScale] = useState(1);
+  const [fit, setFit] = useState<{ scale: number; height: number | null }>({ scale: 1, height: null });
 
+  // The mock window is a fixed-size desktop layout that is scaled down to the
+  // width available. The frame's height follows the scaled window, so a phone
+  // gets a small frame instead of a tall one with empty space around it.
   useLayoutEffect(() => {
     const outer = outerRef.current;
     const inner = innerRef.current;
     if (!outer || !inner) return;
     const measure = () => {
       const ow = outer.clientWidth;
-      const oh = outer.clientHeight;
       const iw = inner.scrollWidth;
       const ih = inner.scrollHeight;
-      if (!iw || !ih || !ow || !oh) return;
-      setScale(Math.min(ow / iw, oh / ih));
+      if (!iw || !ih || !ow) return;
+      const scale = Math.min(1, ow / iw);
+      setFit({ scale, height: Math.ceil(ih * scale) });
     };
     measure();
     const ro = new ResizeObserver(measure);
@@ -325,8 +328,11 @@ function FixedDemoFrame({ children }: { children: React.ReactNode }) {
   }, []);
 
   return (
-    <div ref={outerRef} style={{ position: 'relative', overflow: 'hidden', width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-      <div ref={innerRef} style={{ transform: `scale(${scale})`, transformOrigin: 'center center' }}>
+    <div
+      ref={outerRef}
+      style={{ position: 'relative', overflow: 'hidden', width: '100%', height: fit.height ?? undefined, display: 'flex', justifyContent: 'center' }}
+    >
+      <div ref={innerRef} style={{ flexShrink: 0, transform: `scale(${fit.scale})`, transformOrigin: 'top center' }}>
         {children}
       </div>
     </div>
@@ -341,7 +347,7 @@ function PlayPauseButton({ playing, onClick }: { playing: boolean; onClick: () =
       style={{
         position: 'absolute',
         right: '20px',
-        bottom: '20px',
+        top: '16px',
         width: '40px',
         height: '40px',
         borderRadius: '50%',
@@ -404,18 +410,18 @@ export default function AnimatedStaffDemo() {
   }
 
   return (
-    <div style={{ position: 'relative', width: '100%', maxWidth: '980px', margin: '0 auto', paddingBottom: '30px' }}>
+    <div style={{ position: 'relative', width: '100%', maxWidth: '980px', margin: '0 auto' }}>
       <div
         style={{
           position: 'relative',
           background: '#fff',
           border: '1px solid #e8e8e3',
-          borderRadius: '32px',
-          padding: '36px',
+          borderRadius: '24px',
+          padding: 'clamp(12px, 3.5vw, 32px) clamp(12px, 3.5vw, 32px) 36px',
           boxShadow: '0 0 140px -20px rgba(4,106,56,0.32), 0 4px 34px rgba(0,0,0,0.07)',
         }}
       >
-        <div style={{ height: '600px' }}>
+        <div>
           <FixedDemoFrame>
             <div style={{ position: 'relative', width: '740px', flexShrink: 0 }}>
               <div style={{ background: '#fff', border: '1px solid #e0e0dc', borderRadius: '18px', overflow: 'hidden', boxShadow: '0 34px 90px rgba(0,0,0,0.16)' }}>
@@ -435,10 +441,8 @@ export default function AnimatedStaffDemo() {
 
       <div
         style={{
-          position: 'absolute',
-          left: '50%',
-          bottom: 0,
-          transform: 'translate(-50%, 50%)',
+          position: 'relative',
+          margin: '-22px auto 0',
           display: 'flex',
           justifyContent: 'center',
           gap: '4px',
