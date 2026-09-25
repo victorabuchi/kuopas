@@ -101,3 +101,46 @@
   min-width: 0;
   overflow-y: auto;
 }
+
+/* Phones and small tablets: the icon rail becomes a tab bar along the bottom
+   and the page uses the full width. */
+@media (max-width: 768px) {
+  .shell {
+    flex-direction: column;
+    height: 100vh;
+    height: 100dvh;
+  }
+  .main {
+    order: 1;
+    min-height: 0;
+    overflow-x: hidden;
+  }
+  .rail {
+    order: 2;
+    width: 100%;
+    flex-direction: row;
+    align-items: stretch;
+    justify-content: flex-start;
+    padding: 6px 8px;
+    gap: 4px;
+    border-right: none;
+    border-top: 1px solid var(--border);
+    overflow-x: auto;
+    overflow-y: hidden;
+  }
+  .railTop,
+  .railBottom {
+    flex-direction: row;
+    margin-top: 0;
+    gap: 4px;
+    flex-shrink: 0;
+  }
+  .railBottom {
+    margin-left: auto;
+  }
+  .railLink {
+    width: 62px;
+    min-height: 48px;
+    flex-shrink: 0;
+  }
+}

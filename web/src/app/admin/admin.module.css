@@ -227,3 +227,68 @@
   font-weight: 700;
   cursor: pointer;
 }
+
+/* Phones and small tablets: the icon rail becomes a tab bar along the bottom. */
+@media (max-width: 768px) {
+  .shell {
+    flex-direction: column;
+    height: 100vh;
+    height: 100dvh;
+  }
+  .mainCol {
+    order: 1;
+    min-height: 0;
+  }
+  .rail {
+    order: 2;
+    width: 100%;
+    flex-direction: row;
+    align-items: stretch;
+    justify-content: flex-start;
+    padding: 6px 8px;
+    gap: 4px;
+    border-right: none;
+    border-top: 1px solid var(--border);
+    overflow-x: auto;
+    overflow-y: hidden;
+  }
+  .railTop,
+  .railBottom {
+    flex: 0 0 auto;
+    width: auto;
+    flex-direction: row;
+    margin-top: 0;
+    gap: 4px;
+    overflow: visible;
+  }
+  .railBottom {
+    margin-left: auto;
+  }
+  .railLink {
+    width: 62px;
+    min-height: 48px;
+    flex-shrink: 0;
+  }
+  .topBar {
+    padding: 0 12px;
+  }
+  .main {
+    padding: 20px 16px 40px;
+  }
+}
+
+@media (max-width: 600px) {
+  .topBar {
+    gap: 8px;
+  }
+  .logo {
+    height: 32px;
+  }
+  .title {
+    font-size: 16px;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}

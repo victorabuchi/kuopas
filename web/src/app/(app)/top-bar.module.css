@@ -31,3 +31,21 @@
   background-repeat: repeat-x;
   background-size: auto 100%;
 }
+
+/* Phones: a compact bar so the role and language switchers always fit. */
+@media (max-width: 600px) {
+  .bar {
+    gap: 8px;
+    padding: 0 12px;
+  }
+  .logo {
+    height: 32px;
+  }
+  .title {
+    font-size: 16px;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
